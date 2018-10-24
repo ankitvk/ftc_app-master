@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.OpModes;
 
-import android.graphics.Point;
 import android.graphics.PointF;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -9,8 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.Subsystems.PathFollower;
-import android.graphics.Point;
-
 
 @TeleOp(name="TeleOp")
 
@@ -71,13 +68,6 @@ public class MaelstromTeleop extends OpMode implements Constants{
         else if(gamepad2.dpad_up){
 
         }
-
-        //tracker.trackPosition(robot.imu,coordinate,);
-
-        //telemetry.addData("X Position: ",);
-        //telemetry.addData("Y Position: ",);
-
-        tracker.trackPoint(robot,robot.imu,12,12);
 
     }
 }
