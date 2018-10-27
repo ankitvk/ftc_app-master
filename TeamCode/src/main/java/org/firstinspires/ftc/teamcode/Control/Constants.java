@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.Control;
 public interface Constants {
     double NANOSECONDS_PER_MINUTE = 6e+10;
     double NEVEREST_20_MAX_RPM = 320;
-    double NEVEREST_COUNTS_PER_REV = 1440;
+    double NEVEREST20_COUNTS_PER_REV = 560;
     double E4T_COUNTS_PER_REV = 537.6;
     int PATH_FOLLOWING_INTERVAL = 50;
     double SPEED_MULTIPLIER = 1;
@@ -12,6 +12,8 @@ public interface Constants {
     double WHEEL_DIAMETER  =4;
 
     double LOOKAHEAD = 18;
+
+    double ROTATIONS_FOR_EXTENSION = 5.5;
 
     double frontLeftKP = 20;
     double frontLeftKI = 0;
@@ -33,23 +35,20 @@ public interface Constants {
     double backRightKD = 0;
     double backRightMaxI = 1;
 
-    double topPivotKP = 20;
-    double topPivotKI = 0;
-    double topPivotKD = 0;
-    double topPivotMaxI = 1;
+    double topPivot1KP = 20;
+    double topPivot1KI = 0;
+    double topPivot1KD = 0;
+    double topPivot1MaxI = 1;
 
-    double extensionLeftKP = 20;
-    double extensionLeftKI = 0;
-    double extensionLeftKD = 0;
-    double extensionLeftMaxI = 1;
+    double topPivot2KP = 20;
+    double topPivot2KI = 0;
+    double topPivot2KD = 0;
+    double topPivot2MaxI = 1;
 
-    double extensionRightKP = 20;
-    double extensionRightKI = 0;
-    double extensionRightKD = 0;
-    double extensionRightMaxI = 1;
+    double extensionKP = .1;
+    double extensionKI = 0;
+    double extensionKD = 0;
+    double extensionMaxI = 1;
 
-    double intakeKP = 20;
-    double intakeKI = 0;
-    double intakeKD = 0;
-    double intakeMaxI = 1;
+
 }

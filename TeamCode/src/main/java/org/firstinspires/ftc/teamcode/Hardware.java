@@ -4,15 +4,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.vuforia.Vuforia;
+import com.qualcomm.robotcore.hardware.Servo;
 
-//import org.firstinspires.ftc.robotcore.external.navigation.R
-import org.firstinspires.ftc.robotcore.external.navigation.VuMarkInstanceId;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;/*use*/
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-
+import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Control.SpeedControlledMotor;
 import org.firstinspires.ftc.teamcode.Sensors.BNO055_IMU;
@@ -22,22 +16,26 @@ public class Hardware implements Constants
 {
     HardwareMap hwMap;
 
+    public AutonomousOpMode auto;
+
     public SpeedControlledMotor frontLeft = new SpeedControlledMotor(frontLeftKP,frontLeftKI,frontLeftKD,frontLeftMaxI),
                                 frontRight = new SpeedControlledMotor(frontRightKP,frontRightKI,frontRightKD,frontRightMaxI),
                                 backLeft = new SpeedControlledMotor(backLeftKP,backLeftKI,backLeftKD,backLeftMaxI),
                                 backRight = new SpeedControlledMotor(backRightKP,backRightKI,backRightKD,backRightMaxI),
-                                topPivot = new SpeedControlledMotor(topPivotKP,topPivotKI,topPivotKD,topPivotMaxI),
-                                extensionLeft = new SpeedControlledMotor(extensionLeftKP,extensionLeftKI,extensionLeftKD,extensionLeftMaxI),
-                                extensionRight = new SpeedControlledMotor(extensionRightKP,extensionRightKI,extensionRightKD,extensionRightMaxI),
-                                intake = new SpeedControlledMotor(intakeKP,intakeKI,intakeKD,intakeMaxI);
+                                pivot1 = new SpeedControlledMotor(topPivot1KP,topPivot1KI,topPivot1KD,topPivot1MaxI),
+                                pivot2 = new SpeedControlledMotor(topPivot2KP,topPivot2KI,topPivot2KD,topPivot2MaxI),
+                                extensionLeft = new SpeedControlledMotor(extensionKP,extensionKI,extensionKD,extensionMaxI),
+                                extensionRight = new SpeedControlledMotor(extensionKP,extensionKI,extensionKD,extensionMaxI);
 
     public BNO055_IMU imu;
 
-    public ExternalEncoder pivotCount;
+    public Servo stopRotation,stopExtension,indexer,intake;
 
-    public DcMotor pivot;
+    //public ExternalEncoder pivotCount;
 
-    public CRServo LEDStrip;
+    //public DcMotor pivot;
+
+    //public CRServo LEDStrip;
 
 
     public void init(HardwareMap hardwareMap){
@@ -50,16 +48,24 @@ public class Hardware implements Constants
         frontRight.init(hwMap,"frontRight");
         backLeft.init(hwMap,"backLeft");
         backRight.init(hwMap,"backRight");
-        topPivot.init(hwMap,"topPivot");
+        pivot1.init(hwMap,"pivot1");
+        pivot2.init(hwMap,"pivot2");
         extensionLeft.init(hwMap,"extensionLeft");
         extensionRight.init(hwMap,"extensionRight");
-        intake.init(hwMap,"intake");
 
-        pivotCount = new ExternalEncoder(pivot);
+        stopRotation = hwMap.servo.get("stopRotation");
+        stopExtension = hwMap.servo.get("stopExtension");
+        indexer = hwMap.servo.get("indexer");
+        intake = hwMap.servo.get("intake");
 
-        LEDStrip = hwMap.crservo.get("LEDStrip");
 
+        //pivotCount = new ExternalEncoder(pivot);
 
+        //LEDStrip = hwMap.crservo.get("LEDStrip");
 
+    }
+
+    public HardwareMap getHwMap() {
+        return hwMap;
     }
 }

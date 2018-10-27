@@ -4,13 +4,17 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
+import org.firstinspires.ftc.teamcode.Control.Constants;
+import org.firstinspires.ftc.teamcode.Control.PIDController;
+import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.Subsystems.PathFollower;
 
 
 @Autonomous(name = "BlueBottomAuto")
-public class BlueBottomAuto extends LinearOpMode implements AutonomousOpMode{
+public class BlueBottomAuto extends LinearOpMode implements AutonomousOpMode,Constants {
 
-    PathFollower trackingNigga = new PathFollower(this);
+    Hardware robot = new Hardware();
+    PathFollower track = new PathFollower(this);
 
     @Override
     public boolean getOpModeIsActive() {
@@ -19,5 +23,51 @@ public class BlueBottomAuto extends LinearOpMode implements AutonomousOpMode{
 
     public void runOpMode() {
 
+    }//end opMode
+
+    /*private void extend(){
+        double error = Math.abs(robot.extensionLeft.getCurrentPosition()-(NEVEREST20_COUNTS_PER_REV*5.5));
+        double p;
+
+        while(error>150){
+            error = Math.abs(robot.extensionLeft.getCurrentPosition()-(NEVEREST20_COUNTS_PER_REV*5.5));
+            p = extensionKP*error;
+            robot.extensionLeft.setPower(-p);
+            robot.extensionRight.setPower(-p);
+        }
     }
+
+    private void retract(){
+        double error = Math.abs(robot.extensionLeft.getCurrentPosition());
+        double p;
+
+        while(error>150){
+            error = Math.abs(robot.extensionLeft.getCurrentPosition());
+            p = extensionKP*error;
+            robot.extensionLeft.setPower(p);
+            robot.extensionRight.setPower(p);
+        }
+    }*/
+    private void extend(){
+        PIDController control = new PIDController(extensionKP,extensionKI,extensionKD,extensionMaxI);
+        double error = Math.abs((robot.extensionLeft.getCurrentPosition()+(robot.extensionRight.getCurrentPosition()))/2-(NEVEREST20_COUNTS_PER_REV*5.5));
+        double p;
+        while(error>150){
+            p = control.power((NEVEREST20_COUNTS_PER_REV*5.5),((robot.extensionLeft.getCurrentPosition()+robot.extensionRight.getCurrentPosition())/2));
+            robot.extensionLeft.setPower(p);
+            robot.extensionRight.setPower(p);
+        }
+    }
+
+    private void retract(){
+        PIDController control = new PIDController(extensionKP,extensionKI,extensionKD,extensionMaxI);
+        double error = Math.abs((robot.extensionLeft.getCurrentPosition()+(robot.extensionRight.getCurrentPosition()))/2);
+        double p;
+        while(error>150){
+            p = control.power(0,((robot.extensionLeft.getCurrentPosition()+robot.extensionRight.getCurrentPosition())/2));
+            robot.extensionLeft.setPower(p);
+            robot.extensionRight.setPower(p);
+        }
+    }
+
 }

@@ -19,6 +19,7 @@ public class MaelstromTeleop extends OpMode implements Constants{
     PathFollower tracker = new PathFollower();
     double yDirection;
     double xDirection;
+    boolean extendHasStopped = false;
 
 
 
@@ -51,25 +52,31 @@ public class MaelstromTeleop extends OpMode implements Constants{
         }
 
         if (gamepad2.right_trigger>0){
-            robot.extensionRight.setPower(gamepad2.right_trigger);
-            robot.extensionLeft.setPower(-1*gamepad2.right_trigger);
+            robot.extensionRight.setPower(-gamepad2.right_trigger);
+            robot.extensionLeft.setPower(-gamepad2.right_trigger);
         }
-        else if (gamepad2.left_trigger<0){
-            robot.extensionLeft.setPower(gamepad2.right_trigger);
-            robot.extensionRight.setPower(-1*gamepad2.right_trigger);
+        else if (gamepad2.left_trigger>0){
+            robot.extensionLeft.setPower(gamepad2.left_trigger);
+            robot.extensionRight.setPower(gamepad2.left_trigger);
         }
-
-        if(gamepad2.dpad_right){
-
-        }
-        else if(gamepad2.dpad_left){
+        else if(extendHasStopped){
+            extendHasStopped = !extendHasStopped;
 
         }
-        else if(gamepad2.dpad_up){
-
+        else{
+            extendHasStopped = true;
         }
 
-    }
+        if (gamepad1.right_trigger>0){
+            robot.pivot1.setPower(.75);
+            robot.pivot2.setPower(.75);
+        }
+        else if
+
+
+
+
+    } //Ends main loop
 }
 
 /*

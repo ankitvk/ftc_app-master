@@ -34,7 +34,7 @@ public class SpeedControlledMotor implements Constants {
         int deltaPos = motor.getCurrentPosition() - previousPos;
         double deltaTime = (System.nanoTime() - previousTime)/NANOSECONDS_PER_MINUTE;
         if (deltaTime*6e4 > 10) {
-            rpm = (deltaPos/ NEVEREST_20_COUNTS_PER_REV)/(deltaTime);
+            rpm = (deltaPos/ NEVEREST20_COUNTS_PER_REV)/(deltaTime);
             previousPos = motor.getCurrentPosition();
             previousTime = System.nanoTime();
         }
