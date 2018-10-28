@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -29,7 +30,11 @@ public class Hardware implements Constants
 
     public BNO055_IMU imu;
 
-    public Servo stopRotation,stopExtension,indexer,intake;
+    public Servo stopRotation,stopExtension,indexer;
+
+    public CRServo intake;
+
+    public DigitalChannel magLimitSwitch;
 
     //public ExternalEncoder pivotCount;
 
@@ -56,8 +61,9 @@ public class Hardware implements Constants
         stopRotation = hwMap.servo.get("stopRotation");
         stopExtension = hwMap.servo.get("stopExtension");
         indexer = hwMap.servo.get("indexer");
-        intake = hwMap.servo.get("intake");
+        intake = hwMap.crservo.get("intake");
 
+        magLimitSwitch = hwMap.digitalChannel.get("magLimitSwitch");
 
         //pivotCount = new ExternalEncoder(pivot);
 

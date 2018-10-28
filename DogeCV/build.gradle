@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 27
     buildToolsVersion '27.0.3'
 
     defaultConfig {
@@ -25,7 +25,7 @@ repositories {
     }
 }
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(path: ':openCVLibrary3')
-    implementation (name: 'RobotCore-release', ext: 'aar')
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile project(path: ':openCVLibrary3')
+    compile (name: 'RobotCore-release', ext: 'aar')
 }

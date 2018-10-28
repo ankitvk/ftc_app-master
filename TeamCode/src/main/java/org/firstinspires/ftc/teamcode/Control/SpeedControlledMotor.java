@@ -58,7 +58,6 @@ public class SpeedControlledMotor implements Constants {
     }
 
 
-
     public int getCurrentPosition() {
         return motor.getCurrentPosition();
     }

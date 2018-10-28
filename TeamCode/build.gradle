@@ -12,4 +12,6 @@
 apply from: '../build.common.gradle'
 
 dependencies {
+    compile project(':openCVLibrary3')
+    compile project(':DogeCV')
 }

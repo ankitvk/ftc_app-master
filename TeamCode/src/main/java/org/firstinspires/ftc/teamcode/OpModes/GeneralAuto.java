@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.PathFollower;
 
 
 @Autonomous(name = "BlueBottomAuto")
-public class BlueBottomAuto extends LinearOpMode implements AutonomousOpMode,Constants {
+public class GeneralAuto extends LinearOpMode implements AutonomousOpMode,Constants {
 
     Hardware robot = new Hardware();
     PathFollower track = new PathFollower(this);
