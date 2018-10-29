@@ -58,12 +58,12 @@ public class Hardware implements Constants
         extensionLeft.init(hwMap,"extensionLeft");
         extensionRight.init(hwMap,"extensionRight");
 
-        stopRotation = hwMap.servo.get("stopRotation");
-        stopExtension = hwMap.servo.get("stopExtension");
-        indexer = hwMap.servo.get("indexer");
+        //stopRotation = hwMap.servo.get("stopRotation");
+        //stopExtension = hwMap.servo.get("stopExtension");
+        //indexer = hwMap.servo.get("indexer");
         intake = hwMap.crservo.get("intake");
 
-        magLimitSwitch = hwMap.digitalChannel.get("magLimitSwitch");
+        //magLimitSwitch = hwMap.digitalChannel.get("magLimitSwitch");
 
         //pivotCount = new ExternalEncoder(pivot);
 

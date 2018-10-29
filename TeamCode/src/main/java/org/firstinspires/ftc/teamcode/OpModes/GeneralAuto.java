@@ -8,13 +8,15 @@ import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Control.PIDController;
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.Subsystems.PathFollower;
+import org.firstinspires.ftc.teamcode.Subsystems.GoldFind;
 
 
-@Autonomous(name = "BlueBottomAuto")
+@Autonomous(name = "GeneralAuto")
 public class GeneralAuto extends LinearOpMode implements AutonomousOpMode,Constants {
 
     Hardware robot = new Hardware();
     PathFollower track = new PathFollower(this);
+    GoldFind goldfish = new GoldFind(this);
 
     @Override
     public boolean getOpModeIsActive() {
@@ -22,6 +24,11 @@ public class GeneralAuto extends LinearOpMode implements AutonomousOpMode,Consta
     }
 
     public void runOpMode() {
+        goldfish.startOpenCV(hardwareMap);
+        robot.stopRotation.setPosition(.5);
+        while(this.getOpModeIsActive() && !goldfish.getAligned()){
+
+        }
 
     }//end opMode
 

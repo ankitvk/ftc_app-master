@@ -57,7 +57,6 @@ public class PathFollower implements Constants {
         coordinate.set(coordinate.x +deltaX,coordinate.y + deltaY);
 
         return coordinate;
-
     }
 
     private boolean OpModeState(){

@@ -141,12 +141,12 @@ public class MaelstromTeleop extends OpMode implements Constants{
         }
 
         //index
-        if (gamepad2.x){
+        /*if (gamepad2.x){
             robot.indexer.setPosition(1);
         }
         else if (gamepad2.a){
             robot.indexer.setPosition(0);
-        }
+        }*/
 
         telemetry.addData("pivotPos",(robot.pivot1.getCurrentPosition()+robot.pivot2.getCurrentPosition())/2);
 
