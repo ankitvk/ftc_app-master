@@ -16,28 +16,25 @@ import org.firstinspires.ftc.teamcode.Subsystems.PathFollower;
 //@Disabled
 public class MaelstromTeleop extends OpMode implements Constants{
 
-    Hardware robot = new Hardware();
-    PointF coordinate = new PointF(0,0);
-    PathFollower tracker = new PathFollower();
-    double yDirection;
-    double xDirection;
+    private Hardware robot = new Hardware();
+    private double yDirection;
+    private double xDirection;
 
 
-    PIDController controlExtend = new PIDController(extensionKP,extensionKI,extensionKD,extensionMaxI);
-    PIDController controlPivot = new PIDController(pivotKP,pivotKI,pivotKD,pivotMaxI);
+    private PIDController controlExtend = new PIDController(extensionKP,extensionKI,extensionKD,extensionMaxI);
+    private PIDController controlPivot = new PIDController(pivotKP,pivotKI,pivotKD,pivotMaxI);
 
-    boolean extendHasStopped = false;
+    private boolean extendHasStopped = false;
     double holdExtendPos = 0;
     double extendPower;
 
-    boolean pivotHasStopped = false;
-    double holdPivotPos = 0;
-    double pivotPower = 0;
+    private boolean pivotHasStopped = false;
+    private double holdPivotPos = 0;
+    private double pivotPower = 0;
 
-    boolean intakeBoolCurr;
-    boolean intakeBoolPrev;
-    boolean intakeOn;
-
+    private boolean intakeBoolCurr;
+    private boolean intakeBoolPrev;
+    private boolean intakeOn;
 
 
     public void init(){
@@ -50,11 +47,6 @@ public class MaelstromTeleop extends OpMode implements Constants{
         //dt control
         yDirection = gamepad1.left_stick_y;
         xDirection = gamepad1.right_stick_x;
-
-        /*robot.backLeft.setPower(yDirection+xDirection);
-        robot.frontLeft.setPower(yDirection+xDirection);
-        robot.backRight.setPower(xDirection-yDirection);
-        robot.frontRight.setPower(xDirection-yDirection);*/
 
         robot.backLeft.setPower(-yDirection-xDirection);
         robot.frontLeft.setPower(-yDirection-xDirection);
@@ -72,19 +64,20 @@ public class MaelstromTeleop extends OpMode implements Constants{
             robot.extensionLeft.setPower(-gamepad1.left_trigger);
             robot.extensionRight.setPower(-gamepad1.left_trigger);
             extendHasStopped = false;
-        } else {
+        }
+        /*else {
             robot.extensionLeft.setPower(0);
             robot.extensionRight.setPower(0);
-        }
-/*        else if(!extendHasStopped){
+        }*/
+        else if(!extendHasStopped){
             extendHasStopped = true;
             holdExtendPos = robot.extensionRight.getCurrentPosition();
         }
         else {
-            extendPower = control.power(holdExtendPos,robot.extensionRight.getCurrentPosition());
+            extendPower = controlExtend.power(holdExtendPos,robot.extensionRight.getCurrentPosition());
             robot.extensionLeft.setPower(extendPower);
             robot.extensionRight.setPower(extendPower);
-        }*/
+        }
 
         //pivot control
         if(gamepad1.right_bumper){
@@ -107,13 +100,6 @@ public class MaelstromTeleop extends OpMode implements Constants{
                 robot.pivot1.setPower(pivotPower);
                 robot.pivot2.setPower(pivotPower);
         }
-
-
-        //pivot reset control
-        /*if(robot.magLimitSwitch.getState()){
-            robot.pivot1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.pivot2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }*/
 
         //intake d1
         if (gamepad1.x && gamepad1.start) {
