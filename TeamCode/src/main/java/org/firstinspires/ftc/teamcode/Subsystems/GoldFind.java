@@ -29,7 +29,7 @@ public class GoldFind extends DogeCVDetector {
     // Defining Mats to be used.
     private Mat displayMat = new Mat(); // Display debug info to the screen (this is what is returned)
     private Mat workingMat = new Mat(); // Used for preprocessing and working with (blurring as an example)
-    private Mat maskYellow = new Mat(); // Yellow Mask returned by color filter
+    private Mat Yellow = new Mat();
     private Mat hierarchy  = new Mat(); // hierarchy used by contours
 
     // Results of the detector
@@ -73,12 +73,12 @@ public class GoldFind extends DogeCVDetector {
 
         //Preprocess the working Mat (blur it then apply a yellow filter)
         Imgproc.GaussianBlur(workingMat,workingMat,new Size(5,5),0);
-        yellowFilter.process(workingMat.clone(),maskYellow);
+        yellowFilter.process(workingMat.clone(),Yellow);
 
         //Find contours of the yellow mask and draw them to the display mat for viewing
 
         List<MatOfPoint> contoursYellow = new ArrayList<>();
-        Imgproc.findContours(maskYellow, contoursYellow, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(Yellow, contoursYellow, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
         Imgproc.drawContours(displayMat,contoursYellow,-1,new Scalar(230,70,70),2);
 
         // Current result
@@ -155,7 +155,7 @@ public class GoldFind extends DogeCVDetector {
     public void useDefaults() {
         addScorer(ratioScorer);
 
-        // Add diffrent scoreres depending on the selected mode
+        // Add diffrent scores depending on the selected mode
         if(areaScoringMethod == DogeCV.AreaScoringMethod.MAX_AREA){
             addScorer(maxAreaScorer);
         }
@@ -201,18 +201,18 @@ public class GoldFind extends DogeCVDetector {
     }
 
     public void startOpenCV (HardwareMap hardwareMap) {
-        this.init(hardwareMap.appContext, CameraViewDisplay.getInstance());
-        this.useDefaults();
+        init(hardwareMap.appContext, CameraViewDisplay.getInstance());
+        useDefaults();
         // Optional Tuning
-        this.alignSize = 100; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
-        this.alignPosOffset = 0; // How far from center frame to offset this alignment zone.
-        this.downscale = 0.4; // How much to downscale the input frames
-        this.areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Can also be PERFECT_AREA
+        alignSize = 100; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
+        alignPosOffset = 0; // How far from center frame to offset this alignment zone.
+        downscale = 0.4; // How much to downscale the input frames
+        areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Can also be PERFECT_AREA
         //falcon.goldAlignDetector.perfectAreaScorer.perfectArea = 10000; // if using PERFECT_AREA scoring
-        this.maxAreaScorer.weight = 0.005;
-        this.ratioScorer.weight = 5;
-        this.ratioScorer.perfectRatio = 1.0;
-        this.enable();
+        maxAreaScorer.weight = 0.005;
+        ratioScorer.weight = 5;
+        ratioScorer.perfectRatio = 1.0;
+        enable();
     }
     /*public boolean turnTillGold () {
         while (auto.getOpModeIsActive() && !this.getAligned()){

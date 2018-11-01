@@ -19,14 +19,17 @@ public class Hardware implements Constants
 
     public AutonomousOpMode auto;
 
-    public SpeedControlledMotor frontLeft = new SpeedControlledMotor(frontLeftKP,frontLeftKI,frontLeftKD,frontLeftMaxI),
-                                frontRight = new SpeedControlledMotor(frontRightKP,frontRightKI,frontRightKD,frontRightMaxI),
-                                backLeft = new SpeedControlledMotor(backLeftKP,backLeftKI,backLeftKD,backLeftMaxI),
-                                backRight = new SpeedControlledMotor(backRightKP,backRightKI,backRightKD,backRightMaxI),
+    public SpeedControlledMotor frontLeft = new SpeedControlledMotor(dtKP,dtKI,dtKD,dtMaxI),
+                                frontRight = new SpeedControlledMotor(dtKP,dtKI,dtKD,dtMaxI),
+                                backLeft = new SpeedControlledMotor(dtKP,dtKI,dtKD,dtMaxI),
+                                backRight = new SpeedControlledMotor(dtKP,dtKI,dtKD,dtMaxI),
                                 pivot1 = new SpeedControlledMotor(topPivot1KP,topPivot1KI,topPivot1KD,topPivot1MaxI),
                                 pivot2 = new SpeedControlledMotor(topPivot2KP,topPivot2KI,topPivot2KD,topPivot2MaxI),
                                 extensionLeft = new SpeedControlledMotor(extensionKP,extensionKI,extensionKD,extensionMaxI),
                                 extensionRight = new SpeedControlledMotor(extensionKP,extensionKI,extensionKD,extensionMaxI);
+
+
+    public SpeedControlledMotor[] drivetrainMotors = {frontLeft, backLeft, frontRight, backRight};
 
     public BNO055_IMU imu;
 
@@ -58,9 +61,9 @@ public class Hardware implements Constants
         extensionLeft.init(hwMap,"extensionLeft");
         extensionRight.init(hwMap,"extensionRight");
 
-        //stopRotation = hwMap.servo.get("stopRotation");
-        //stopExtension = hwMap.servo.get("stopExtension");
-        //indexer = hwMap.servo.get("indexer");
+        stopRotation = hwMap.servo.get("stopRotation");
+        stopExtension = hwMap.servo.get("stopExtension");
+        indexer = hwMap.servo.get("indexer");
         intake = hwMap.crservo.get("intake");
 
         //magLimitSwitch = hwMap.digitalChannel.get("magLimitSwitch");
