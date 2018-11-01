@@ -25,9 +25,14 @@ public class MaelstromTeleop extends OpMode implements Constants{
 
     PIDController controlExtend = new PIDController(extensionKP,extensionKI,extensionKD,extensionMaxI);
     PIDController controlPivot = new PIDController(pivotKP,pivotKI,pivotKD,pivotMaxI);
+
     boolean extendHasStopped = false;
     double holdExtendPos = 0;
     double extendPower;
+
+    boolean pivotHasStopped = false;
+    double holdPivotPos = 0;
+    double pivotPower = 0;
 
     boolean intakeBoolCurr;
     boolean intakeBoolPrev;
@@ -85,14 +90,24 @@ public class MaelstromTeleop extends OpMode implements Constants{
         if(gamepad1.right_bumper){
             robot.pivot1.setPower(.75);
             robot.pivot2.setPower(.75);
+            pivotHasStopped = false;
         }
         else if (gamepad1.left_bumper){
             robot.pivot1.setPower(-.15);
             robot.pivot2.setPower(-.15);
-        } else {
-            robot.pivot1.setPower(0);
-            robot.pivot2.setPower(0);
+            pivotHasStopped = false;
         }
+        else if(!pivotHasStopped){
+            pivotHasStopped = true;
+            holdPivotPos = robot.pivot1.getCurrentPosition();
+        }
+        else
+            {
+                pivotPower = controlPivot.power(holdPivotPos,robot.pivot1.getCurrentPosition());
+                robot.pivot1.setPower(pivotPower);
+                robot.pivot2.setPower(pivotPower);
+        }
+
 
         //pivot reset control
         /*if(robot.magLimitSwitch.getState()){
