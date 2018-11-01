@@ -33,7 +33,7 @@ public class BNO055_IMU implements Runnable {
         imu.initialize(parameters);
     }
 
-    public void updateRelativeYaw() {
+    private void updateRelativeYaw() {
         if (lastAngle > 90 && getYaw() < 0) {
             relativeYaw = 180 * Math.round(relativeYaw/180) + (180 + getYaw() );
         } else if (lastAngle < -90 && getYaw()  > 0) {
@@ -50,7 +50,7 @@ public class BNO055_IMU implements Runnable {
         return relativeYaw;
     }
 
-    public double[] getAngles() {
+    private double[] getAngles() {
         Quaternion quatAngles = imu.getQuaternionOrientation();
 
         double w = quatAngles.w;

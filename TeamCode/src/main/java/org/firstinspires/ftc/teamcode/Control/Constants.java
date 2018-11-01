@@ -38,5 +38,11 @@ public interface Constants {
     double extensionKD = 0;
     double extensionMaxI = 1;
 
+    double pivotKP = .1;
+    double pivotKI = 0;
+    double pivotKD = 0;
+    double pivotMaxI = 1;
+
+
 
 }

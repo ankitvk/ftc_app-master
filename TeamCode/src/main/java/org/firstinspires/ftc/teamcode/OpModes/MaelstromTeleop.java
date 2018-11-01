@@ -23,7 +23,8 @@ public class MaelstromTeleop extends OpMode implements Constants{
     double xDirection;
 
 
-    PIDController control = new PIDController(extensionKP,extensionKI,extensionKD,extensionMaxI);
+    PIDController controlExtend = new PIDController(extensionKP,extensionKI,extensionKD,extensionMaxI);
+    PIDController controlPivot = new PIDController(pivotKP,pivotKI,pivotKD,pivotMaxI);
     boolean extendHasStopped = false;
     double holdExtendPos = 0;
     double extendPower;
