@@ -65,7 +65,7 @@ public abstract class OpenCVPipeline implements CameraBridgeViewBase.CvCameraVie
      *                    in most cases, using CameraViewDisplay.getInstance() as the argument is just fine.
      */
     public void init(Context context, ViewDisplay viewDisplay) {
-        init(context, viewDisplay, 0, false);
+        init(context, viewDisplay, 1, false);
     }
 
     /**

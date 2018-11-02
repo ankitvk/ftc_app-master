@@ -9,7 +9,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
-public class CameraGLSurfaceView extends GLSurfaceView {
+public class   CameraGLSurfaceView extends GLSurfaceView {
 
     private static final String LOGTAG = "CameraGLSurfaceView";
 

@@ -28,10 +28,10 @@ public class GeneralAuto extends LinearOpMode implements AutonomousOpMode,Consta
     public void runOpMode() {
         goldfish.startOpenCV(hardwareMap);
         robot.stopRotation.setPosition(.5);
-        //rotate -30 d
+        drivetrain.rotateToAngle(-30);
         sleep(500);
         while(getOpModeIsActive() && !goldfish.getAligned()){
-            drivetrain.rotate(.4,false);
+            drivetrain.rotate(.125,false);
         }
         drivetrain.stop();
         goldfish.disable();

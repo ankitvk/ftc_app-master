@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Control.PIDController;
 import org.firstinspires.ftc.teamcode.Hardware;
+import org.firstinspires.ftc.teamcode.Subsystems.GoldFind;
 import org.firstinspires.ftc.teamcode.Subsystems.PathFollower;
 
 @TeleOp(name="TeleOp")
@@ -19,16 +20,14 @@ public class MaelstromTeleop extends OpMode implements Constants{
     private Hardware robot = new Hardware();
     private double yDirection;
     private double xDirection;
+    GoldFind goldfish = new GoldFind();
 
 
     private PIDController controlExtend = new PIDController(extensionKP,extensionKI,extensionKD,extensionMaxI);
     private PIDController controlPivot = new PIDController(pivotKP,pivotKI,pivotKD,pivotMaxI);
 
-    private boolean extendHasStopped = false;
     double holdExtendPos = 0;
-    double extendPower;
 
-    private boolean pivotHasStopped = false;
     private double holdPivotPos = 0;
     private double pivotPower = 0;
 
@@ -40,6 +39,7 @@ public class MaelstromTeleop extends OpMode implements Constants{
     public void init(){
 
         robot.init(hardwareMap);
+        goldfish.startOpenCV(hardwareMap);
     }
 
     public void loop(){
@@ -58,47 +58,37 @@ public class MaelstromTeleop extends OpMode implements Constants{
         if (gamepad1.right_trigger>0){
             robot.extensionRight.setPower(gamepad1.right_trigger);
             robot.extensionLeft.setPower(gamepad1.right_trigger);
-            extendHasStopped = false;
+            holdExtendPos = robot.extensionRight.getCurrentPosition();
         }
         else if (gamepad1.left_trigger>0){
             robot.extensionLeft.setPower(-gamepad1.left_trigger);
             robot.extensionRight.setPower(-gamepad1.left_trigger);
-            extendHasStopped = false;
-        }
-        /*else {
-            robot.extensionLeft.setPower(0);
-            robot.extensionRight.setPower(0);
-        }*/
-        else if(!extendHasStopped){
-            extendHasStopped = true;
             holdExtendPos = robot.extensionRight.getCurrentPosition();
         }
         else {
-            extendPower = controlExtend.power(holdExtendPos,robot.extensionRight.getCurrentPosition());
-            robot.extensionLeft.setPower(extendPower);
-            robot.extensionRight.setPower(extendPower);
+            robot.extensionLeft.setPower(0);
+            robot.extensionRight.setPower(0);
         }
 
         //pivot control
         if(gamepad1.right_bumper){
             robot.pivot1.setPower(.75);
             robot.pivot2.setPower(.75);
-            pivotHasStopped = false;
+            holdPivotPos = robot.pivot1.getCurrentPosition();
         }
         else if (gamepad1.left_bumper){
             robot.pivot1.setPower(-.15);
             robot.pivot2.setPower(-.15);
-            pivotHasStopped = false;
-        }
-        else if(!pivotHasStopped){
-            pivotHasStopped = true;
             holdPivotPos = robot.pivot1.getCurrentPosition();
         }
-        else
-            {
-                pivotPower = controlPivot.power(holdPivotPos,robot.pivot1.getCurrentPosition());
-                robot.pivot1.setPower(pivotPower);
-                robot.pivot2.setPower(pivotPower);
+        /*else if(!pivotHasStopped){
+            pivotHasStopped = true;
+            holdPivotPos = robot.pivot1.getCurrentPosition();
+        }*/
+        else {
+            //pivotPower = controlPivot.power(holdPivotPos,robot.pivot1.getCurrentPosition());
+            robot.pivot1.setPower(0);
+            robot.pivot2.setPower(0);
         }
 
         //intake d1
@@ -132,23 +122,25 @@ public class MaelstromTeleop extends OpMode implements Constants{
 
         //intake d2
         if (gamepad2.right_trigger>0){
-            robot.intake.setPower(.5);
+            robot.intake.setPower(.4);
         }
         else if (gamepad2.left_trigger>0){
-            robot.intake.setPower(-.5);
+            robot.intake.setPower(-.4);
         }
         else{
             robot.intake.setPower(0);
         }
 
         //index
-        if (gamepad2.x){
-            robot.indexer.setPosition(1);
+        if (gamepad2.right_bumper){
+            robot.indexer.setPosition(robot.indexer.getPosition()+.05);
         }
-        else if (gamepad2.a){
-            robot.indexer.setPosition(0);
+        else if (gamepad2.left_bumper){
+            robot.indexer.setPosition(robot.indexer.getPosition()-.05);
         }
 
+        telemetry.addData("IndexVal:",robot.indexer.getPosition());
+        telemetry.addData("Aligned?:",goldfish.getAligned());
         telemetry.update();
     } //Ends main loop
 }

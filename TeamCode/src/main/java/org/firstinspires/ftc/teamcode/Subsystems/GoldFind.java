@@ -60,6 +60,10 @@ public class GoldFind extends DogeCVDetector {
         detectorName = "GoldFinder"; // Set the detector name
         this.auto = auto;
     }
+    public GoldFind(){
+        super();
+        detectorName = "GoldFinder"; // Set the detector name
+    }
 
 
     @Override
@@ -83,7 +87,7 @@ public class GoldFind extends DogeCVDetector {
 
         // Current result
         Rect bestRect = null;
-        double bestDiffrence = Double.MAX_VALUE; // MAX_VALUE since less diffrence = better
+        double bestDifference = Double.MAX_VALUE; // MAX_VALUE since less diffrence = better
 
         // Loop through the contours and score them, searching for the best result
         for(MatOfPoint cont : contoursYellow){
@@ -94,8 +98,8 @@ public class GoldFind extends DogeCVDetector {
             Imgproc.rectangle(displayMat, rect.tl(), rect.br(), new Scalar(0,0,255),2); // Draw rect
 
             // If the result is better then the previously tracked one, set this rect as the new best
-            if(score < bestDiffrence){
-                bestDiffrence = score;
+            if(score < bestDifference){
+                bestDifference = score;
                 bestRect = rect;
             }
         }
