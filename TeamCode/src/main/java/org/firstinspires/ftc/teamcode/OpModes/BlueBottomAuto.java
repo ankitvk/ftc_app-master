@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.OpModes;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Control.PIDController;
@@ -19,6 +20,10 @@ public class BlueBottomAuto extends LinearOpMode implements AutonomousOpMode,Con
     @Override
     public boolean getOpModeIsActive() {
         return opModeIsActive();
+    }
+
+    public Telemetry getTelemetry() {
+        return telemetry;
     }
 
     public void runOpMode() {

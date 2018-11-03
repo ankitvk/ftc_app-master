@@ -15,9 +15,9 @@ public class Drivetrain implements Constants {
     private SpeedControlledMotor frontLeft,backLeft,frontRight,backRight;
     private BNO055_IMU imu;
     private AutonomousOpMode auto;
+    private Telemetry telemetry;
     private Hardware hardware;
-    public Telemetry telemetry;
-    public PIDController control = new PIDController(dtKP,dtKI,dtKD,dtMaxI);
+    private PIDController control = new PIDController(dtKP,dtKI,dtKD,dtMaxI);
 
     public Drivetrain(Hardware hardware){
         this.hardware = hardware;
@@ -27,6 +27,7 @@ public class Drivetrain implements Constants {
         backRight = hardware.backRight;
         imu = hardware.imu;
         auto = hardware.auto;
+        telemetry = hardware.telemetry;
     }
 
     public void stop(){
@@ -44,23 +45,25 @@ public class Drivetrain implements Constants {
     }
 
     public void driveForward(double speed){
-        hardware.frontLeft.setPower(speed);
-        hardware.backLeft.setPower(speed);
-        hardware.frontRight.setPower(-speed);
-        hardware.backRight.setPower(-speed);
+        hardware.frontLeft.setPower(-speed);
+        hardware.backLeft.setPower(-speed);
+        hardware.frontRight.setPower(speed);
+        hardware.backRight.setPower(speed);
     }
 
-    public void driveForwardDistance(double speed, double distance){
+    public void driveForwardDistance(double distance){
         eReset();
-        double ticks = (distance/(WHEEL_DIAMETER*Math.PI))*0.5*NEVEREST40_COUNTS_PER_REV;
+        double ticks = -(distance/(WHEEL_DIAMETER*Math.PI))*0.5*NEVEREST40_COUNTS_PER_REV;
         long startTime = System.nanoTime();
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 1000)){
             double power = control.power(ticks,hardware.frontLeft.getCurrentPosition());
+            telemetry.addData("power: ", power);
+            telemetry.update();
             hardware.frontLeft.setPower(power);
             hardware.backLeft.setPower(power);
-            hardware.frontRight.setPower(power);
-            hardware.backRight.setPower(power);
+            hardware.frontRight.setPower(-power);
+            hardware.backRight.setPower(-power);
 
             if (Math.abs(frontRight.getCurrentPosition() - -ticks) <= DISTANCE_TOLERANCE) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
@@ -70,7 +73,37 @@ public class Drivetrain implements Constants {
         }
     }
 
-    public void rotateToAngle(double radians){
+    public void driveForTime(double power, double time){
+        eReset();
+        long startTime = System.nanoTime();
+        long stopState = 0;
+        while(stopState <= time){
+            hardware.frontLeft.setPower(-power);
+            hardware.backLeft.setPower(-power);
+            hardware.frontRight.setPower(power);
+            hardware.backRight.setPower(power);
+
+            stopState = (System.nanoTime() - startTime) / 1000000;
+        }
+        stop();
+    }
+
+    public void rotateForTime(double power, double time){
+        eReset();
+        long startTime = System.nanoTime();
+        long stopState = 0;
+        while(stopState <= time){
+            hardware.frontLeft.setPower(-power);
+            hardware.backLeft.setPower(-power);
+            hardware.frontRight.setPower(-power);
+            hardware.backRight.setPower(-power);
+
+            stopState = (System.nanoTime() - startTime) / 1000000;
+        }
+        stop();
+    }
+
+    /*public void rotateToAngle(double radians){
         double initialYaw = imu.getYaw();
         double error = Math.abs((initialYaw+radians)-initialYaw);
         double power;
@@ -82,22 +115,37 @@ public class Drivetrain implements Constants {
             hardware.backRight.setPower(power);
         }
 
+    }*/
+
+    public void rotateToAbsoluteAngle(double degrees){
+        PIDController controlRotate = new PIDController(0.015,1.5,0,1);
+        long startTime = System.nanoTime();
+        long stopState = 0;
+        while(opModeIsActive() && (stopState <= 1000)){
+            double position = hardware.imu.getYaw();
+            double power = controlRotate.power(degrees,position);
+            telemetry.addData("stopstate: ", stopState);
+            telemetry.addData("Angle: ", hardware.imu.getYaw());
+            telemetry.update();
+            hardware.frontLeft.setPower(power);
+            hardware.backLeft.setPower(power);
+            hardware.frontRight.setPower(power);
+            hardware.backRight.setPower(power);
+
+            if (Math.abs(Math.abs(position)-Math.abs(degrees)) <= IMU_TOLERANCE) {
+                stopState = (System.nanoTime() - startTime) / 1000000;
+            }
+            else {
+                startTime = System.nanoTime();
+            }
+        }
     }
 
-    public void rotate(double speed, boolean counterClockwise){
-
-        if(counterClockwise){
-            hardware.frontLeft.setPower(speed);
-            hardware.backLeft.setPower(speed);
-            hardware.frontRight.setPower(speed);
-            hardware.backRight.setPower(speed);
-        }
-        else{
-            hardware.frontLeft.setPower(-speed);
-            hardware.backLeft.setPower(-speed);
-            hardware.frontRight.setPower(-speed);
-            hardware.backRight.setPower(-speed);
-        }
+    public void rotate(double speed){
+        hardware.frontLeft.setPower(speed);
+        hardware.backLeft.setPower(speed);
+        hardware.frontRight.setPower(speed);
+        hardware.backRight.setPower(speed);
     }
 
     public boolean opModeIsActive() {

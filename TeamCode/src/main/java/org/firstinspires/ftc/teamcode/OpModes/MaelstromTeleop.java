@@ -20,7 +20,7 @@ public class MaelstromTeleop extends OpMode implements Constants{
     private Hardware robot = new Hardware();
     private double yDirection;
     private double xDirection;
-    GoldFind goldfish = new GoldFind();
+    //GoldFind goldfish = new GoldFind();
 
 
     private PIDController controlExtend = new PIDController(extensionKP,extensionKI,extensionKD,extensionMaxI);
@@ -39,7 +39,8 @@ public class MaelstromTeleop extends OpMode implements Constants{
     public void init(){
 
         robot.init(hardwareMap);
-        goldfish.startOpenCV(hardwareMap);
+        //goldfish.startOpenCV(hardwareMap);
+        robot.stopRotation.setPosition(.5);
     }
 
     public void loop(){
@@ -139,9 +140,24 @@ public class MaelstromTeleop extends OpMode implements Constants{
             robot.indexer.setPosition(robot.indexer.getPosition()-.05);
         }
 
+        //temporary code{
+        if(gamepad1.y){
+            robot.stopRotation.setPosition(1);
+            robot.stopExtension.setPosition(1);
+        }
+        else if(gamepad1.b){
+            robot.stopRotation.setPosition(-1);
+            robot.stopExtension.setPosition(-1);
+        }
+
         telemetry.addData("IndexVal:",robot.indexer.getPosition());
-        telemetry.addData("Aligned?:",goldfish.getAligned());
+        //telemetry.addData("Aligned?:",goldfish.getAligned());
+        telemetry.addData("extension",robot.extensionLeft.getCurrentPosition());
+
+        telemetry.addData("pivotPos:",robot.pivot1.getCurrentPosition());
         telemetry.update();
+
+
     } //Ends main loop
 }
 

@@ -11,6 +11,7 @@ import com.disnodeteam.dogecv.scoring.RatioScorer;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
+import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
@@ -22,7 +23,7 @@ import org.opencv.imgproc.Imgproc;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GoldFind extends DogeCVDetector {
+public class GoldFind extends DogeCVDetector implements Constants {
 
     public AutonomousOpMode auto;
 
@@ -39,14 +40,14 @@ public class GoldFind extends DogeCVDetector {
 
     // Detector settings
     public boolean debugAlignment = true; // Show debug lines to show alignment settings
-    public double alignPosOffset  = 0;    // How far from center frame is aligned
-    public double alignSize       = 100;  // How wide is the margin of error for alignment
+    public double alignPosOffset  = 0; // How far from center frame is aligned
+    public double alignSize       = 1000;  // How wide is the margin of error for alignment
 
     public DogeCV.AreaScoringMethod areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Setting to decide to use MaxAreaScorer or PerfectAreaScorer
 
 
     //Create the default filters and scorers
-    public DogeCVColorFilter yellowFilter      = new LeviColorFilter(LeviColorFilter.ColorPreset.YELLOW); //Default Yellow filter
+    public DogeCVColorFilter yellowFilter      = new LeviColorFilter(LeviColorFilter.ColorPreset.YELLOW, 85); //Default Yellow filter
 
     public RatioScorer ratioScorer       = new RatioScorer(1.0, 3);          // Used to find perfect squares
     public MaxAreaScorer maxAreaScorer     = new MaxAreaScorer( 0.01);                    // Used to find largest objects
@@ -59,10 +60,6 @@ public class GoldFind extends DogeCVDetector {
         super();
         detectorName = "GoldFinder"; // Set the detector name
         this.auto = auto;
-    }
-    public GoldFind(){
-        super();
-        detectorName = "GoldFinder"; // Set the detector name
     }
 
 
@@ -209,7 +206,6 @@ public class GoldFind extends DogeCVDetector {
         useDefaults();
         // Optional Tuning
         alignSize = 100; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
-        alignPosOffset = 0; // How far from center frame to offset this alignment zone.
         downscale = 0.4; // How much to downscale the input frames
         areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Can also be PERFECT_AREA
         //falcon.goldAlignDetector.perfectAreaScorer.perfectArea = 10000; // if using PERFECT_AREA scoring

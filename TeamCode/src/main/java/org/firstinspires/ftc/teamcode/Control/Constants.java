@@ -13,12 +13,16 @@ public interface Constants {
     double WHEEL_DIAMETER  =4;
 
     double DISTANCE_TOLERANCE = 0.5;
+    double IMU_TOLERANCE = 8;
+    double PIVOT_TOLERANCE = 15;
 
     double LOOKAHEAD = 18;
 
+    int ALIGN_POSITION = 130;
+
     double ROTATIONS_FOR_EXTENSION = 5.5;
 
-    double dtKP = 5;
+    double dtKP = .025;
     double dtKI = 0;
     double dtKD = 0;
     double dtMaxI = 1;
@@ -33,7 +37,7 @@ public interface Constants {
     double topPivot2KD = 0;
     double topPivot2MaxI = 1;
 
-    double extensionKP = .1;
+    double extensionKP = .05;
     double extensionKI = 0;
     double extensionKD = 0;
     double extensionMaxI = 1;

@@ -7,17 +7,21 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Control.SpeedControlledMotor;
 import org.firstinspires.ftc.teamcode.Sensors.BNO055_IMU;
 import org.firstinspires.ftc.teamcode.Sensors.ExternalEncoder;
+import org.opencv.android.Utils;
 
 public class Hardware implements Constants
 {
     HardwareMap hwMap;
 
     public AutonomousOpMode auto;
+
+    public Telemetry telemetry;
 
     public SpeedControlledMotor frontLeft = new SpeedControlledMotor(dtKP,dtKI,dtKD,dtMaxI),
                                 frontRight = new SpeedControlledMotor(dtKP,dtKI,dtKD,dtMaxI),
@@ -72,6 +76,10 @@ public class Hardware implements Constants
 
         //LEDStrip = hwMap.crservo.get("LEDStrip");
 
+    }
+    public void setAuto (AutonomousOpMode auto, Telemetry telemetry) {
+        this.auto = auto;
+        this.telemetry = telemetry;
     }
 
     public HardwareMap getHwMap() {
