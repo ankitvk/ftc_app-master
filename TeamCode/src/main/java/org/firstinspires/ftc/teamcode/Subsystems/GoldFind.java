@@ -214,9 +214,5 @@ public class GoldFind extends DogeCVDetector implements Constants {
         ratioScorer.perfectRatio = 1.0;
         enable();
     }
-    /*public boolean turnTillGold () {
-        while (auto.getOpModeIsActive() && !this.getAligned()){
 
-        }
-    }*/
 }

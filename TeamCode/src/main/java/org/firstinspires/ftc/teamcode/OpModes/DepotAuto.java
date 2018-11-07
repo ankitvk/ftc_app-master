@@ -10,9 +10,8 @@ import org.firstinspires.ftc.teamcode.Hardware.HardwareUndertow;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.Subsystems.GoldFind;
 
-
-@Autonomous(name = "GeneralAuto")
-public class GeneralAuto extends LinearOpMode implements AutonomousOpMode,Constants {
+@Autonomous(name = "DepotAuto")
+public class DepotAuto extends LinearOpMode implements AutonomousOpMode,Constants {
 
     HardwareUndertow robot = new HardwareUndertow();
 
@@ -43,18 +42,31 @@ public class GeneralAuto extends LinearOpMode implements AutonomousOpMode,Consta
             drivetrain.rotate(0.45);
         }
         drivetrain.stop();
-        goldfish.disable();
 
         //drivetrain.driveForwardDistance(35);
 
-
+        drivetrain.eReset();
+        while((robot.frontLeft.getCurrentPosition()<(drivetrain.DistanceToTicks(35))) && opModeIsActive()){
+            if(goldfish.getAligned()){
+                drivetrain.driveForward(.5);
+                sleep(250);
+            }
+            else{
+                drivetrain.rotateToRelativeAngle(-15);
+                while(getOpModeIsActive() && !goldfish.getAligned()){
+                    drivetrain.rotate(0.4);
+                }
+            }
+        }
+        drivetrain.stop();
+        goldfish.disable();
 
         drivetrain.rotateToAbsoluteAngle(-robot.imu.getYaw());
         sleep(500);
         drivetrain.driveForwardDistance(30);
 
-        drivetrain.rotateToAbsoluteAngle(-125);
-        drivetrain.driveForwardDistance(84);
+        drivetrain.rotateToAbsoluteAngle(55);
+        drivetrain.driveForwardDistance(-84);
 
         drivetrain.stop();
 

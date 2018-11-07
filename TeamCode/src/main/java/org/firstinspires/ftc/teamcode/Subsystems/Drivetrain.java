@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Control.PIDController;
 import org.firstinspires.ftc.teamcode.Control.SpeedControlledMotor;
-import org.firstinspires.ftc.teamcode.Hardware;
+import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Sensors.BNO055_IMU;
 
 public class Drivetrain implements Constants {
@@ -53,7 +53,7 @@ public class Drivetrain implements Constants {
 
     public void driveForwardDistance(double distance){
         eReset();
-        double ticks = -(distance/(WHEEL_DIAMETER*Math.PI))*0.5*NEVEREST40_COUNTS_PER_REV;
+        double ticks = (distance/(WHEEL_DIAMETER*Math.PI))*0.5*NEVEREST40_COUNTS_PER_REV;
         long startTime = System.nanoTime();
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 1000)){
@@ -103,20 +103,6 @@ public class Drivetrain implements Constants {
         stop();
     }
 
-    /*public void rotateToAngle(double radians){
-        double initialYaw = imu.getYaw();
-        double error = Math.abs((initialYaw+radians)-initialYaw);
-        double power;
-        while(error>0.08){
-            power = control.power(initialYaw+radians,imu.getYaw());
-            hardware.frontLeft.setPower(power);
-            hardware.backLeft.setPower(power);
-            hardware.frontRight.setPower(power);
-            hardware.backRight.setPower(power);
-        }
-
-    }*/
-
     public void rotateToAbsoluteAngle(double degrees){
         PIDController controlRotate = new PIDController(0.015,1.5,0,1);
         long startTime = System.nanoTime();
@@ -151,4 +137,13 @@ public class Drivetrain implements Constants {
     public boolean opModeIsActive() {
         return auto.getOpModeIsActive();
     }
+
+    public double DistanceToTicks(double distance){
+        return (distance/(WHEEL_DIAMETER*Math.PI))*0.5*NEVEREST40_COUNTS_PER_REV;
+    }
+
+    public void rotateToRelativeAngle(double degrees){
+        rotateToAbsoluteAngle(hardware.imu.getYaw()+degrees);
+    }
+
 }

@@ -4,7 +4,7 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
-import org.firstinspires.ftc.teamcode.Hardware;
+import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 
 public class BNO055_IMU implements Runnable {
 
@@ -85,7 +85,7 @@ public class BNO055_IMU implements Runnable {
                 Thread.sleep(50);
             }
             catch (InterruptedException e) {
-
+                e.printStackTrace();
             }
         }
 
@@ -95,7 +95,7 @@ public class BNO055_IMU implements Runnable {
                 Thread.sleep(10);
             }
             catch (InterruptedException e) {
-
+                e.printStackTrace();
             }
         }
     }

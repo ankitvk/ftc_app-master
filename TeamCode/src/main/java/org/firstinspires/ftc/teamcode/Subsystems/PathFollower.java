@@ -4,7 +4,7 @@ import android.graphics.PointF;
 
 import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
-import org.firstinspires.ftc.teamcode.Hardware;
+import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Sensors.BNO055_IMU;
 
 public class PathFollower implements Constants {
