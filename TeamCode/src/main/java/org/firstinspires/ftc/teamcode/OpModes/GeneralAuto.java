@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
-import org.firstinspires.ftc.teamcode.Hardware.HardwareUndertow;
+import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.Subsystems.GoldFind;
 
@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.GoldFind;
 @Autonomous(name = "GeneralAuto")
 public class GeneralAuto extends LinearOpMode implements AutonomousOpMode,Constants {
 
-    HardwareUndertow robot = new HardwareUndertow();
+    Hardware robot = new Hardware();
 
     public boolean getOpModeIsActive() {
         return opModeIsActive();
@@ -37,10 +37,11 @@ public class GeneralAuto extends LinearOpMode implements AutonomousOpMode,Consta
 
         waitForStart();
 
-        drivetrain.rotateToAbsoluteAngle(-40);
+        /*drivetrain.rotateToAbsoluteAngle(-40);*/
+        drivetrain.rotateForTime(.5,500);
 
         while(getOpModeIsActive() && !goldfish.getAligned()){
-            drivetrain.rotate(0.45);
+            drivetrain.rotate(0.25);
         }
         drivetrain.stop();
         goldfish.disable();

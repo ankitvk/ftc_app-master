@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Control.SpeedControlledMotor;
@@ -20,6 +21,8 @@ public class HardwareUndertow extends Hardware implements Constants
 
     public SpeedControlledMotor[] drivetrainMotors = {frontLeft, backLeft, frontRight, backRight};
 
+    public Servo hook;
+
     public Drivetrain drive;
 
     public void init(HardwareMap hardwareMap){
@@ -34,6 +37,8 @@ public class HardwareUndertow extends Hardware implements Constants
         backRight.init(hwMap,"backRight");
 
         extendo.init(hwMap,"extendo");
+
+        hook = hardwareMap.servo.get("hook");
 
         drive = new Drivetrain(this);
 

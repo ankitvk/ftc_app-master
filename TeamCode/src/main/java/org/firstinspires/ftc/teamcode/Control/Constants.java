@@ -12,17 +12,17 @@ public interface Constants {
     double LENGTH_BETWEEN_WHEELS = 15.789;
     double WHEEL_DIAMETER  =4;
 
-    double DISTANCE_TOLERANCE = 0.5;
-    double IMU_TOLERANCE = 8;
+    double DISTANCE_TOLERANCE = 2;
+    double IMU_TOLERANCE = 10;
     double PIVOT_TOLERANCE = 15;
 
     double LOOKAHEAD = 18;
 
-    int ALIGN_POSITION = 130;
+    int ALIGN_POSITION = 50;
 
     double ROTATIONS_FOR_EXTENSION = 5.5;
 
-    double dtKP = .025;
+    double dtKP = .03;
     double dtKI = 0;
     double dtKD = 0;
     double dtMaxI = 1;

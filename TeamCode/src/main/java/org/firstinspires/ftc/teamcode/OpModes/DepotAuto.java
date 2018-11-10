@@ -6,14 +6,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
-import org.firstinspires.ftc.teamcode.Hardware.HardwareUndertow;
+import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.Subsystems.GoldFind;
 
 @Autonomous(name = "DepotAuto")
 public class DepotAuto extends LinearOpMode implements AutonomousOpMode,Constants {
 
-    HardwareUndertow robot = new HardwareUndertow();
+    Hardware robot = new Hardware();
 
     public boolean getOpModeIsActive() {
         return opModeIsActive();
@@ -33,39 +33,57 @@ public class DepotAuto extends LinearOpMode implements AutonomousOpMode,Constant
         Drivetrain drivetrain = new Drivetrain(robot);
         robot.init(hardwareMap);
         goldfish.startOpenCV(hardwareMap); //start opencv
+        double goldPos = 0;
 
         waitForStart();
 
-        drivetrain.rotateToAbsoluteAngle(-40);
+        //drivetrain.rotateToAbsoluteAngle(-40);
 
-        while(getOpModeIsActive() && !goldfish.getAligned()){
-            drivetrain.rotate(0.45);
-        }
+        drivetrain.rotateForTime(-.5,500);
+
         drivetrain.stop();
 
-        //drivetrain.driveForwardDistance(35);
-
-        drivetrain.eReset();
-        while((robot.frontLeft.getCurrentPosition()<(drivetrain.DistanceToTicks(35))) && opModeIsActive()){
-            if(goldfish.getAligned()){
-                drivetrain.driveForward(.5);
-                sleep(250);
-            }
-            else{
-                drivetrain.rotateToRelativeAngle(-15);
-                while(getOpModeIsActive() && !goldfish.getAligned()){
-                    drivetrain.rotate(0.4);
-                }
-            }
+        /*drivetrain.rotate(-1);
+        sleep(125);*/
+        while(getOpModeIsActive() && !goldfish.getAligned()){
+            drivetrain.rotate(-0.3);
+            telemetry.addData("Aligned:",goldfish.getAligned());
+            telemetry.addData("Pos:",goldfish.getXPosition());
+            telemetry.update();
         }
         drivetrain.stop();
         goldfish.disable();
 
-        drivetrain.rotateToAbsoluteAngle(-robot.imu.getYaw());
-        sleep(500);
-        drivetrain.driveForwardDistance(30);
+        drivetrain.driveForwardDistance(-25);
 
-        drivetrain.rotateToAbsoluteAngle(55);
+        //good till here
+
+        /*double SamplePos = robot.imu.getYaw();
+        if(SamplePos<-15){
+            drivetrain.rotateToAbsoluteAngle(30);
+            drivetrain.driveForwardDistance(20);
+
+        }
+        else if(SamplePos>15){
+            drivetrain.rotateToAbsoluteAngle(-30);
+            drivetrain.driveForwardDistance(20);
+        }
+        else{
+            drivetrain.driveForwardDistance(15);
+        }
+
+        sleep(2000);*/
+
+        //bad
+        double SamplePos = robot.imu.getYaw();
+        drivetrain.rotateToAbsoluteAngle(-SamplePos);
+        //sleep(500);
+        drivetrain.driveForwardDistance(-15);
+
+        //sleep(3000);
+
+        drivetrain.rotateForTime(.35,500);
+        drivetrain.rotateToAbsoluteAngle(-135);
         drivetrain.driveForwardDistance(-84);
 
         drivetrain.stop();

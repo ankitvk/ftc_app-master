@@ -65,7 +65,7 @@ public class Drivetrain implements Constants {
             hardware.frontRight.setPower(-power);
             hardware.backRight.setPower(-power);
 
-            if (Math.abs(frontRight.getCurrentPosition() - -ticks) <= DISTANCE_TOLERANCE) {
+            if (Math.abs(frontRight.getCurrentPosition() - -ticks) <= (DISTANCE_TOLERANCE/(WHEEL_DIAMETER*Math.PI))*0.5*NEVEREST40_COUNTS_PER_REV) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
             } else {
                 startTime = System.nanoTime();
@@ -104,7 +104,7 @@ public class Drivetrain implements Constants {
     }
 
     public void rotateToAbsoluteAngle(double degrees){
-        PIDController controlRotate = new PIDController(0.015,1.5,0,1);
+        PIDController controlRotate = new PIDController(.02,0,0,1);
         long startTime = System.nanoTime();
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 1000)){
@@ -125,6 +125,7 @@ public class Drivetrain implements Constants {
                 startTime = System.nanoTime();
             }
         }
+        stop();
     }
 
     public void rotate(double speed){

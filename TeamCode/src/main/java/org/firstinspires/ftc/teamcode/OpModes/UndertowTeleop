@@ -4,22 +4,14 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Control.Constants;
-import org.firstinspires.ftc.teamcode.Control.PIDController;
-import org.firstinspires.ftc.teamcode.Hardware.HardwareUndertow;
+import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 
-@TeleOp(name="TeleOp")
-
-//@Disabled
+@TeleOp(name="UndertowTeleOp")
 public class UndertowTeleop extends OpMode implements Constants{
 
-    private HardwareUndertow robot = new HardwareUndertow();
+    private Hardware robot = new Hardware();
     private double yDirection;
     private double xDirection;
-
-    private PIDController controlExtend = new PIDController(extensionKP,extensionKI,extensionKD,extensionMaxI);
-
-    private boolean driveFront = true;
-
 
     public void init(){
 
@@ -56,6 +48,18 @@ public class UndertowTeleop extends OpMode implements Constants{
             robot.extendo.setPower(-gamepad2.left_trigger);
         }
 
+        /*if(gamepad2.a){
+            robot.hook.setPosition(1);
+        }
+
+        if(gamepad2.x){
+            robot.hook.setPosition(0);
+        }*/
+
+        telemetry.addData("Absolute Angle:",robot.imu.getYaw());
+        telemetry.addData("LeftSpeed:",robot.frontLeft.getPower());
+        telemetry.addData("RightSpeed",robot.frontRight.getPower());
+        telemetry.addData("Extendo",robot.extendo.getCurrentPosition());
         telemetry.update();
 
 
@@ -75,7 +79,7 @@ public class UndertowTeleop extends OpMode implements Constants{
                 ./:/-  `/:/:     :/`./-     -/-````     -/.     .:////:.`           ./-     :/`    -/`  ./-     `/:   -/:/.  -/:/`        .//-
                  ::`::`./.-/.    -/` `/:`    :////:`     :/`      .://///-.          :/`    `/::::::/:   :/`     -/.  `:-./- :/`::    `.-::-`
          `.--..  `/- -/:/. ::    -/-..-/:`   `/:````     `/:        `-:////:-`       `/:     -/::://:-   `/:      ::`  ./``:::/ ./-  .```
-       `:/-`      -/` .//` ./-   -////////.   -/.         pee-/.          .://///:.      -/.     :/` .::`    -/.     ./-   ::  -/:  :/`
+       `:/-`      -/` .//` ./-   -////////.   -/.          /.          .://///:.      -/.     :/` .::`    -/.     ./-   ::  -/:  :/`
       .//.         ::  `:`  -/`  ./-`````:/-   :/-------   ::------.     `-/////:.     ::`    `/-  `-/:`   ::------//`  `/-  .:  `/:
       :/:          `/.      `::  ./-      -/-  .////////.  .///////:        .:////:`   ./-     -/.   `:/-` `-////////.   -/`      ./.
       ://`          -:..............................................`         .:////.   `.``````..`````...```........`````..``````.::`

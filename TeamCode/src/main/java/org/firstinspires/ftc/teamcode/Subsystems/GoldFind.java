@@ -156,7 +156,7 @@ public class GoldFind extends DogeCVDetector implements Constants {
     public void useDefaults() {
         addScorer(ratioScorer);
 
-        // Add diffrent scores depending on the selected mode
+        // Add different scores depending on the selected mode
         if(areaScoringMethod == DogeCV.AreaScoringMethod.MAX_AREA){
             addScorer(maxAreaScorer);
         }
