@@ -10,8 +10,12 @@ import com.disnodeteam.dogecv.scoring.PerfectAreaScorer;
 import com.disnodeteam.dogecv.scoring.RatioScorer;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
+import org.firstinspires.ftc.teamcode.Control.PIDController;
+import org.firstinspires.ftc.teamcode.Hardware.Hardware;
+
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
@@ -26,6 +30,9 @@ import java.util.List;
 public class GoldFind extends DogeCVDetector implements Constants {
 
     public AutonomousOpMode auto;
+    public Hardware hardware;
+    private Telemetry telemetry;
+    private Drivetrain drivetrain;
 
     // Defining Mats to be used.
     private Mat displayMat = new Mat(); // Display debug info to the screen (this is what is returned)
@@ -39,32 +46,36 @@ public class GoldFind extends DogeCVDetector implements Constants {
     private double  goldXPos = 0;     // X Position (in pixels) of the gold element
 
     // Detector settings
-    public boolean debugAlignment = true; // Show debug lines to show alignment settings
-    public double alignPosOffset  = 0; // How far from center frame is aligned
-    public double alignSize       = 1000;  // How wide is the margin of error for alignment
+    private double alignPosOffset  = 0; // How far from center frame is aligned
+    private double alignSize       = 1000;  // How wide is the margin of error for alignment
 
-    public DogeCV.AreaScoringMethod areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Setting to decide to use MaxAreaScorer or PerfectAreaScorer
+    private DogeCV.AreaScoringMethod areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Setting to decide to use MaxAreaScorer or PerfectAreaScorer
 
 
     //Create the default filters and scorers
-    public DogeCVColorFilter yellowFilter      = new LeviColorFilter(LeviColorFilter.ColorPreset.YELLOW, 85); //Default Yellow filter
+    private DogeCVColorFilter yellowFilter      = new LeviColorFilter(LeviColorFilter.ColorPreset.YELLOW, 85); //Default Yellow filter
 
-    public RatioScorer ratioScorer       = new RatioScorer(1.0, 3);          // Used to find perfect squares
-    public MaxAreaScorer maxAreaScorer     = new MaxAreaScorer( 0.01);                    // Used to find largest objects
-    public PerfectAreaScorer perfectAreaScorer = new PerfectAreaScorer(5000,0.05); // Used to find objects near a tuned area value
+    private RatioScorer ratioScorer       = new RatioScorer(1.0, 3);          // Used to find perfect squares
+    private MaxAreaScorer maxAreaScorer     = new MaxAreaScorer( 0.01);                    // Used to find largest objects
+    private PerfectAreaScorer perfectAreaScorer = new PerfectAreaScorer(5000,0.05); // Used to find objects near a tuned area value
 
     /**
      * Simple constructor
      */
-    public GoldFind(AutonomousOpMode auto) {
+    public GoldFind(AutonomousOpMode auto, Hardware hardware) {
         super();
         detectorName = "GoldFinder"; // Set the detector name
         this.auto = auto;
+        this.hardware = hardware;
+        telemetry = hardware.telemetry;
+        drivetrain = new Drivetrain(hardware);
     }
 
 
     @Override
     public Mat process(Mat input) {
+        boolean debugAlignment = true; // Show debug lines to show alignment settings
+
 
         // Copy the input mat to our working mats, then release it for memory
         input.copyTo(displayMat);
@@ -120,11 +131,7 @@ public class GoldFind extends DogeCVDetector implements Constants {
             Imgproc.circle(displayMat, new Point( xPos, bestRect.y + (bestRect.height / 2)), 5, new Scalar(0,255,0),2);
 
             // Check if the mineral is aligned
-            if(xPos < alignXMax && xPos > alignXMin){
-                aligned = true;
-            }else{
-                aligned = false;
-            }
+            aligned = xPos < alignXMax && xPos > alignXMin;
 
             // Draw Current X
             Imgproc.putText(displayMat,"Current X: " + bestRect.x,new Point(10,getAdjustedSize().height - 10),0,0.5, new Scalar(255,255,255),1);
@@ -205,7 +212,7 @@ public class GoldFind extends DogeCVDetector implements Constants {
         init(hardwareMap.appContext, CameraViewDisplay.getInstance());
         useDefaults();
         // Optional Tuning
-        alignSize = 100; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
+        alignSize = 75; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
         downscale = 0.4; // How much to downscale the input frames
         areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Can also be PERFECT_AREA
         //falcon.goldAlignDetector.perfectAreaScorer.perfectArea = 10000; // if using PERFECT_AREA scoring
@@ -214,5 +221,38 @@ public class GoldFind extends DogeCVDetector implements Constants {
         ratioScorer.perfectRatio = 1.0;
         enable();
     }
+
+    public void alignGold(){
+        PIDController getTheGold = new PIDController(.003,0,0,1);
+        long startTime = System.nanoTime();
+        long stopState = 0;
+        while(opModeIsActive() && (stopState <= 1000)){
+            double power = getTheGold.power(ALIGN_POSITION,getXPosition());
+            telemetry.addLine("PIDAlign");
+            telemetry.addData("Stopstate: ", stopState);
+            telemetry.addData("Aligned:",getAligned());
+            telemetry.addData("Found:",isFound());
+            telemetry.addData("Pos:",getXPosition());
+            telemetry.addData("Heading:",hardware.imu.getYaw());
+            telemetry.update();
+            hardware.frontLeft.setPower(power);
+            hardware.backLeft.setPower(power);
+            hardware.frontRight.setPower(power);
+            hardware.backRight.setPower(power);
+
+            if (Math.abs(ALIGN_POSITION-getXPosition()) <= alignSize) {
+                stopState = (System.nanoTime() - startTime) / 1000000;
+            }
+            else {
+                startTime = System.nanoTime();
+            }
+        }
+        drivetrain.stop();
+    }
+
+    private boolean opModeIsActive() {
+        return auto.getOpModeIsActive();
+    }
+
 
 }

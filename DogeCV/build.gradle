@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.2'
 
     defaultConfig {
         minSdkVersion 19
@@ -23,9 +23,10 @@ repositories {
     flatDir {
         dirs '../libs'
     }
+    google()
 }
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(path: ':openCVLibrary3')
-    compile (name: 'RobotCore-release', ext: 'aar')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(path: ':openCVLibrary3')
+    implementation (name: 'RobotCore-release', ext: 'aar')
 }

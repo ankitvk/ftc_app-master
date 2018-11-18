@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -36,7 +37,7 @@ public class Drivetrain implements Constants {
         }
     }
 
-    public void eReset() {
+    private void eReset() {
 
         for(SpeedControlledMotor motor: hardware.drivetrainMotors) {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -57,15 +58,29 @@ public class Drivetrain implements Constants {
         long startTime = System.nanoTime();
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 1000)){
-            double power = control.power(ticks,hardware.frontLeft.getCurrentPosition());
-            telemetry.addData("power: ", power);
+            double avg = ((hardware.frontLeft.getCurrentPosition())+(hardware.backLeft.getCurrentPosition()))/2;
+            double power = control.power(ticks,avg);
+            if(Math.abs(power)<.15){
+                if(Math.abs(power)<.0005){
+                    break;
+                }
+                else if(power>=0){
+                    power = .15;
+                }
+                else {
+                    power = -.15;
+                }
+            }
+            telemetry.addData("Power: ", power);
+            telemetry.addData("Distance: ",ticksToDistance(avg));
+            telemetry.addData("Angle: ", hardware.imu.getYaw());
             telemetry.update();
             hardware.frontLeft.setPower(power);
             hardware.backLeft.setPower(power);
             hardware.frontRight.setPower(-power);
             hardware.backRight.setPower(-power);
 
-            if (Math.abs(frontRight.getCurrentPosition() - -ticks) <= (DISTANCE_TOLERANCE/(WHEEL_DIAMETER*Math.PI))*0.5*NEVEREST40_COUNTS_PER_REV) {
+            if (Math.abs(ticks) <= distanceToTicks(DISTANCE_TOLERANCE)) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
             } else {
                 startTime = System.nanoTime();
@@ -103,13 +118,25 @@ public class Drivetrain implements Constants {
         stop();
     }
 
-    public void rotateToAbsoluteAngle(double degrees){
-        PIDController controlRotate = new PIDController(.02,0,0,1);
+    public void rotateToAbsoluteAngle(double desire){
+        double degrees = desire;
+        PIDController controlRotate = new PIDController(.01,0,0,1);
         long startTime = System.nanoTime();
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 1000)){
             double position = hardware.imu.getYaw();
             double power = controlRotate.power(degrees,position);
+            if(Math.abs(power)<.3){
+                if(Math.abs(power)<.0005){
+                    break;
+                }
+                else if(power>=0){
+                    power = .3;
+                }
+                else {
+                    power = -.3;
+                }
+            }
             telemetry.addData("stopstate: ", stopState);
             telemetry.addData("Angle: ", hardware.imu.getYaw());
             telemetry.update();
@@ -139,8 +166,11 @@ public class Drivetrain implements Constants {
         return auto.getOpModeIsActive();
     }
 
-    public double DistanceToTicks(double distance){
+    public double distanceToTicks(double distance){
         return (distance/(WHEEL_DIAMETER*Math.PI))*0.5*NEVEREST40_COUNTS_PER_REV;
+    }
+    public double ticksToDistance(double ticks){
+        return (ticks*(WHEEL_DIAMETER*Math.PI)*2)/NEVEREST40_COUNTS_PER_REV;
     }
 
     public void rotateToRelativeAngle(double degrees){

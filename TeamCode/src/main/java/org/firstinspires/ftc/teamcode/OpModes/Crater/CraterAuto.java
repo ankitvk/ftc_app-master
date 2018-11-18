@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OpModes.Crater;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.Subsystems.GoldFind;
 
-@Autonomous(name = "CraterAuto")
+@Autonomous(name = "CraterAuto",group = "Crater")
 public class CraterAuto extends LinearOpMode implements AutonomousOpMode,Constants {
 
     Hardware robot = new Hardware();
@@ -28,23 +28,35 @@ public class CraterAuto extends LinearOpMode implements AutonomousOpMode,Constan
 
         robot.setAuto(this, telemetry);
 
-        GoldFind goldfish = new GoldFind(this);
+        GoldFind goldfish = new GoldFind(this,robot);
         goldfish.setAlignSettings(ALIGN_POSITION, 1000);
         Drivetrain drivetrain = new Drivetrain(robot);
         robot.init(hardwareMap);
-        goldfish.startOpenCV(hardwareMap); //start opencv
+
         double goldPos = 0;
 
         waitForStart();
 
-        drivetrain.rotateForTime(-.5, 500);
+        goldfish.startOpenCV(hardwareMap); //start opencv
 
+        robot.marker.setPosition(.9);
+
+        robot.hook.setPosition(.5);
+        robot.extendo.setPower(1);
+        sleep(1250);
+        robot.extendo.setPower(0);
+
+        drivetrain.rotateForTime(-.5, 350);
         drivetrain.stop();
 
-        /*drivetrain.rotate(-1);
-        sleep(125);*/
+        robot.extendo.setPower(-1);
+        sleep(1500);
+        robot.extendo.setPower(0);
+
+
+
         while (getOpModeIsActive() && !goldfish.getAligned()) {
-            drivetrain.rotate(-0.3);
+            drivetrain.rotate(-0.25);
             telemetry.addData("Aligned:", goldfish.getAligned());
             telemetry.addData("Pos:", goldfish.getXPosition());
             telemetry.update();
@@ -52,6 +64,6 @@ public class CraterAuto extends LinearOpMode implements AutonomousOpMode,Constan
         drivetrain.stop();
         goldfish.disable();
 
-        drivetrain.driveForwardDistance(-30);
+        drivetrain.driveForwardDistance(-45);
     }
 }

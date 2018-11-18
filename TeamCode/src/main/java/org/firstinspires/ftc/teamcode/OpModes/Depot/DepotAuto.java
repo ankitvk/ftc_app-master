@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes;
+package org.firstinspires.ftc.teamcode.OpModes.Depot;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.Subsystems.GoldFind;
 
-@Autonomous(name = "DepotAuto")
+@Autonomous(name = "DepotAuto",group = "Depot")
 public class DepotAuto extends LinearOpMode implements AutonomousOpMode,Constants {
 
     Hardware robot = new Hardware();
@@ -28,25 +28,34 @@ public class DepotAuto extends LinearOpMode implements AutonomousOpMode,Constant
 
         robot.setAuto(this, telemetry);
 
-        GoldFind goldfish = new GoldFind(this);
+        GoldFind goldfish = new GoldFind(this,robot);
         goldfish.setAlignSettings(ALIGN_POSITION, 1000);
         Drivetrain drivetrain = new Drivetrain(robot);
         robot.init(hardwareMap);
-        goldfish.startOpenCV(hardwareMap); //start opencv
+        //start opencv
         double goldPos = 0;
 
         waitForStart();
 
-        //drivetrain.rotateToAbsoluteAngle(-40);
+        goldfish.startOpenCV(hardwareMap); //start opencv
 
-        drivetrain.rotateForTime(-.5,500);
+        /*robot.marker.setPosition(.9);
 
+        robot.hook.setPosition(.5);
+        robot.extendo.setPower(1);
+        sleep(1250);
+        robot.extendo.setPower(0);
+*/
+        drivetrain.rotateForTime(-.5, 500);
         drivetrain.stop();
 
-        /*drivetrain.rotate(-1);
-        sleep(125);*/
+        /*robot.extendo.setPower(-1);
+        sleep(1500);
+        robot.extendo.setPower(0);
+*/
+
         while(getOpModeIsActive() && !goldfish.getAligned()){
-            drivetrain.rotate(-0.3);
+            drivetrain.rotate(-0.35);
             telemetry.addData("Aligned:",goldfish.getAligned());
             telemetry.addData("Pos:",goldfish.getXPosition());
             telemetry.update();
@@ -55,39 +64,69 @@ public class DepotAuto extends LinearOpMode implements AutonomousOpMode,Constant
         goldfish.disable();
 
         drivetrain.driveForwardDistance(-25);
+        drivetrain.stop();
+
+        double postSample = robot.imu.getYaw();
+        drivetrain.rotateToAbsoluteAngle(-postSample);
+
+        sleep(5000);
+
+        drivetrain.rotateToAbsoluteAngle(0);
+
+        drivetrain.driveForwardDistance(12);
+
+        drivetrain.rotateToAbsoluteAngle(-90);
+
+        drivetrain.driveForwardDistance(-30);
+
+        drivetrain.rotateToAbsoluteAngle(-180);
+
+
 
         //good till here
 
         /*double SamplePos = robot.imu.getYaw();
-        if(SamplePos<-15){
-            drivetrain.rotateToAbsoluteAngle(30);
-            drivetrain.driveForwardDistance(20);
+        if(SamplePos<-20){
+            drivetrain.rotateToAbsoluteAngle(20);
+            drivetrain.driveForwardDistance(-25);
+            robot.marker.setPosition(.25);
+            sleep(1000);
+            robot.marker.setPosition(.75);
+            drivetrain.rotateForTime(.5,750);
+            drivetrain.rotateToAbsoluteAngle(-135);
+            drivetrain.driveForwardDistance(-84);
+
+            drivetrain.stop();
 
         }
-        else if(SamplePos>15){
-            drivetrain.rotateToAbsoluteAngle(-30);
-            drivetrain.driveForwardDistance(20);
+        else if(SamplePos>20){
+            drivetrain.rotateToAbsoluteAngle(-20);
+            drivetrain.driveForwardDistance(-25);
+            robot.marker.setPosition(.25);
+            sleep(1000);
+            robot.marker.setPosition(.75);
+            *//*drivetrain.rotateForTime(-.5,750);
+            drivetrain.rotateToAbsoluteAngle(135);
+            drivetrain.driveForwardDistance(-84);*//*
+
+            drivetrain.stop();
         }
         else{
-            drivetrain.driveForwardDistance(15);
+            drivetrain.rotateToAbsoluteAngle(0);
+            drivetrain.driveForwardDistance(-20);
+            robot.marker.setPosition(.25);
+            sleep(1000);
+            robot.marker.setPosition(.75);
+            drivetrain.rotateForTime(.5,750);
+            drivetrain.rotateToAbsoluteAngle(-135);
+            drivetrain.driveForwardDistance(-84);
+
+            drivetrain.stop();
         }
+*/
 
-        sleep(2000);*/
-
-        //bad
-        double SamplePos = robot.imu.getYaw();
-        drivetrain.rotateToAbsoluteAngle(-SamplePos);
-        //sleep(500);
-        drivetrain.driveForwardDistance(-15);
-
-        //sleep(3000);
-
-        drivetrain.rotateForTime(.35,500);
-        drivetrain.rotateToAbsoluteAngle(-135);
-        drivetrain.driveForwardDistance(-84);
 
         drivetrain.stop();
-
     }//end opMode
 
 }
