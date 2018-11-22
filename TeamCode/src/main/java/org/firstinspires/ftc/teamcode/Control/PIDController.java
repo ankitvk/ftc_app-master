@@ -4,6 +4,8 @@ public class PIDController implements Constants{
 
     private double i = 0;
     private double d;
+    private double error;
+    private double power;
     private double KP;
     private double KI;
     private double KD;
@@ -21,13 +23,13 @@ public class PIDController implements Constants{
     }
 
     public double power(double target, double currentLoc) {
-        double error = target - currentLoc;
+        error = target - currentLoc;
         double deltaTime = (System.nanoTime() - previousTime)/NANOSECONDS_PER_MINUTE;
         if (Math.abs(currentLoc) > Math.abs(target) * 0.8){
             i+=error*deltaTime;
         }
         d = (error - previousError)/deltaTime;
-        double power = (KP*error) + (KI*i) + (KD*d);
+        power = (KP*error) + (KI*i) + (KD*d);
         previousTime = System.nanoTime();
         previousError = error;
         return power;
@@ -40,6 +42,11 @@ public class PIDController implements Constants{
     public void reset() {
         i = 0;
         previousError = 0;
+    }
+
+    public double[] returnVal(){
+        double PID[] = {(KP*error),(KI*i),(KD*d),power};
+        return PID;
     }
 
 }

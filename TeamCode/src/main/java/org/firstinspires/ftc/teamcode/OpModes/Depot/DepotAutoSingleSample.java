@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.Subsystems.GoldFind;
 
-@Autonomous(name = "DepotAutoDoubleSample",group = "Depot")
-public class DepotAuto extends LinearOpMode implements AutonomousOpMode,Constants {
+@Autonomous(name = "DepotAutoSingleSample",group = "Depot")
+public class DepotAutoSingleSample extends LinearOpMode implements AutonomousOpMode,Constants {
 
     Hardware robot = new Hardware();
 
@@ -39,11 +39,23 @@ public class DepotAuto extends LinearOpMode implements AutonomousOpMode,Constant
 
         goldfish.startOpenCV(hardwareMap); //start opencv
 
+        /*robot.marker.setPosition(.9);
+
+        robot.hook.setPosition(.5);
+        robot.extendo.setPower(1);
+        sleep(1250);
+        robot.extendo.setPower(0);
+*/
         drivetrain.rotateForTime(-.5, 600);
         drivetrain.stop();
 
+        /*robot.extendo.setPower(-1);
+        sleep(1500);
+        robot.extendo.setPower(0);
+*/
+
         while(getOpModeIsActive() && !goldfish.getAligned()){
-            drivetrain.rotate(-0.35);
+            drivetrain.rotate(-0.33);
             telemetry.addData("Aligned:",goldfish.getAligned());
             telemetry.addData("Pos:",goldfish.getXPosition());
             telemetry.update();
@@ -55,76 +67,126 @@ public class DepotAuto extends LinearOpMode implements AutonomousOpMode,Constant
         drivetrain.stop();
 
         double postSample = robot.imu.getYaw();
-        drivetrain.rotateToAbsoluteAngle(-postSample);
 
-        sleep(3000);
 
         double distanceTwo;
 
         if(postSample>25){
-             distanceTwo = -25;
+
+            drivetrain.rotateToAbsoluteAngle(-10);
+
+            robot.markerExtend1.setPower(1);
+            robot.markerExtend2.setPower(1);
+
+            sleep(1500);
+
+            robot.markerExtend1.setPower(0);
+            robot.markerExtend2.setPower(0);
+
+            robot.marker.setPosition(1);
+
+            robot.markerExtend1.setPower(-1);
+            robot.markerExtend2.setPower(-1);
+
+            sleep(1500);
+
+            robot.markerExtend1.setPower(0);
+            robot.markerExtend2.setPower(0);
+
+            robot.marker.setPosition(0);
+            distanceTwo = -45;
             drivetrain.rotateToAbsoluteAngle(0);
 
-            drivetrain.driveForwardDistance(12);
+            drivetrain.driveForwardDistance(10);
 
-            drivetrain.rotateToAbsoluteAngle(-90);
+            drivetrain.rotateToBigAbsoluteAngle(-87);
 
 
 
             drivetrain.driveForwardDistance(distanceTwo);
 
-
-
-            drivetrain.rotateToBigAbsoluteAngle(-180);
-
-            drivetrain.driveForwardDistance(-30);
         }
         else if(postSample<-25){
-             distanceTwo = -10;
+            drivetrain.rotateToAbsoluteAngle(10);
+
+            robot.markerExtend1.setPower(1);
+            robot.markerExtend2.setPower(1);
+
+            sleep(1500);
+
+            robot.markerExtend1.setPower(0);
+            robot.markerExtend2.setPower(0);
+
+            robot.marker.setPosition(1);
+
+            robot.markerExtend1.setPower(-1);
+            robot.markerExtend2.setPower(-1);
+
+            sleep(1500);
+
+            robot.markerExtend1.setPower(0);
+            robot.markerExtend2.setPower(0);
+
+            robot.marker.setPosition(0);
+            distanceTwo = -25;
             drivetrain.rotateToAbsoluteAngle(0);
 
-            drivetrain.driveForwardDistance(12);
+            drivetrain.driveForwardDistance(10);
 
-            drivetrain.rotateToAbsoluteAngle(-90);
+            drivetrain.rotateToBigAbsoluteAngle(-100);
 
 
 
             drivetrain.driveForwardDistance(distanceTwo);
 
-
-
-            drivetrain.rotateToBigAbsoluteAngle(-180);
-
-            drivetrain.driveForwardDistance(-55);
-
-            drivetrain.rotateToAbsoluteAngle(-90);
-
-            drivetrain.driveForwardDistance(-25);
         }
         else{
-            distanceTwo = -18;
             drivetrain.rotateToAbsoluteAngle(0);
 
-            drivetrain.driveForwardDistance(12);
+            robot.markerExtend1.setPower(1);
+            robot.markerExtend2.setPower(1);
 
-            drivetrain.rotateToAbsoluteAngle(-90);
+            sleep(1500);
+
+            robot.markerExtend1.setPower(0);
+            robot.markerExtend2.setPower(0);
+
+            robot.marker.setPosition(1);
+
+            robot.markerExtend1.setPower(-1);
+            robot.markerExtend2.setPower(-1);
+
+            sleep(1500);
+
+            robot.markerExtend1.setPower(0);
+            robot.markerExtend2.setPower(0);
+
+            robot.marker.setPosition(0);
+            distanceTwo = -30;
+
+            drivetrain.rotateToAbsoluteAngle(0);
+
+            drivetrain.driveForwardDistance(10);
+
+            drivetrain.rotateToBigAbsoluteAngle(-90);
 
 
 
             drivetrain.driveForwardDistance(distanceTwo);
 
-
-
-            drivetrain.rotateToBigAbsoluteAngle(-185);
-
-            drivetrain.driveForwardDistance(-40);
         }
 
-        drivetrain.rotateToAbsoluteAngle(-90);
-
-        drivetrain.driveForwardDistance(-25);
+        drivetrain.rotateToBigAbsoluteAngle(-135);
 
         drivetrain.stop();
+
+        robot.markerExtend1.setPower(1);
+        robot.markerExtend2.setPower(1);
+
+        sleep(1500);
+
+        robot.markerExtend1.setPower(0);
+        robot.markerExtend2.setPower(0);
     }//end opMode
 
 }

@@ -80,10 +80,10 @@ public class PathFollower implements Constants {
 
             speeds = follow(imu,desiredX,desiredY,lastX,lastY,coordinate.x,currentY);
 
-            robot.frontLeft.setPower(speeds[0]);
-            robot.backLeft.setPower(speeds[0]);
-            robot.frontRight.setPower(speeds[1]);
-            robot.backRight.setPower(speeds[1]);
+            robot.frontLeft.setPower(speeds[0]*SPEED_MULTIPLIER);
+            robot.backLeft.setPower(speeds[0]*SPEED_MULTIPLIER);
+            robot.frontRight.setPower(-speeds[1]*SPEED_MULTIPLIER);
+            robot.backRight.setPower(-speeds[1]*SPEED_MULTIPLIER);
 
             lastX = currentX;
             lastY = currentY;

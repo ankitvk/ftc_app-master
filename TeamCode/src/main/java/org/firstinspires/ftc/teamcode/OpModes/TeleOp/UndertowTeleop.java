@@ -48,13 +48,16 @@ public class UndertowTeleop extends OpMode implements Constants{
             robot.hook.setPosition(0);
         }
 
-        if(gamepad2.y){
+        /*if(gamepad2.y){
             robot.marker.setPosition(0);
         }
         if(gamepad2.b){
             robot.marker.setPosition(1);
-        }
+        }*/
+
+        robot.marker.setPosition(1);
         telemetry.addData("Absolute Angle:",robot.imu.getYaw());
+        telemetry.addData("BiggAngle", robot.imu.getRelativeYaw());
         telemetry.addData("LeftSpeed:",robot.frontLeft.getPower());
         telemetry.addData("RightSpeed:",robot.frontRight.getPower());
         telemetry.addData("Extendo:",robot.extendo.getCurrentPosition());

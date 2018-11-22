@@ -13,15 +13,15 @@ public interface Constants {
     double WHEEL_DIAMETER  =4;
 
     double DISTANCE_TOLERANCE = 1;
-    double IMU_TOLERANCE = 5;
+    double IMU_TOLERANCE = 1;
 
     double LOOKAHEAD = 18;
 
-    int ALIGN_POSITION = -75;
+    int ALIGN_POSITION = -200;
 
 
     double dtKP = .001;
-    double dtKI = 0;
+    double dtKI = .0625;
     double dtKD = 0;
     double dtMaxI = 1;
 

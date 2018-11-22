@@ -29,7 +29,9 @@ public class Hardware implements Constants {
             frontRight = new SpeedControlledMotor(dtKP,dtKI,dtKD,dtMaxI),
             backLeft = new SpeedControlledMotor(dtKP,dtKI,dtKD,dtMaxI),
             backRight = new SpeedControlledMotor(dtKP,dtKI,dtKD,dtMaxI),
-            extendo = new SpeedControlledMotor(extensionKP,extensionKI,extensionKD,extensionMaxI);
+            extendo = new SpeedControlledMotor(extensionKP,extensionKI,extensionKD,extensionMaxI),
+            markerExtend1 = new SpeedControlledMotor(0,0,0,0),
+            markerExtend2 = new SpeedControlledMotor(0,0,0,0);
 
 
     public SpeedControlledMotor[] drivetrainMotors = {frontLeft, backLeft, frontRight, backRight};
@@ -48,6 +50,10 @@ public class Hardware implements Constants {
         backRight.init(hwMap,"backRight");
 
         extendo.init(hwMap,"extendo");
+
+        markerExtend1.init(hwMap,"markerExtend1");
+        markerExtend2.init(hwMap,"markerExtend2");
+
 
         hook = hardwareMap.servo.get("hook");
 

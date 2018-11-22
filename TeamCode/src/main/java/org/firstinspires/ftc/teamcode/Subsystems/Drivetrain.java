@@ -60,31 +60,22 @@ public class Drivetrain implements Constants {
         while(opModeIsActive() && (stopState <= 1000)){
             double avg = ((hardware.frontLeft.getCurrentPosition())+(hardware.backLeft.getCurrentPosition()))/2;
             double power = control.power(ticks,avg);
-            if(Math.abs(power)<.15){
-                if(Math.abs(power)<.0005){
-                    break;
-                }
-                else if(power>=0){
-                    power = .15;
-                }
-                else {
-                    power = -.15;
-                }
-            }
             telemetry.addData("Power: ", power);
             telemetry.addData("Distance: ",ticksToDistance(avg));
             telemetry.addData("Angle: ", hardware.imu.getYaw());
-            telemetry.update();
+
             hardware.frontLeft.setPower(power);
             hardware.backLeft.setPower(power);
             hardware.frontRight.setPower(-power);
             hardware.backRight.setPower(-power);
 
-            if (Math.abs(ticks) <= distanceToTicks(DISTANCE_TOLERANCE)) {
+            if (Math.abs(ticks-avg)<= distanceToTicks(DISTANCE_TOLERANCE)) {
+                telemetry.addData("Distance from Target: ", Math.abs(ticks-avg));
                 stopState = (System.nanoTime() - startTime) / 1000000;
             } else {
                 startTime = System.nanoTime();
             }
+            telemetry.update();
         }
     }
 
@@ -120,14 +111,14 @@ public class Drivetrain implements Constants {
 
     public void rotateToAbsoluteAngle(double desire){
         double degrees = desire;
-        PIDController controlRotate = new PIDController(.01,0,0,1);
+        PIDController controlRotate = new PIDController(.003,0.00001,0,1);
         long startTime = System.nanoTime();
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 1000)){
-            double position = hardware.imu.getYaw();
+            double position = hardware.imu.getRelativeYaw();
             double power = controlRotate.power(degrees,position);
             if(Math.abs(power)<.3){
-                if(Math.abs(power)<.0005){
+                if(Math.abs(power)<.01){
                     break;
                 }
                 else if(power>=0){
@@ -138,7 +129,52 @@ public class Drivetrain implements Constants {
                 }
             }
             telemetry.addData("stopstate: ", stopState);
-            telemetry.addData("Angle: ", hardware.imu.getYaw());
+            telemetry.addData("Angle: ", hardware.imu.getRelativeYaw());
+            telemetry.addLine(" ");
+            telemetry.addData("KP*error: ",controlRotate.returnVal()[0]);
+            telemetry.addData("KI*i: ",controlRotate.returnVal()[1]);
+            telemetry.addData("KD*d: ",controlRotate.returnVal()[2]);
+            telemetry.update();
+            hardware.frontLeft.setPower(power);
+            hardware.backLeft.setPower(power);
+            hardware.frontRight.setPower(power);
+            hardware.backRight.setPower(power);
+
+            if (Math.abs(position-degrees) <= IMU_TOLERANCE) {
+                stopState = (System.nanoTime() - startTime) / 1000000;
+            }
+            else {
+                startTime = System.nanoTime();
+            }
+        }
+        stop();
+    }
+
+    public void rotateToBigAbsoluteAngle(double desire){
+        double degrees = desire;
+        PIDController controlRotate = new PIDController(.0025,0.00001,0,1);
+        long startTime = System.nanoTime();
+        long stopState = 0;
+        while(opModeIsActive() && (stopState <= 1000)){
+            double position = hardware.imu.getRelativeYaw();
+            double power = controlRotate.power(degrees,position);
+            if(Math.abs(power)<.35){
+                if(Math.abs(power)<.01){
+                    break;
+                }
+                else if(power>=0){
+                    power = .35;
+                }
+                else {
+                    power = -.35;
+                }
+            }
+            telemetry.addData("stopstate: ", stopState);
+            telemetry.addData("Angle: ", hardware.imu.getRelativeYaw());
+            telemetry.addLine(" ");
+            telemetry.addData("KP*error: ",controlRotate.returnVal()[0]);
+            telemetry.addData("KI*i: ",controlRotate.returnVal()[1]);
+            telemetry.addData("KD*d: ",controlRotate.returnVal()[2]);
             telemetry.update();
             hardware.frontLeft.setPower(power);
             hardware.backLeft.setPower(power);
