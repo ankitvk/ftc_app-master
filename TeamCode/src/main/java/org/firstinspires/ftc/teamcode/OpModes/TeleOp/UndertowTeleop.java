@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
+import org.firstinspires.ftc.teamcode.Subsystems.GoldFind;
 
 @TeleOp(name="UndertowTeleOpOG")
 public class UndertowTeleop extends OpMode implements Constants{
@@ -13,10 +14,18 @@ public class UndertowTeleop extends OpMode implements Constants{
     private double yDirection;
     private double xDirection;
 
+    GoldFind goldfish;
+
     public void init(){
 
         robot.init(hardwareMap);
         robot.hook.setPosition(0);
+
+        goldfish = new GoldFind(robot);
+        goldfish.setAlignSettings(ALIGN_POSITION, 1000);
+
+        goldfish.startOpenCV(hardwareMap); //start opencv
+
         //robot.marker.setPosition(.5);
     }
 
@@ -61,6 +70,7 @@ public class UndertowTeleop extends OpMode implements Constants{
         telemetry.addData("LeftSpeed:",robot.frontLeft.getPower());
         telemetry.addData("RightSpeed:",robot.frontRight.getPower());
         telemetry.addData("Extendo:",robot.extendo.getCurrentPosition());
+        telemetry.addData("Pos:",goldfish.getXPosition());
         telemetry.update();
 
     } //Ends main loop

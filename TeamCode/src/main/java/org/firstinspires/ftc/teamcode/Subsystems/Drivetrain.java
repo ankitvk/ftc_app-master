@@ -111,13 +111,14 @@ public class Drivetrain implements Constants {
 
     public void rotateToAbsoluteAngle(double desire){
         double degrees = desire;
-        PIDController controlRotate = new PIDController(.003,0.00001,0,1);
+        PIDController controlRotate = new PIDController(.02,.00001,0,1); //increase Ki .00005
         long startTime = System.nanoTime();
+        long beginTime = startTime;
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 1000)){
             double position = hardware.imu.getRelativeYaw();
             double power = controlRotate.power(degrees,position);
-            if(Math.abs(power)<.3){
+            /*if(Math.abs(power)<.3){
                 if(Math.abs(power)<.01){
                     break;
                 }
@@ -127,7 +128,7 @@ public class Drivetrain implements Constants {
                 else {
                     power = -.3;
                 }
-            }
+            }*/
             telemetry.addData("stopstate: ", stopState);
             telemetry.addData("Angle: ", hardware.imu.getRelativeYaw());
             telemetry.addLine(" ");
@@ -146,19 +147,24 @@ public class Drivetrain implements Constants {
             else {
                 startTime = System.nanoTime();
             }
+            if(System.nanoTime()/1000000-beginTime/1000000>3000){
+                break;
+            }
         }
         stop();
     }
 
     public void rotateToBigAbsoluteAngle(double desire){
         double degrees = desire;
-        PIDController controlRotate = new PIDController(.0025,0.00001,0,1);
+        PIDController controlRotate = new PIDController(.01,0.00001,0,1);
         long startTime = System.nanoTime();
+        long beginTime = startTime;
+
         long stopState = 0;
-        while(opModeIsActive() && (stopState <= 1000)){
+        while((opModeIsActive() && (stopState <= 1000))){
             double position = hardware.imu.getRelativeYaw();
             double power = controlRotate.power(degrees,position);
-            if(Math.abs(power)<.35){
+            /*if(Math.abs(power)<.35){
                 if(Math.abs(power)<.01){
                     break;
                 }
@@ -168,7 +174,7 @@ public class Drivetrain implements Constants {
                 else {
                     power = -.35;
                 }
-            }
+            }*/
             telemetry.addData("stopstate: ", stopState);
             telemetry.addData("Angle: ", hardware.imu.getRelativeYaw());
             telemetry.addLine(" ");
@@ -187,6 +193,9 @@ public class Drivetrain implements Constants {
             else {
                 startTime = System.nanoTime();
             }
+            /*if(System.nanoTime()/1000000-beginTime/1000000>1500){
+                break;
+            }*/
         }
         stop();
     }

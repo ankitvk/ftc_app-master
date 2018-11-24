@@ -54,13 +54,15 @@ public class DepotAutoSingleSample extends LinearOpMode implements AutonomousOpM
         robot.extendo.setPower(0);
 */
 
-        while(getOpModeIsActive() && !goldfish.getAligned()){
+        while(getOpModeIsActive() && !goldfish.isFound()){
             drivetrain.rotate(-0.33);
             telemetry.addData("Aligned:",goldfish.getAligned());
             telemetry.addData("Pos:",goldfish.getXPosition());
             telemetry.update();
         }
+        sleep(750);
         drivetrain.stop();
+        goldfish.alignGold();
         goldfish.disable();
 
         drivetrain.driveForwardDistance(-25);
@@ -97,7 +99,7 @@ public class DepotAutoSingleSample extends LinearOpMode implements AutonomousOpM
             distanceTwo = -45;
             drivetrain.rotateToAbsoluteAngle(0);
 
-            drivetrain.driveForwardDistance(10);
+            drivetrain.driveForwardDistance(8);
 
             drivetrain.rotateToBigAbsoluteAngle(-87);
 
@@ -162,7 +164,7 @@ public class DepotAutoSingleSample extends LinearOpMode implements AutonomousOpM
             robot.markerExtend2.setPower(0);
 
             robot.marker.setPosition(0);
-            distanceTwo = -30;
+            distanceTwo = -35;
 
             drivetrain.rotateToAbsoluteAngle(0);
 
@@ -176,9 +178,11 @@ public class DepotAutoSingleSample extends LinearOpMode implements AutonomousOpM
 
         }
 
-        drivetrain.rotateToBigAbsoluteAngle(-135);
+        drivetrain.rotateToBigAbsoluteAngle(-110);
 
         drivetrain.stop();
+
+        drivetrain.driveForwardDistance(-15);
 
         robot.markerExtend1.setPower(1);
         robot.markerExtend2.setPower(1);

@@ -17,7 +17,7 @@ public interface Constants {
 
     double LOOKAHEAD = 18;
 
-    int ALIGN_POSITION = -200;
+    int ALIGN_POSITION = -75/*-200*/;
 
 
     double dtKP = .001;

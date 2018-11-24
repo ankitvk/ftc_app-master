@@ -71,6 +71,14 @@ public class GoldFind extends DogeCVDetector implements Constants {
         drivetrain = new Drivetrain(hardware);
     }
 
+    public GoldFind(Hardware hardware) {
+        super();
+        detectorName = "GoldFinder"; // Set the detector name
+        this.hardware = hardware;
+        telemetry = hardware.telemetry;
+        drivetrain = new Drivetrain(hardware);
+    }
+
 
     @Override
     public Mat process(Mat input) {
@@ -212,7 +220,7 @@ public class GoldFind extends DogeCVDetector implements Constants {
         init(hardwareMap.appContext, CameraViewDisplay.getInstance());
         useDefaults();
         // Optional Tuning
-        alignSize = 75; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
+        alignSize = 5; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
         downscale = 0.4; // How much to downscale the input frames
         areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Can also be PERFECT_AREA
         //falcon.goldAlignDetector.perfectAreaScorer.perfectArea = 10000; // if using PERFECT_AREA scoring
@@ -223,29 +231,37 @@ public class GoldFind extends DogeCVDetector implements Constants {
     }
 
     public void alignGold(){
-        PIDController getTheGold = new PIDController(.003,0,0,1);
+        PIDController getTheGold = new PIDController(.002,0,0,1);
         long startTime = System.nanoTime();
+        long beginTime = startTime;
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 1000)){
-            double power = getTheGold.power(ALIGN_POSITION,getXPosition());
+            double power = getTheGold.power(315,getXPosition());
             telemetry.addLine("PIDAlign");
             telemetry.addData("Stopstate: ", stopState);
             telemetry.addData("Aligned:",getAligned());
             telemetry.addData("Found:",isFound());
             telemetry.addData("Pos:",getXPosition());
             telemetry.addData("Heading:",hardware.imu.getYaw());
+            telemetry.addLine(" ");
+            telemetry.addData("KP*error: ",getTheGold.returnVal()[0]);
+            telemetry.addData("KI*i: ",getTheGold.returnVal()[1]);
+            telemetry.addData("KD*d: ",getTheGold.returnVal()[2]);
             telemetry.update();
-            hardware.frontLeft.setPower(power);
-            hardware.backLeft.setPower(power);
-            hardware.frontRight.setPower(power);
-            hardware.backRight.setPower(power);
+            hardware.frontLeft.setPower(-power);
+            hardware.backLeft.setPower(-power);
+            hardware.frontRight.setPower(-power);
+            hardware.backRight.setPower(-power);
 
-            if (Math.abs(ALIGN_POSITION-getXPosition()) <= alignSize) {
+            if (Math.abs(315-getXPosition()) <= 25) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
             }
             else {
                 startTime = System.nanoTime();
             }
+            /*if(System.nanoTime()/1000000-beginTime/1000000>2000){
+                break;
+            }*/
         }
         drivetrain.stop();
     }
