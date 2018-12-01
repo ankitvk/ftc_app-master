@@ -31,10 +31,18 @@ public class Hardware implements Constants {
             backRight = new SpeedControlledMotor(dtKP,dtKI,dtKD,dtMaxI),
             extendo = new SpeedControlledMotor(extensionKP,extensionKI,extensionKD,extensionMaxI),
             markerExtend1 = new SpeedControlledMotor(0,0,0,0),
-            markerExtend2 = new SpeedControlledMotor(0,0,0,0);
+            markerExtend2 = new SpeedControlledMotor(0,0,0,0),
+            pivot1 = new SpeedControlledMotor(0,0,0,0),
+            pivot2 = new SpeedControlledMotor(0,0,0,0),
+            extension1 = new SpeedControlledMotor(0,0,0,0),
+            extension2 = new SpeedControlledMotor(0,0,0,0);
 
 
     public SpeedControlledMotor[] drivetrainMotors = {frontLeft, backLeft, frontRight, backRight};
+
+    public SpeedControlledMotor[] pivotMotors = {pivot1,pivot2};
+
+    public SpeedControlledMotor[] extensionMotors = {extension1,extension2};
 
     public Drivetrain drive;
 
@@ -48,6 +56,18 @@ public class Hardware implements Constants {
         frontRight.init(hwMap,"frontRight");
         backLeft.init(hwMap,"backLeft");
         backRight.init(hwMap,"backRight");
+
+        /*for(SpeedControlledMotor motor: drivetrainMotors) {
+            motor.init(hwMap,motor.toString());
+        }
+*/
+        /*for(SpeedControlledMotor motor: pivotMotors) {
+            motor.init(hwMap,motor.toString());
+        }
+
+        for(SpeedControlledMotor motor: drivetrainMotors) {
+            motor.init(hwMap,motor.toString());
+        }*/
 
         extendo.init(hwMap,"extendo");
 

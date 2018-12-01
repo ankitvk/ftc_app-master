@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Control;
 
+import com.qualcomm.robotcore.util.Range;
+
 public class PIDController implements Constants{
 
     private double i = 0;
@@ -12,6 +14,8 @@ public class PIDController implements Constants{
     private double previousError = 0;
     private double maxI;
     private double previousTime = 0;
+    private double current;
+    private double target;
 
 
 
@@ -22,10 +26,12 @@ public class PIDController implements Constants{
         this.maxI = maxI;
     }
 
-    public double power(double target, double currentLoc) {
-        error = target - currentLoc;
+    public double power(double lock, double currentLoc) {
+        current = currentLoc;
+        target = lock;
+        error = lock - currentLoc;
         double deltaTime = (System.nanoTime() - previousTime)/NANOSECONDS_PER_MINUTE;
-        if (Math.abs(currentLoc) > Math.abs(target) * 0.8){
+        if (Math.abs(currentLoc) > Math.abs(lock) * 0.8){
             i+=error*deltaTime;
         }
         d = (error - previousError)/deltaTime;
@@ -48,5 +54,42 @@ public class PIDController implements Constants{
         double PID[] = {(KP*error),(KI*i),(KD*d),power};
         return PID;
     }
+
+    public double getKp() {
+        return KP;
+    }
+
+    public double getKi() {
+        return KI;
+    }
+
+    public double getKd() {
+        return KD;
+    }
+
+    public void setKp(double kp) {
+        this.KP = kp;
+    }
+
+    public void setKi(double ki) {
+        this.KI = ki;
+    }
+
+    public void setKd(double kd) {
+        this.KD = kd;
+    }
+
+    public double getError() {
+        return error;
+    }
+
+    public double getCurrent() {
+        return current;
+    }
+
+    public double getTarget() {
+        return target;
+    }
+
 
 }

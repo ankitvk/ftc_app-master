@@ -11,6 +11,7 @@ import com.disnodeteam.dogecv.scoring.RatioScorer;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Control.PIDController;
@@ -231,7 +232,7 @@ public class GoldFind extends DogeCVDetector implements Constants {
     }
 
     public void alignGold(){
-        PIDController getTheGold = new PIDController(.002,0,0,1);
+        PIDController getTheGold = new PIDController(.001,0,0,1);
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;

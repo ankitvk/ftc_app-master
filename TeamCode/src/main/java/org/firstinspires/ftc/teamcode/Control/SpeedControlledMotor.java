@@ -57,6 +57,10 @@ public class SpeedControlledMotor implements Constants {
         motor.setZeroPowerBehavior(behavior);
     }
 
+    public double getAngle (double ticksPerInch, double ticksPerRotation) {
+        return (360 * (motor.getCurrentPosition()) % ticksPerInch) / ticksPerRotation;
+    }
+
 
     public int getCurrentPosition() {
         return motor.getCurrentPosition();
