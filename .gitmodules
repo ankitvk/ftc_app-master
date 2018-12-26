@@ -1,0 +1,3 @@
+[submodule "MasqLib"]
+	path = MasqLib
+	url = https://github.com/archishou/MasqLib

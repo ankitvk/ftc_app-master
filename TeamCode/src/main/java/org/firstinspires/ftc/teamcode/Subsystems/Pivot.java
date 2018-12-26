@@ -37,13 +37,19 @@ public class Pivot implements Constants {
         kd = 0.0;
         rotatorPower = (0.0001 * -liftPosition) + basePower;
         downPower = (0.001 * Math.abs(getPosition()) + baseDownPower);
-        if (controller.right_bumper) setPower(rotatorPower);
-        else if (controller.left_bumper) setPower(-downPower);
+        if (controller.left_bumper){
+            setPower(-rotatorPower);
+        }
+        else if (controller.right_bumper) {
+            setPower(downPower);
+        } else {
+            setPower(0);
+        }
 
         if (controller.right_bumper|| controller.left_bumper) targetPosition = getPosition();
         else {
             double currentPosition = getPosition();
-            setPower(pivotControl.power(targetPosition,currentPosition));
+            //setPower(pivotControl.power(targetPosition,currentPosition));
         }
         pivotControl.setKp(kp);
         pivotControl.setKi(ki);
@@ -67,7 +73,7 @@ public class Pivot implements Constants {
     }
 
     public double getPosition() {
-        return ((hardware.pivotMotors[0].getCurrentPosition())+(hardware.pivotMotors[1].getCurrentPosition()))/2;
+        return (hardware.pivotMotors[0].getCurrentPosition());
     }
 
     public void setPower(double power){

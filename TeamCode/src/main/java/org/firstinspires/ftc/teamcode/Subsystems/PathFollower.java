@@ -11,14 +11,22 @@ public class PathFollower implements Constants {
 
     private AutonomousOpMode auto;
     private PointF coordinate  = new PointF(0,0);
+    private Hardware robot;
+    private BNO055_IMU imu;
 
-    public PathFollower(AutonomousOpMode auto){
+    public PathFollower(AutonomousOpMode auto,Hardware hardware){
+
         this.auto = auto;
+        this.robot = hardware;
+        this.imu = hardware.imu;
     }
 
-    public PathFollower(){}
+    public PathFollower(Hardware hardware){
+        this.robot = hardware;
+        this.imu = hardware.imu;
+    }
 
-    private double[] follow(BNO055_IMU imu, double desiredX, double desiredY, double lastX, double lastY, double currentX, double currentY){
+    private double[] follow(double desiredX, double desiredY, double lastX, double lastY, double currentX, double currentY){
 
         double Ax = desiredX - lastX;
         double Ay = desiredY - lastY;
@@ -34,7 +42,7 @@ public class PathFollower implements Constants {
         double Ry = (proj + LOOKAHEAD)*Ay/legLength+lastY;
 
         double D = Math.hypot(Rx-currentX,Ry-currentY);
-        double R = D/(2*Math.sin(imu.getYaw()));
+        double R = D/(2*Math.sin(imu.getRelativeYaw()));
         double V = SPEED_MULTIPLIER;
 
         double[] speeds = new double[2];
@@ -47,9 +55,9 @@ public class PathFollower implements Constants {
         return speeds;
     }
 
-    private PointF trackPosition (BNO055_IMU imu, PointF coordinate, Hardware robot, double oldEncoderTicks){
-        double theta = imu.getYaw();
-        double newEncoderTicks = (robot.backRight.getCurrentPosition()+robot.frontRight.getCurrentPosition())/2;
+    private PointF trackPosition (PointF coordinate, double oldEncoderTicks){
+        double theta = imu.getRelativeYaw();
+        double newEncoderTicks = (robot.frontLeft.getCurrentPosition()-robot.frontRight.getCurrentPosition())/2;
         double encoderTicks = newEncoderTicks-oldEncoderTicks;
         double magnitude = encoderTicks*WHEEL_DIAMETER*Math.PI/NEVEREST20_COUNTS_PER_REV;
         float deltaX = (float)(magnitude*Math.cos(theta));
@@ -63,7 +71,7 @@ public class PathFollower implements Constants {
         return auto.getOpModeIsActive();
     }
 
-    public void trackPoint (Hardware robot, BNO055_IMU imu, double desiredX, double desiredY ){
+    public void trackPoint (double desiredX, double desiredY ){
         double speeds[];
 
         double lastX = coordinate.x;
@@ -74,16 +82,16 @@ public class PathFollower implements Constants {
 
         while ((Math.hypot(desiredX-coordinate.x,desiredY-coordinate.y)>=0.5)&&(OpModeState())){
 
-            PointF currPoint = trackPosition(imu,coordinate,robot,oldEncoderTicks);
+            PointF currPoint = trackPosition(coordinate,oldEncoderTicks);
             currentX = currPoint.x;
             currentY = currPoint.y;
 
-            speeds = follow(imu,desiredX,desiredY,lastX,lastY,coordinate.x,currentY);
+            speeds = follow(desiredX,desiredY,lastX,lastY,coordinate.x,currentY);
 
-            robot.frontLeft.setPower(speeds[0]*SPEED_MULTIPLIER);
-            robot.backLeft.setPower(speeds[0]*SPEED_MULTIPLIER);
-            robot.frontRight.setPower(-speeds[1]*SPEED_MULTIPLIER);
-            robot.backRight.setPower(-speeds[1]*SPEED_MULTIPLIER);
+            robot.frontLeft.setPower(speeds[0]*PATH_FOLLOW_SPEED_MULTIPLIER);
+            robot.backLeft.setPower(speeds[0]*PATH_FOLLOW_SPEED_MULTIPLIER);
+            robot.frontRight.setPower(-speeds[1]*PATH_FOLLOW_SPEED_MULTIPLIER);
+            robot.backRight.setPower(-speeds[1]*PATH_FOLLOW_SPEED_MULTIPLIER);
 
             lastX = currentX;
             lastY = currentY;

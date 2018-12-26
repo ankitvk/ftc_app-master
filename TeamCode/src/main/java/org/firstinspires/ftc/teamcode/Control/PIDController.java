@@ -16,9 +16,17 @@ public class PIDController implements Constants{
     private double previousTime = 0;
     private double current;
     private double target;
+    private double minPower = 0;
 
 
 
+    public PIDController(double KP, double KI, double KD, double maxI, double minPower) {
+        this.KP = KP;
+        this.KI = KI;
+        this.KD = KD;
+        this.maxI = maxI;
+        this.minPower = minPower;
+    }
     public PIDController(double KP, double KI, double KD, double maxI) {
         this.KP = KP;
         this.KI = KI;
@@ -38,6 +46,7 @@ public class PIDController implements Constants{
         power = (KP*error) + (KI*i) + (KD*d);
         previousTime = System.nanoTime();
         previousError = error;
+        power = power < 0 ? Math.min(power, -minPower) : Math.max(power, minPower);
         return power;
     }
 

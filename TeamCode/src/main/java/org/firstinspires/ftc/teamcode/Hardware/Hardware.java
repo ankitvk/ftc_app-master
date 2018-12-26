@@ -1,14 +1,19 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+//import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Control.SpeedControlledMotor;
+import org.firstinspires.ftc.teamcode.Sensors.AltIMU;
 import org.firstinspires.ftc.teamcode.Sensors.BNO055_IMU;
 import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.Subsystems.Extendo;
+import org.firstinspires.ftc.teamcode.Subsystems.Pivot;
 
 public class Hardware implements Constants {
 
@@ -18,11 +23,15 @@ public class Hardware implements Constants {
 
     public Telemetry telemetry;
 
-    public Servo hook;
+    public Servo hookRelease,hookSwivel,drop,index;
 
-    public Servo marker;
+    public CRServo intake;
 
     public BNO055_IMU imu;
+
+    //public Servo led;
+
+    //public WebcamName webcam;
 
     public SpeedControlledMotor
             frontLeft = new SpeedControlledMotor(dtKP,dtKI,dtKD,dtMaxI),
@@ -30,21 +39,19 @@ public class Hardware implements Constants {
             backLeft = new SpeedControlledMotor(dtKP,dtKI,dtKD,dtMaxI),
             backRight = new SpeedControlledMotor(dtKP,dtKI,dtKD,dtMaxI),
             extendo = new SpeedControlledMotor(extensionKP,extensionKI,extensionKD,extensionMaxI),
-            markerExtend1 = new SpeedControlledMotor(0,0,0,0),
-            markerExtend2 = new SpeedControlledMotor(0,0,0,0),
+            winch = new SpeedControlledMotor(0,0,0,1),
             pivot1 = new SpeedControlledMotor(0,0,0,0),
-            pivot2 = new SpeedControlledMotor(0,0,0,0),
-            extension1 = new SpeedControlledMotor(0,0,0,0),
-            extension2 = new SpeedControlledMotor(0,0,0,0);
-
+            pivot2 = new SpeedControlledMotor(0,0,0,0);
 
     public SpeedControlledMotor[] drivetrainMotors = {frontLeft, backLeft, frontRight, backRight};
 
     public SpeedControlledMotor[] pivotMotors = {pivot1,pivot2};
 
-    public SpeedControlledMotor[] extensionMotors = {extension1,extension2};
 
     public Drivetrain drive;
+    private Pivot pivot ;
+    private Extendo extendoo;
+    //private Intake intake;
 
     public void init(HardwareMap hardwareMap){
 
@@ -57,30 +64,28 @@ public class Hardware implements Constants {
         backLeft.init(hwMap,"backLeft");
         backRight.init(hwMap,"backRight");
 
-        /*for(SpeedControlledMotor motor: drivetrainMotors) {
-            motor.init(hwMap,motor.toString());
-        }
-*/
-        /*for(SpeedControlledMotor motor: pivotMotors) {
-            motor.init(hwMap,motor.toString());
-        }
-
-        for(SpeedControlledMotor motor: drivetrainMotors) {
-            motor.init(hwMap,motor.toString());
-        }*/
+        //led = hardwareMap.servo.get("led");
 
         extendo.init(hwMap,"extendo");
 
-        markerExtend1.init(hwMap,"markerExtend1");
-        markerExtend2.init(hwMap,"markerExtend2");
+        pivot1.init(hwMap,"pivot1");
+        pivot2.init(hwMap,"pivot2");
 
+        winch.init(hwMap,"winch");
 
-        hook = hardwareMap.servo.get("hook");
+        hookRelease = hardwareMap.servo.get("hookRelease");
+        hookSwivel = hardwareMap.servo.get("hookSwivel");
 
-        marker = hardwareMap.servo.get("marker");
+        drop = hardwareMap.servo.get("drop");
+
+        index = hardwareMap.servo.get("index");
+
+        intake = hardwareMap.crservo.get("intake");
 
         drive = new Drivetrain(this);
-
+        pivot = new Pivot(this);
+        extendoo = new Extendo(this);
+        //private Intake intake =  new Intake(robot);
     }
 
     public void setAuto (AutonomousOpMode auto, Telemetry telemetry) {
