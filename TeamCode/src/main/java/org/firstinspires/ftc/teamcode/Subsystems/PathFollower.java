@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import android.graphics.PointF;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
@@ -13,12 +14,16 @@ public class PathFollower implements Constants {
     private PointF coordinate  = new PointF(0,0);
     private Hardware robot;
     private BNO055_IMU imu;
+    private Telemetry telemetry;
 
-    public PathFollower(AutonomousOpMode auto,Hardware hardware){
+    private double R;
+
+    public PathFollower(AutonomousOpMode auto, Hardware hardware, Telemetry telemetry){
 
         this.auto = auto;
         this.robot = hardware;
         this.imu = hardware.imu;
+        this.telemetry = telemetry;
     }
 
     public PathFollower(Hardware hardware){
@@ -42,7 +47,7 @@ public class PathFollower implements Constants {
         double Ry = (proj + LOOKAHEAD)*Ay/legLength+lastY;
 
         double D = Math.hypot(Rx-currentX,Ry-currentY);
-        double R = D/(2*Math.sin(imu.getRelativeYaw()));
+        R = D/(2*Math.sin(imu.getRelativeYaw()));
         double V = SPEED_MULTIPLIER;
 
         double[] speeds = new double[2];
@@ -59,7 +64,7 @@ public class PathFollower implements Constants {
         double theta = imu.getRelativeYaw();
         double newEncoderTicks = (robot.frontLeft.getCurrentPosition()-robot.frontRight.getCurrentPosition())/2;
         double encoderTicks = newEncoderTicks-oldEncoderTicks;
-        double magnitude = encoderTicks*WHEEL_DIAMETER*Math.PI/NEVEREST20_COUNTS_PER_REV;
+        double magnitude = -encoderTicks*WHEEL_DIAMETER*Math.PI/DT_NEVEREST_GEARBOX;
         float deltaX = (float)(magnitude*Math.cos(theta));
         float deltaY = (float)(magnitude*Math.sin(theta));
         coordinate.set(coordinate.x +deltaX,coordinate.y + deltaY);
@@ -78,7 +83,7 @@ public class PathFollower implements Constants {
         double lastY = coordinate.y;
         double currentX;
         double currentY;
-        double oldEncoderTicks = (robot.backRight.getCurrentPosition()+robot.frontRight.getCurrentPosition())/2;
+        double oldEncoderTicks = (robot.frontLeft.getCurrentPosition()-robot.frontRight.getCurrentPosition())/2;
 
         while ((Math.hypot(desiredX-coordinate.x,desiredY-coordinate.y)>=0.5)&&(OpModeState())){
 
@@ -88,14 +93,22 @@ public class PathFollower implements Constants {
 
             speeds = follow(desiredX,desiredY,lastX,lastY,coordinate.x,currentY);
 
-            robot.frontLeft.setPower(speeds[0]*PATH_FOLLOW_SPEED_MULTIPLIER);
-            robot.backLeft.setPower(speeds[0]*PATH_FOLLOW_SPEED_MULTIPLIER);
-            robot.frontRight.setPower(-speeds[1]*PATH_FOLLOW_SPEED_MULTIPLIER);
-            robot.backRight.setPower(-speeds[1]*PATH_FOLLOW_SPEED_MULTIPLIER);
+            robot.frontLeft.setPower(-speeds[0]*PATH_FOLLOW_SPEED_MULTIPLIER);
+            robot.backLeft.setPower(-speeds[0]*PATH_FOLLOW_SPEED_MULTIPLIER);
+            robot.frontRight.setPower(speeds[1]*PATH_FOLLOW_SPEED_MULTIPLIER);
+            robot.backRight.setPower(speeds[1]*PATH_FOLLOW_SPEED_MULTIPLIER);
+
+            telemetry.addData("Left: ",speeds[0]*PATH_FOLLOW_SPEED_MULTIPLIER);
+            telemetry.addData("Right: ",speeds[1]*PATH_FOLLOW_SPEED_MULTIPLIER );
+            telemetry.addLine("");
+            telemetry.addData("X-coordinate: ",coordinate.x);
+            telemetry.addData("Y-coordinate: ",coordinate.y);
+            telemetry.addData("Radius: ",R);
+            telemetry.update();
 
             lastX = currentX;
             lastY = currentY;
-            oldEncoderTicks = (robot.backRight.getCurrentPosition()+robot.frontRight.getCurrentPosition())/2;
+            oldEncoderTicks = (robot.frontLeft.getCurrentPosition()-robot.frontRight.getCurrentPosition())/2;
 
             try {
                 Thread.sleep(PATH_FOLLOWING_INTERVAL);

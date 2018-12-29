@@ -39,7 +39,7 @@ public class PIDController implements Constants{
         target = lock;
         error = lock - currentLoc;
         double deltaTime = (System.nanoTime() - previousTime)/NANOSECONDS_PER_MINUTE;
-        if (Math.abs(currentLoc) > Math.abs(lock) * 0.8){
+        if (Math.abs(currentLoc) > Math.abs(lock) * .8){
             i+=error*deltaTime;
         }
         d = (error - previousError)/deltaTime;

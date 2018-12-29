@@ -1,21 +1,22 @@
 package org.firstinspires.ftc.teamcode.OpModes.Test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
-import org.firstinspires.ftc.teamcode.Subsystems.PathFollower;
+import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.Subsystems.Endgame;
+import org.firstinspires.ftc.teamcode.Subsystems.Extendo;
+import org.firstinspires.ftc.teamcode.Subsystems.GoldFind;
+import org.firstinspires.ftc.teamcode.Subsystems.Pivot;
 
-@Disabled
-@Autonomous(name = "PathFollow",group = "Test")
-public class PathFollowTest extends LinearOpMode implements AutonomousOpMode,Constants {
+@Autonomous(name = "JustTurn",group = "Dummy")
+public class JustTurn extends LinearOpMode implements AutonomousOpMode,Constants{
 
     Hardware robot = new Hardware();
-
 
     public boolean getOpModeIsActive() {
         return opModeIsActive();
@@ -28,11 +29,17 @@ public class PathFollowTest extends LinearOpMode implements AutonomousOpMode,Con
     @Override
     public void runOpMode() {
         robot.setAuto(this, telemetry);
+
         robot.init(hardwareMap);
-        PathFollower pathFollower = new PathFollower(this,robot,telemetry);
+
+        telemetry.addLine("Instant Run test 3");
+        telemetry.update();
+
         waitForStart();
 
-        pathFollower.trackPoint(5,0);
+        robot.drive.rotateToAbsoluteAngle(60);
 
+        robot.drive.stop();
     }
 }
+

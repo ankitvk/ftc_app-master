@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-//import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Control.SpeedControlledMotor;
@@ -31,7 +32,7 @@ public class Hardware implements Constants {
 
     //public Servo led;
 
-    //public WebcamName webcam;
+    public RevBlinkinLedDriver led;
 
     public SpeedControlledMotor
             frontLeft = new SpeedControlledMotor(dtKP,dtKI,dtKD,dtMaxI),
@@ -64,7 +65,7 @@ public class Hardware implements Constants {
         backLeft.init(hwMap,"backLeft");
         backRight.init(hwMap,"backRight");
 
-        //led = hardwareMap.servo.get("led");
+        led = hardwareMap.get(RevBlinkinLedDriver.class, "led");
 
         extendo.init(hwMap,"extendo");
 

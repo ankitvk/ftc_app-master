@@ -64,6 +64,12 @@ public class Drivetrain implements Constants {
             telemetry.addData("Power: ", power);
             telemetry.addData("Distance: ",ticksToDistance(avg));
             telemetry.addData("Angle: ", hardware.imu.getYaw());
+            telemetry.addLine(" ");
+            telemetry.addData("error: ",control.getError());
+            telemetry.addData("KP*error: ",control.returnVal()[0]);
+            telemetry.addData("KI*i: ",control.returnVal()[1]);
+            telemetry.addData("KD*d: ",control.returnVal()[2]);
+            telemetry.update();
 
             hardware.frontLeft.setPower(-power);
             hardware.backLeft.setPower(-power);
@@ -77,11 +83,10 @@ public class Drivetrain implements Constants {
                 startTime = System.nanoTime();
             }
 
-            if(System.nanoTime()/1000000-beginTime/1000000>5000){
+            /*if(System.nanoTime()/1000000-beginTime/1000000>5000){
                 break;
             }
-
-            telemetry.update();
+*/
         }
     }
 
@@ -117,7 +122,7 @@ public class Drivetrain implements Constants {
 
     public void rotateToAbsoluteAngle(double desire){
         double degrees = desire;
-        PIDController controlRotate = new PIDController(dtRotateKP,dtRotateKI,dtRotateKD,dtRotateMaxI, 0); //increase Ki .00005
+        PIDController controlRotate = new PIDController(dtRotateKP,dtRotateKI,dtRotateKD,dtRotateMaxI); //increase Ki .00005
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
@@ -156,9 +161,9 @@ public class Drivetrain implements Constants {
             /*else {
                 startTime = System.nanoTime();
             }*/
-            if(System.nanoTime()/1000000-beginTime/1000000>3000){
+            /*if(System.nanoTime()/1000000-beginTime/1000000>3000){
                 break;
-            }
+            }*/
         }
         stop();
     }

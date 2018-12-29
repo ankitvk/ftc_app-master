@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Control;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
+
 public interface Constants {
     double NANOSECONDS_PER_MINUTE = 6e+10;
     double NEVEREST_20_MAX_RPM = 320;
@@ -25,25 +27,25 @@ public interface Constants {
 
     double LOOKAHEAD = 18;
 
-    int ALIGN_POSITION = 0;
+    int ALIGN_POSITION = 55;
 
     int TARGET_GOLD_X_POS = 425;
 
     double MIN_ROTATE_POWER = 0.39;
     double MIN_DRIVE_POWER = 0;
 
-    double dtKP = .00045;
-    double dtKI = .025;
+    double dtKP = .0003;
+    double dtKI = .035;
     double dtKD = 0;
     double dtMaxI = 1;
 
-    double dtRotateKP = 0.009;
-    double dtRotateKI = 0.00000;
+    double dtRotateKP = 0.01285;
+    double dtRotateKI = 1;
     double dtRotateKD = 0;
     double dtRotateMaxI = 1;
 
-    double dtBigRotateKP = 0.015;
-    double dtBigRotateKI = 0;
+    double dtBigRotateKP = 0.01285;
+    double dtBigRotateKI = 2;
     double dtBigRotateKD = 0;
     double dtBigRotateMaxI = 1;
 
@@ -63,6 +65,8 @@ public interface Constants {
             "NDz4PKdioMn8uobSLb4MC9z77cXv+BCxSQGsswhgaVNYh/3GoBLrYYEYDpgGGFRL" +
             "EJtrmf8pYbd3s+KKatCS5xEaEoILRYWQZMt5kENV2CyoaSznfg+zmRNeNpVpFBLWMl" +
             "aVoT19fBzj2IZZx209ztGb+MLCRkHwy2b0cTDc1DfBm/RfzcJsAm8ym9sAPTmlbi6UlWB/dJr9s48kwM";
+
+    RevBlinkinLedDriver.BlinkinPattern PATTERN = RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_OCEAN_PALETTE;
 
 
 }
