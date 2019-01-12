@@ -4,7 +4,7 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 public interface Constants {
     double NANOSECONDS_PER_MINUTE = 6e+10;
-    double NEVEREST_20_MAX_RPM = 320;
+    double NEVEREST_MAX_RPM = 16;
     double NEVEREST20_COUNTS_PER_REV = 560;
     double NEVEREST40_COUNTS_PER_REV = 1120;
 
@@ -16,7 +16,7 @@ public interface Constants {
 
     double E4T_COUNTS_PER_REV = 537.6;
     int PATH_FOLLOWING_INTERVAL = 50;
-    double SPEED_MULTIPLIER = 1;
+    double SPEED_MULTIPLIER = .75;
     double PATH_FOLLOW_SPEED_MULTIPLIER = .25;
 
     double LENGTH_BETWEEN_WHEELS = 15.789;
@@ -25,7 +25,7 @@ public interface Constants {
     double DISTANCE_TOLERANCE = .5;
     double IMU_TOLERANCE = .5;
 
-    double LOOKAHEAD = 18;
+    double LOOKAHEAD = 5;
 
     int ALIGN_POSITION = 55;
 
@@ -34,12 +34,12 @@ public interface Constants {
     double MIN_ROTATE_POWER = 0.39;
     double MIN_DRIVE_POWER = 0;
 
-    double dtKP = .0003;
-    double dtKI = .035;
+    double dtKP = .000175;
+    double dtKI = /*.035*/0.01;
     double dtKD = 0;
     double dtMaxI = 1;
 
-    double dtRotateKP = 0.01285;
+    double dtRotateKP = 0.012;
     double dtRotateKI = 1;
     double dtRotateKD = 0;
     double dtRotateMaxI = 1;

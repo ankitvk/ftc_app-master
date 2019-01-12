@@ -47,7 +47,7 @@ public class PathFollower implements Constants {
         double Ry = (proj + LOOKAHEAD)*Ay/legLength+lastY;
 
         double D = Math.hypot(Rx-currentX,Ry-currentY);
-        R = D/(2*Math.sin(imu.getRelativeYaw()));
+        R = D/(2*Math.sin(Math.toRadians(imu.getRelativeYaw())));
         double V = SPEED_MULTIPLIER;
 
         double[] speeds = new double[2];
@@ -61,7 +61,7 @@ public class PathFollower implements Constants {
     }
 
     private PointF trackPosition (PointF coordinate, double oldEncoderTicks){
-        double theta = imu.getRelativeYaw();
+        double theta = Math.toRadians(imu.getRelativeYaw());
         double newEncoderTicks = (robot.frontLeft.getCurrentPosition()-robot.frontRight.getCurrentPosition())/2;
         double encoderTicks = newEncoderTicks-oldEncoderTicks;
         double magnitude = -encoderTicks*WHEEL_DIAMETER*Math.PI/DT_NEVEREST_GEARBOX;

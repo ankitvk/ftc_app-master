@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Subsystems;
+package org.firstinspires.ftc.teamcode.Subsystems.Components;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -51,6 +51,41 @@ public class Pivot implements Constants {
             double currentPosition = getPosition();
             //setPower(pivotControl.power(targetPosition,currentPosition));
         }
+
+        /*if(!hardware.limit.getState()){
+            eReset();
+        }
+*/
+        pivotControl.setKp(kp);
+        pivotControl.setKi(ki);
+        pivotControl.setKd(kd);
+    }
+
+    public void driverControl(Gamepad controller,boolean idc) {
+        kp = (pivotKP * -liftPosition) + 0.001;
+        ki = 0.0;
+        kd = 0.0;
+        rotatorPower = (0.0001 * -liftPosition) + basePower;
+        downPower = (0.001 * Math.abs(getPosition()) + baseDownPower);
+        if (controller.dpad_right){
+            setPower(-rotatorPower);
+        }
+        else if (controller.dpad_left) {
+            setPower(downPower);
+        } else {
+            setPower(0);
+        }
+
+        if (controller.dpad_left|| controller.dpad_right) targetPosition = getPosition();
+        else {
+            double currentPosition = getPosition();
+            //setPower(pivotControl.power(targetPosition,currentPosition));
+        }
+
+        /*if(!hardware.limit.getState()){
+            eReset();
+        }
+*/
         pivotControl.setKp(kp);
         pivotControl.setKi(ki);
         pivotControl.setKd(kd);

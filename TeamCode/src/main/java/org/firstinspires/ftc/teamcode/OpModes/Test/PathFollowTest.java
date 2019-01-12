@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Subsystems.PathFollower;
 
-@Disabled
 @Autonomous(name = "PathFollow",group = "Test")
 public class PathFollowTest extends LinearOpMode implements AutonomousOpMode,Constants {
 
@@ -32,7 +31,7 @@ public class PathFollowTest extends LinearOpMode implements AutonomousOpMode,Con
         PathFollower pathFollower = new PathFollower(this,robot,telemetry);
         waitForStart();
 
-        pathFollower.trackPoint(5,0);
+        pathFollower.trackPoint(20,20);
 
     }
 }

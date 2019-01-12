@@ -2,19 +2,21 @@ package org.firstinspires.ftc.teamcode.Hardware;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Control.SpeedControlledMotor;
-import org.firstinspires.ftc.teamcode.Sensors.AltIMU;
 import org.firstinspires.ftc.teamcode.Sensors.BNO055_IMU;
-import org.firstinspires.ftc.teamcode.Subsystems.Drivetrain;
-import org.firstinspires.ftc.teamcode.Subsystems.Extendo;
-import org.firstinspires.ftc.teamcode.Subsystems.Pivot;
+import org.firstinspires.ftc.teamcode.Subsystems.Components.Drivetrain;
+import org.firstinspires.ftc.teamcode.Subsystems.Components.Extendo;
+import org.firstinspires.ftc.teamcode.Subsystems.Paths.Depot.depotLeft;
+import org.firstinspires.ftc.teamcode.Subsystems.Paths.Depot.depotMiddle;
+import org.firstinspires.ftc.teamcode.Subsystems.Paths.Depot.depotRight;
+import org.firstinspires.ftc.teamcode.Subsystems.Components.Pivot;
 
 public class Hardware implements Constants {
 
@@ -30,15 +32,20 @@ public class Hardware implements Constants {
 
     public BNO055_IMU imu;
 
+    public DigitalChannel limit;
+
     //public Servo led;
 
     public RevBlinkinLedDriver led;
 
+    double kp = 0.1;
+    double ki = 0.000001;
+
     public SpeedControlledMotor
-            frontLeft = new SpeedControlledMotor(dtKP,dtKI,dtKD,dtMaxI),
-            frontRight = new SpeedControlledMotor(dtKP,dtKI,dtKD,dtMaxI),
-            backLeft = new SpeedControlledMotor(dtKP,dtKI,dtKD,dtMaxI),
-            backRight = new SpeedControlledMotor(dtKP,dtKI,dtKD,dtMaxI),
+            frontLeft = new SpeedControlledMotor(kp,ki,0,1),
+            frontRight = new SpeedControlledMotor(kp,ki,0,1),
+            backLeft = new SpeedControlledMotor(kp,ki,0,1),
+            backRight = new SpeedControlledMotor(kp,ki,0,1),
             extendo = new SpeedControlledMotor(extensionKP,extensionKI,extensionKD,extensionMaxI),
             winch = new SpeedControlledMotor(0,0,0,1),
             pivot1 = new SpeedControlledMotor(0,0,0,0),
@@ -50,9 +57,13 @@ public class Hardware implements Constants {
 
 
     public Drivetrain drive;
-    private Pivot pivot ;
-    private Extendo extendoo;
+    public Pivot pivot ;
+    public Extendo extendoo;
     //private Intake intake;
+
+    public depotLeft depotLeft;
+    public depotMiddle depotMiddle;
+    public depotRight depotRight;
 
     public void init(HardwareMap hardwareMap){
 
@@ -87,6 +98,12 @@ public class Hardware implements Constants {
         pivot = new Pivot(this);
         extendoo = new Extendo(this);
         //private Intake intake =  new Intake(robot);
+
+        depotLeft = new depotLeft(this);
+        depotMiddle = new depotMiddle(this);
+        depotRight = new depotRight(this);
+
+        limit = hardwareMap.digitalChannel.get("limit");
     }
 
     public void setAuto (AutonomousOpMode auto, Telemetry telemetry) {

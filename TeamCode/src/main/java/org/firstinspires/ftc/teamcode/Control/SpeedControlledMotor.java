@@ -34,7 +34,7 @@ public class SpeedControlledMotor implements Constants {
         int deltaPos = motor.getCurrentPosition() - previousPos;
         double deltaTime = (System.nanoTime() - previousTime)/NANOSECONDS_PER_MINUTE;
         if (deltaTime*6e4 > 10) {
-            rpm = (deltaPos/ NEVEREST20_COUNTS_PER_REV)/(deltaTime);
+            rpm = (deltaPos/ DT_NEVEREST_GEARBOX)/(deltaTime);
             previousPos = motor.getCurrentPosition();
             previousTime = System.nanoTime();
         }
@@ -42,7 +42,7 @@ public class SpeedControlledMotor implements Constants {
     }
 
     public void setSpeed(double speed) {
-        double rpm = NEVEREST_20_MAX_RPM *speed;
+        double rpm = NEVEREST_MAX_RPM *DT_NEVEREST_GEARBOX*speed;
         power = PIDController.power(rpm, getRPM());
         motor.setPower((power > 0 && getRPM() < 0) || (power < 0 && getRPM() > 0) ? 0: (power));
     }
