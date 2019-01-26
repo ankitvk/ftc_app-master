@@ -18,7 +18,6 @@ public class Drivetrain implements Constants {
     private AutonomousOpMode auto;
     private Telemetry telemetry;
     private Hardware hardware;
-    private PIDController control = new PIDController(dtKP,dtKI,dtKD,dtMaxI);
 
     public Drivetrain(Hardware hardware){
         this.hardware = hardware;
@@ -54,11 +53,12 @@ public class Drivetrain implements Constants {
 
     public void driveForwardDistance(double distance){
         eReset();
-        double ticks = (distance/(WHEEL_DIAMETER*Math.PI))*DT_NEVEREST_GEARBOX;
+        PIDController control = new PIDController(.001885,dtKI,0,0);
+        double ticks = (distance/(WHEEL_DIAMETER*Math.PI))*DT_GEARBOX_TICKS_PER_ROTATION;
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
-        while(opModeIsActive() && (stopState <= 1000)){
+        while(opModeIsActive() && (stopState <= 250)){
             double avg = hardware.frontLeft.getCurrentPosition();
             double power = control.power(ticks,avg);
             telemetry.addData("Power: ", power);
@@ -83,10 +83,9 @@ public class Drivetrain implements Constants {
                 startTime = System.nanoTime();
             }
 
-            /*if(System.nanoTime()/1000000-beginTime/1000000>5000){
+            if(System.nanoTime()/1000000-beginTime/1000000>3000){
                 break;
             }
-*/
         }
     }
 
@@ -161,9 +160,9 @@ public class Drivetrain implements Constants {
             /*else {
                 startTime = System.nanoTime();
             }*/
-            /*if(System.nanoTime()/1000000-beginTime/1000000>3000){
+            if(System.nanoTime()/1000000-beginTime/1000000>1000){
                 break;
-            }*/
+            }
         }
         stop();
     }
@@ -226,10 +225,10 @@ public class Drivetrain implements Constants {
     }
 
     public double distanceToTicks(double distance){
-        return (distance/(WHEEL_DIAMETER*Math.PI))*DT_NEVEREST_GEARBOX;
+        return (distance/(WHEEL_DIAMETER*Math.PI))*DT_GEARBOX_TICKS_PER_ROTATION;
     }
     public double ticksToDistance(double ticks){
-        return (ticks*(WHEEL_DIAMETER*Math.PI))/DT_NEVEREST_GEARBOX;
+        return (ticks*(WHEEL_DIAMETER*Math.PI))/DT_GEARBOX_TICKS_PER_ROTATION;
     }
 
     public void rotateToRelativeAngle(double degrees){
@@ -247,5 +246,53 @@ public class Drivetrain implements Constants {
         hardware.backRight.setPower(rightPower);
         hardware.frontRight.setPower(rightPower);
     }
+
+    public void controlDrive(Gamepad gamepad){
+        double yDirection = gamepad.left_stick_y;
+        double xDirection = gamepad.right_stick_x;
+
+        double leftPower = (yDirection-xDirection)*(SPEED_MULTIPLIER);
+        double rightPower = (-yDirection-xDirection)*(SPEED_MULTIPLIER);
+        hardware.frontLeft.setSpeed(leftPower);
+        hardware.backLeft.setPower(hardware.frontLeft.getPower());
+        hardware.frontRight.setSpeed(rightPower);
+        hardware.backRight.setPower(hardware.frontRight.getPower());
+
+    }
+
+    public void driveForwardDistancePOM(double distance){
+        eReset();
+        PIDController control = new PIDController(-0.0001,0.000001,0,1);
+        double ticks = (distance/(WHEEL_DIAMETER*Math.PI))*DT_GEARBOX_TICKS_PER_ROTATION;
+        long startTime = System.nanoTime();
+        long beginTime = startTime;
+        long stopState = 0;
+        while(opModeIsActive() && (stopState <= 250)){
+            double avg = hardware.frontLeft.getCurrentPosition();
+            double power = control.pom(ticks,avg,ticks);
+            telemetry.addData("Power: ", power);
+            telemetry.addData("Distance: ",ticksToDistance(avg));
+            telemetry.addData("Angle: ", hardware.imu.getYaw());
+            telemetry.addLine(" ");
+            telemetry.addData("error: ",control.getError());
+            telemetry.addData("KP*deltaDistance: ",control.getKp()*ticks);
+            telemetry.addData("KI*i: ",control.returnVal()[1]);
+            telemetry.addData("KD*d: ",control.returnVal()[2]);
+            telemetry.update();
+
+            hardware.frontLeft.setSpeed(-power);
+            hardware.backLeft.setPower(hardware.frontLeft.getPower());
+            hardware.frontRight.setSpeed(power);
+            hardware.backRight.setPower(hardware.frontRight.getPower());
+
+            if (Math.abs(ticks-avg)<= distanceToTicks(DISTANCE_TOLERANCE)) {
+                telemetry.addData("Distance from Target: ", Math.abs(ticks-avg));
+                stopState = (System.nanoTime() - startTime) / 1000000;
+            } else {
+                startTime = System.nanoTime();
+            }
+        }
+    }
+
 
 }

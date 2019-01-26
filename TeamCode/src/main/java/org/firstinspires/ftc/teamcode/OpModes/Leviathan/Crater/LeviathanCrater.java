@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
+import org.firstinspires.ftc.teamcode.OpModes.Leviathan.Depot.LeviathanDepot;
 import org.firstinspires.ftc.teamcode.Subsystems.GoldFind;
 
 @Autonomous(name = "LeviathanCrater",group = "Crater")
@@ -23,50 +24,60 @@ public class LeviathanCrater extends LinearOpMode implements AutonomousOpMode,Co
         return telemetry;
     }
 
+    enum Positions{LEFT,MIDDLE,RIGHT}
+
+    LeviathanCrater.Positions gold;
+
     @Override
     public void runOpMode() {
         robot.setAuto(this, telemetry);
 
         robot.init(hardwareMap);
 
+        robot.index.setPosition(.15);
+        robot.marker.setPosition(.75);
+
         goldfish = new GoldFind(this, robot);
-        goldfish.setAlignSettings(ALIGN_POSITION, 1000);
-
-        robot.hookRelease.setPosition(0);
-        telemetry.addLine("Instant Run test 3");
-        telemetry.update();
-
-
-        waitForStart();
+        goldfish.setAlignSettings(ALIGN_POSITION, 100);
 
         goldfish.startOpenCV();
 
-        robot.hookRelease.setPosition(0);
+        telemetry.addLine("Instant Run test 3");
+        telemetry.update();
 
-        sleep(500);
+        waitForStart();
 
-        robot.drop.setPosition(1);
-
-        sleep(1000);
-
-        robot.hookSwivel.setPosition(.75);
-
-        robot.drive.rotateToAbsoluteAngle(60); //Doesn't have to be so complicated
-
-        while(getOpModeIsActive()&& !goldfish.isFound()){
-            robot.drive.rotate(-.50);
-            telemetry.addData("Found: ",goldfish.isFound());
-            telemetry.addData("XPos: ",goldfish.getXPosition());
+        if(!goldfish.detector.isFound()){
+            gold = LeviathanCrater.Positions.RIGHT;
+            telemetry.addLine("RIGHT");
+            telemetry.update();
+        }
+        else if(goldfish.getXPosition()<150){
+            gold = LeviathanCrater.Positions.LEFT;
+            telemetry.addLine("LEFT");
+            telemetry.update();
+        }
+        else if(goldfish.getXPosition()>=150){
+            gold = LeviathanCrater.Positions.MIDDLE;
+            telemetry.addLine("MIDDLE");
             telemetry.update();
         }
 
-        goldfish.alignGold();
+        robot.endgame.lift();
 
-        goldfish.disable();
+        robot.drive.driveForwardDistance(-6);
 
-        robot.drive.driveForwardDistance(40);
+        sleep(2000);
 
-        robot.drive.stop();
+        if(gold == LeviathanCrater.Positions.LEFT){
+            robot.craterLeft.run();
+        }
+        else if(gold == LeviathanCrater.Positions.MIDDLE){
+            robot.craterMiddle.run();
+        }
+        else if(gold == LeviathanCrater.Positions.RIGHT){
+            robot.craterRight.run();
+        }
     }
 
 }

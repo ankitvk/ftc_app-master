@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 //import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
@@ -54,6 +55,7 @@ public class GoldFind extends DogeCVDetector implements Constants {
     private boolean found    = false; // Is the gold mineral found
     private boolean aligned  = false; // Is the gold mineral aligned
     private double  goldXPos = 0;     // X Position (in pixels) of the gold element
+    private double  goldYPos = 0;
 
     // Detector settings
     private double alignPosOffset  = 0; // How far from center frame is aligned
@@ -132,10 +134,11 @@ public class GoldFind extends DogeCVDetector implements Constants {
         }
 
         // Vars to calculate the alignment logic.
-        double alignX    = (getAdjustedSize().width / 2) + alignPosOffset; // Center point in X Pixels
+        double alignX    = (getAdjustedSize().height / 2) + alignPosOffset; // Center point in X Pixels
         double alignXMin = alignX - (alignSize / 2); // Min X Pos in pixels
         double alignXMax = alignX +(alignSize / 2); // Max X pos in pixels
         double xPos; // Current Gold X Pos
+        double yPos;
 
         if(bestRect != null){
             // Show chosen result
@@ -145,6 +148,9 @@ public class GoldFind extends DogeCVDetector implements Constants {
             // Set align X pos
             xPos = bestRect.x + (bestRect.width / 2);
             goldXPos = xPos;
+            // Set align Y pos
+            /*yPos = bestRect.y + (bestRect.height / 2);
+            goldYPos = yPos;*/
 
             // Draw center point
             Imgproc.circle(displayMat, new Point( xPos, bestRect.y + (bestRect.height / 2)), 5, new Scalar(0,255,0),2);
@@ -171,8 +177,9 @@ public class GoldFind extends DogeCVDetector implements Constants {
         }
 
         //Print result
-        Imgproc.putText(displayMat,"Result: " + aligned,new Point(10,getAdjustedSize().height - 30),0,1, new Scalar(255,255,0),1);
-
+        //Imgproc.putText(displayMat,"Result: " + aligned,new Point(10,getAdjustedSize().height - 30),0,1, new Scalar(255,255,0),1);
+        found = detector.isFound();
+        goldXPos = detector.getXPosition();
 
         return displayMat;
 
@@ -220,7 +227,11 @@ public class GoldFind extends DogeCVDetector implements Constants {
      * @return last x-position in screen pixels of gold element
      */
     public double getXPosition(){
-        return goldXPos;
+        return detector.getXPosition();
+    }
+
+    public double getYPosition(){
+        return  goldYPos;
     }
 
     /**
@@ -239,7 +250,7 @@ public class GoldFind extends DogeCVDetector implements Constants {
         detector.alignSize = 200;
         detector.alignPosOffset = 0;
         detector.downscale = .4;
-        detector.areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA;
+        detector.areaScoringMethod = DogeCV.AreaScoringMethod.COLOR_DEVIATION;
         detector.maxAreaScorer.weight = 0.005;
         detector.ratioScorer.weight = 5;
         detector.ratioScorer.perfectRatio = 1;

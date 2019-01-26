@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.Subsystems.Components;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Control.Controller;
 import org.firstinspires.ftc.teamcode.Control.PIDController;
@@ -16,8 +18,8 @@ public class Pivot implements Constants {
     private double kd = 0;
 
     private double targetPosition;
-    private double basePower = 0.7;
-    private double baseDownPower = 0.5;
+    private double basePower = 1;
+    private double baseDownPower = 1;
     private double rotatorPower = basePower;
     private double downPower = -0.1;
 
@@ -26,9 +28,13 @@ public class Pivot implements Constants {
     private double liftPosition = 0;
 
     Hardware hardware;
+    private AutonomousOpMode auto;
+    private Telemetry telemetry;
 
     public Pivot(Hardware hardware){
         this.hardware=hardware;
+        auto = hardware.auto;
+        telemetry = hardware.telemetry;
     }
 
     public void driverControl(Gamepad controller) {
@@ -65,8 +71,8 @@ public class Pivot implements Constants {
         kp = (pivotKP * -liftPosition) + 0.001;
         ki = 0.0;
         kd = 0.0;
-        rotatorPower = (0.0001 * -liftPosition) + basePower;
-        downPower = (0.001 * Math.abs(getPosition()) + baseDownPower);
+        rotatorPower = (0.0005 * -liftPosition) + basePower;
+        downPower = (0.005 * Math.abs(getPosition()) + baseDownPower);
         if (controller.dpad_right){
             setPower(-rotatorPower);
         }
@@ -91,6 +97,70 @@ public class Pivot implements Constants {
         pivotControl.setKd(kd);
     }
 
+    public void scoringPosition(){
+            PIDController scoringPosition = new PIDController(1,0,0,0);
+            long startTime = System.nanoTime();
+            long beginTime = startTime;
+            long stopState = 0;
+
+            double ticks = 0;
+
+            while((opModeIsActive() && (stopState <= 250))){
+                double position = getPosition();
+                double power = scoringPosition.power(ticks,position);
+
+                telemetry.addData("stopstate: ", stopState);
+                telemetry.addData("KP*error: ",scoringPosition.returnVal()[0]);
+                telemetry.addData("KI*i: ",scoringPosition.returnVal()[1]);
+                telemetry.addData("KD*d: ",scoringPosition.returnVal()[2]);
+                telemetry.update();
+
+                hardware.pivot1.setPower(power);
+                hardware.pivot2.setPower(power);
+
+                if (!hardware.limit.getState()) {
+                    stopState = (System.nanoTime() - startTime) / 1000000;
+                }
+                else {
+                    startTime = System.nanoTime();
+                }
+            }
+            stop();
+            eReset();
+    }
+
+    public void downPosition(){
+        PIDController scoringPosition = new PIDController(1,0,0,0);
+        long startTime = System.nanoTime();
+        long beginTime = startTime;
+        long stopState = 0;
+
+        double ticks = 0;
+
+        while((opModeIsActive() && (stopState <= 250))){
+            double position = getPosition();
+            double power = scoringPosition.power(ticks,position);
+
+            telemetry.addData("stopstate: ", stopState);
+            telemetry.addData("KP*error: ",scoringPosition.returnVal()[0]);
+            telemetry.addData("KI*i: ",scoringPosition.returnVal()[1]);
+            telemetry.addData("KD*d: ",scoringPosition.returnVal()[2]);
+            telemetry.update();
+
+            hardware.pivot1.setPower(power);
+            hardware.pivot2.setPower(power);
+
+            if (Math.abs(ticks-position)<= ENCODER_TOLERANCE) {
+                stopState = (System.nanoTime() - startTime) / 1000000;
+            }
+            else {
+                startTime = System.nanoTime();
+            }
+        }
+        stop();
+
+    }
+
     private void eReset(){
         for(SpeedControlledMotor motor: hardware.pivotMotors) {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -108,7 +178,7 @@ public class Pivot implements Constants {
     }
 
     public double getPosition() {
-        return (hardware.pivotMotors[0].getCurrentPosition());
+        return (hardware.pivotMotors[1].getCurrentPosition())+(hardware.pivotMotors[0].getCurrentPosition())-1;
     }
 
     public void setPower(double power){
@@ -127,6 +197,10 @@ public class Pivot implements Constants {
             angle += motor.getAngle(PIVOT_TICKS_PER_INCH,PIVOT_TICKS_PER_ROTATION);
         }
         return angle;
+    }
+
+    public boolean opModeIsActive() {
+        return auto.getOpModeIsActive();
     }
 
 }

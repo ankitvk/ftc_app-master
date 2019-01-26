@@ -4,19 +4,21 @@ import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 public interface Constants {
     double NANOSECONDS_PER_MINUTE = 6e+10;
-    double NEVEREST_MAX_RPM = 16;
+    double NEVEREST_CLASSIC_MAX_RPM = 6600;
     double NEVEREST20_COUNTS_PER_REV = 560;
     double NEVEREST40_COUNTS_PER_REV = 1120;
 
-    double NEVEREST_CLASSIC = 28;
-    double DT_NEVEREST_GEARBOX = (55/3)*NEVEREST_CLASSIC;
+    double NEVEREST_CLASSIC_TICKS_PER_ROTATION = 28;
+    double DT_GEAR_RATIO = 55/3;
+    double DT_GEARBOX_TICKS_PER_ROTATION = DT_GEAR_RATIO*NEVEREST_CLASSIC_TICKS_PER_ROTATION;
+    double DT_MAX_RPM = NEVEREST_CLASSIC_MAX_RPM/DT_GEAR_RATIO;
 
     double PIVOT_TICKS_PER_ROTATION = 100;
     double PIVOT_TICKS_PER_INCH = 100;
 
     double E4T_COUNTS_PER_REV = 537.6;
     int PATH_FOLLOWING_INTERVAL = 50;
-    double SPEED_MULTIPLIER = .75;
+    double SPEED_MULTIPLIER = .85;
     double PATH_FOLLOW_SPEED_MULTIPLIER = .25;
 
     double LENGTH_BETWEEN_WHEELS = 15.789;
@@ -24,6 +26,7 @@ public interface Constants {
 
     double DISTANCE_TOLERANCE = .5;
     double IMU_TOLERANCE = .5;
+    double ENCODER_TOLERANCE = 50;
 
     double LOOKAHEAD = 5;
 

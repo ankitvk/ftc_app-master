@@ -570,14 +570,14 @@ public class FtcRobotControllerActivity extends Activity
     LinearLayout monitorContainer = (LinearLayout) findViewById(R.id.monitorContainer);
     if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
       // When the phone is landscape, lay out the monitor views horizontally.
-      monitorContainer.setOrientation(LinearLayout.HORIZONTAL);
+      monitorContainer.setOrientation(LinearLayout.VERTICAL);
       for (int i = 0; i < monitorContainer.getChildCount(); i++) {
         View view = monitorContainer.getChildAt(i);
         view.setLayoutParams(new LayoutParams(0, LayoutParams.MATCH_PARENT, 1 /* weight */));
       }
     } else {
       // When the phone is portrait, lay out the monitor views vertically.
-      monitorContainer.setOrientation(LinearLayout.HORIZONTAL); //yeahh
+      monitorContainer.setOrientation(LinearLayout.VERTICAL); //yeahh
       for (int i = 0; i < monitorContainer.getChildCount(); i++) {
         View view = monitorContainer.getChildAt(i);
         view.setLayoutParams(new LayoutParams(0, LayoutParams.MATCH_PARENT, 1 /* weight */));//LayoutParams.MATCH_PARENT, 0, 1 /* weight */)

@@ -12,7 +12,12 @@ import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Control.SpeedControlledMotor;
 import org.firstinspires.ftc.teamcode.Sensors.BNO055_IMU;
 import org.firstinspires.ftc.teamcode.Subsystems.Components.Drivetrain;
+import org.firstinspires.ftc.teamcode.Subsystems.Components.Endgame;
 import org.firstinspires.ftc.teamcode.Subsystems.Components.Extendo;
+import org.firstinspires.ftc.teamcode.Subsystems.Components.Intake;
+import org.firstinspires.ftc.teamcode.Subsystems.Paths.Crater.craterLeft;
+import org.firstinspires.ftc.teamcode.Subsystems.Paths.Crater.craterMiddle;
+import org.firstinspires.ftc.teamcode.Subsystems.Paths.Crater.craterRight;
 import org.firstinspires.ftc.teamcode.Subsystems.Paths.Depot.depotLeft;
 import org.firstinspires.ftc.teamcode.Subsystems.Paths.Depot.depotMiddle;
 import org.firstinspires.ftc.teamcode.Subsystems.Paths.Depot.depotRight;
@@ -26,7 +31,7 @@ public class Hardware implements Constants {
 
     public Telemetry telemetry;
 
-    public Servo hookRelease,hookSwivel,drop,index;
+    public Servo /*hookRelease,hookSwivel,drop,*/index,marker;
 
     public CRServo intake;
 
@@ -36,16 +41,16 @@ public class Hardware implements Constants {
 
     //public Servo led;
 
-    public RevBlinkinLedDriver led;
+    //public RevBlinkinLedDriver led;
 
-    double kp = 0.1;
-    double ki = 0.000001;
+    double kp = 0.00015;
+    double ki = 0;
 
     public SpeedControlledMotor
-            frontLeft = new SpeedControlledMotor(kp,ki,0,1),
-            frontRight = new SpeedControlledMotor(kp,ki,0,1),
-            backLeft = new SpeedControlledMotor(kp,ki,0,1),
-            backRight = new SpeedControlledMotor(kp,ki,0,1),
+            frontLeft = new SpeedControlledMotor(.0031,0,0,1),
+            backLeft = new SpeedControlledMotor(.0031,0,0,1),
+            frontRight = new SpeedControlledMotor(.0031,0,0,1),
+            backRight = new SpeedControlledMotor(.0031,0,0,1),
             extendo = new SpeedControlledMotor(extensionKP,extensionKI,extensionKD,extensionMaxI),
             winch = new SpeedControlledMotor(0,0,0,1),
             pivot1 = new SpeedControlledMotor(0,0,0,0),
@@ -59,11 +64,15 @@ public class Hardware implements Constants {
     public Drivetrain drive;
     public Pivot pivot ;
     public Extendo extendoo;
-    //private Intake intake;
+    public Endgame endgame;
 
     public depotLeft depotLeft;
     public depotMiddle depotMiddle;
     public depotRight depotRight;
+
+    public craterLeft craterLeft;
+    public craterMiddle craterMiddle;
+    public craterRight craterRight;
 
     public void init(HardwareMap hardwareMap){
 
@@ -76,7 +85,7 @@ public class Hardware implements Constants {
         backLeft.init(hwMap,"backLeft");
         backRight.init(hwMap,"backRight");
 
-        led = hardwareMap.get(RevBlinkinLedDriver.class, "led");
+        //led = hardwareMap.get(RevBlinkinLedDriver.class, "led");
 
         extendo.init(hwMap,"extendo");
 
@@ -85,10 +94,12 @@ public class Hardware implements Constants {
 
         winch.init(hwMap,"winch");
 
-        hookRelease = hardwareMap.servo.get("hookRelease");
-        hookSwivel = hardwareMap.servo.get("hookSwivel");
+        //hookRelease = hardwareMap.servo.get("hookRelease");
+        //hookSwivel = hardwareMap.servo.get("hookSwivel");
 
-        drop = hardwareMap.servo.get("drop");
+        marker = hardwareMap.servo.get("marker");
+
+        //drop = hardwareMap.servo.get("drop");
 
         index = hardwareMap.servo.get("index");
 
@@ -97,7 +108,7 @@ public class Hardware implements Constants {
         drive = new Drivetrain(this);
         pivot = new Pivot(this);
         extendoo = new Extendo(this);
-        //private Intake intake =  new Intake(robot);
+        endgame = new Endgame(this);
 
         depotLeft = new depotLeft(this);
         depotMiddle = new depotMiddle(this);

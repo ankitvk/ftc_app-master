@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 
-@Disabled
 @Autonomous(name = "JustDrop",group = "Dummy")
 public class JustDrop extends LinearOpMode implements AutonomousOpMode,Constants{
     Hardware robot = new Hardware();
@@ -34,11 +33,8 @@ public class JustDrop extends LinearOpMode implements AutonomousOpMode,Constants
 
         waitForStart();
 
+        robot.endgame.lift();
 
-        robot.hookRelease.setPosition(0);
-
-        robot.drop.setPosition(1);
-
-        robot.drive.stop();
+        robot.drive.driveForwardDistance(-5);
     }
 }

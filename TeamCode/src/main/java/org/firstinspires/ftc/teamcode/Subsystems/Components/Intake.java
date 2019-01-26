@@ -39,19 +39,19 @@ public class Intake implements Constants {
 
     public void index(Gamepad gamepad){
         if(gamepad.a){
-            hardware.index.setPosition(.35);
+            hardware.index.setPosition(.15);
         }
         else{
-            hardware.index.setPosition(.75);
+            hardware.index.setPosition(.95);
         }
     }
 
     public void index(Gamepad gamepad,boolean idc){
         if(gamepad.dpad_up){
-            hardware.index.setPosition(.35);
+            hardware.index.setPosition(.15);
         }
         else{
-            hardware.index.setPosition(.75);
+            hardware.index.setPosition(.95);
         }
     }
 }

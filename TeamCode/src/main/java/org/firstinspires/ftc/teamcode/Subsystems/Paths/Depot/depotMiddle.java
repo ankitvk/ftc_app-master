@@ -18,13 +18,18 @@ public class depotMiddle implements Constants {
     private Telemetry telemetry;
     private Hardware hardware;
 
+    private final double ROTATE_TO_GOLD_ANGLE = -85;
+    private final double ROTATE_TO_GOLD_KP = 0.015/*.02725*/;
+    private final double ROTATE_TO_GOLD_KI = 1.5;
+    private final double ROTATE_TO_GOLD_KD = 0;
+
     private final double DRIVE_TO_DEPOT_DISTANCE = 64;
     private final double DRIVE_TO_DEPOT_KP = .00022;
-    private final double DRIVE_TO_DEPOT_KI = 0.01;
+    private final double DRIVE_TO_DEPOT_KI = 0.1;
     private final double DRIVE_TO_DEPOT_KD = 0;
 
-    private final double ROTATE_TO_CRATER_ANGLE = -46;
-    private final double ROTATE_TO_CRATER_KP = .01885;
+    private final double ROTATE_TO_CRATER_ANGLE = -46-90;
+    private final double ROTATE_TO_CRATER_KP = .015;
     private final double ROTATE_TO_CRATER_KI = 2;
     private final double ROTATE_TO_CRATER_KD = 0;
 
@@ -45,15 +50,55 @@ public class depotMiddle implements Constants {
     }
 
     public void run(){
+        rotateToGold();
         driveToDepot();
-        rotateToCrater();
-        driveToCrater();
+        hardware.marker.setPosition(.15);
+        /*rotateToCrater();
+        driveToCrater();*/
     }
+
+    private void rotateToGold(){
+        double degrees = ROTATE_TO_GOLD_ANGLE;
+        PIDController controlRotate = new PIDController(ROTATE_TO_GOLD_KP,ROTATE_TO_GOLD_KI,ROTATE_TO_GOLD_KD,1);
+        long startTime = System.nanoTime();
+        long beginTime = startTime;
+        long stopState = 0;
+        while(opModeIsActive() && (stopState <= 250)){
+
+            double position = hardware.imu.getRelativeYaw();
+            double power = controlRotate.power(degrees,position);
+
+            telemetry.addData("power", power);
+            telemetry.addData("stopstate: ", stopState);
+            telemetry.addData("Angle: ", hardware.imu.getRelativeYaw());
+            telemetry.addLine(" ");
+            telemetry.addData("error: ",controlRotate.getError());
+            telemetry.addData("KP*error: ",controlRotate.returnVal()[0]);
+            telemetry.addData("KI*i: ",controlRotate.returnVal()[1]);
+            telemetry.update();
+
+            frontLeft.setPower(power);
+            backLeft.setPower(power);
+            frontRight.setPower(power);
+            backRight.setPower(power);
+
+            if (Math.abs(position-degrees) <= IMU_TOLERANCE) {
+                stopState = (System.nanoTime() - startTime) / 1000000;
+            }
+            else {
+                startTime = System.nanoTime();
+            }
+            if(System.nanoTime()/1000000-beginTime/1000000>5000){
+                break;
+            }
+        }
+    }
+
     private void driveToDepot(){
         double distance = DRIVE_TO_DEPOT_DISTANCE;
         eReset();
         PIDController control = new PIDController(DRIVE_TO_DEPOT_KP,DRIVE_TO_DEPOT_KI,DRIVE_TO_DEPOT_KD,1);
-        double ticks = (distance/(WHEEL_DIAMETER*Math.PI))*DT_NEVEREST_GEARBOX;
+        double ticks = (distance/(WHEEL_DIAMETER*Math.PI))*DT_GEARBOX_TICKS_PER_ROTATION;
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
@@ -63,17 +108,16 @@ public class depotMiddle implements Constants {
             telemetry.addData("Power: ", power);
             telemetry.addData("Distance: ",ticksToDistance(avg));
             telemetry.addData("Angle: ", hardware.imu.getYaw());
-            telemetry.addLine(" ");
             telemetry.addData("error: ",control.getError());
             telemetry.addData("KP*error: ",control.returnVal()[0]);
             telemetry.addData("KI*i: ",control.returnVal()[1]);
             telemetry.addData("KD*d: ",control.returnVal()[2]);
             telemetry.update();
 
-            frontLeft.setPower(-power);
-            backLeft.setPower(-power);
-            frontRight.setPower(power);
-            backRight.setPower(power);
+            hardware.frontLeft.setPower(-power);
+            hardware.backLeft.setPower(-power);
+            hardware.frontRight.setPower(power);
+            hardware.backRight.setPower(power);
 
             if (Math.abs(ticks-avg)<= distanceToTicks(DISTANCE_TOLERANCE)) {
                 telemetry.addData("Distance from Target: ", Math.abs(ticks-avg));
@@ -110,10 +154,10 @@ public class depotMiddle implements Constants {
             telemetry.addData("KD*d: ",controlRotate.returnVal()[2]);
             telemetry.update();
 
-            frontLeft.setPower(power);
-            backLeft.setPower(power);
-            frontRight.setPower(power);
-            backRight.setPower(power);
+            hardware.frontLeft.setPower(power);
+            hardware.backLeft.setPower(power);
+            hardware.frontRight.setPower(power);
+            hardware.backRight.setPower(power);
 
             if (Math.abs(position-degrees) <= IMU_TOLERANCE) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
@@ -131,7 +175,7 @@ public class depotMiddle implements Constants {
         double distance = DRIVE_TO_CRATER_DISTANCE;
         eReset();
         PIDController control = new PIDController(DRIVE_TO_CRATER_KP,DRIVE_TO_CRATER_KI,DRIVE_TO_CRATER_KD,1);
-        double ticks = (distance/(WHEEL_DIAMETER*Math.PI))*DT_NEVEREST_GEARBOX;
+        double ticks = (distance/(WHEEL_DIAMETER*Math.PI))*DT_GEARBOX_TICKS_PER_ROTATION;
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
@@ -148,10 +192,10 @@ public class depotMiddle implements Constants {
             telemetry.addData("KD*d: ",control.returnVal()[2]);
             telemetry.update();
 
-            frontLeft.setPower(-power);
-            backLeft.setPower(-power);
-            frontRight.setPower(power);
-            backRight.setPower(power);
+            hardware.frontLeft.setPower(-power);
+            hardware.backLeft.setPower(-power);
+            hardware.frontRight.setPower(power);
+            hardware.backRight.setPower(power);
 
             if (Math.abs(ticks-avg)<= distanceToTicks(DISTANCE_TOLERANCE)) {
                 telemetry.addData("Distance from Target: ", Math.abs(ticks-avg));
@@ -182,10 +226,10 @@ public class depotMiddle implements Constants {
     }
 
     private double distanceToTicks(double distance){
-        return (distance/(WHEEL_DIAMETER*Math.PI))*DT_NEVEREST_GEARBOX;
+        return (distance/(WHEEL_DIAMETER*Math.PI))*DT_GEARBOX_TICKS_PER_ROTATION;
     }
     private double ticksToDistance(double ticks){
-        return (ticks*(WHEEL_DIAMETER*Math.PI))/DT_NEVEREST_GEARBOX;
+        return (ticks*(WHEEL_DIAMETER*Math.PI))/DT_GEARBOX_TICKS_PER_ROTATION;
     }
     public boolean opModeIsActive() {
         return auto.getOpModeIsActive();

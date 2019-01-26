@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Subsystems.GoldFind;
 
-@Disabled
 @Autonomous(name = "OpenCVTest",group = "Depot")
 public class OpenCVTest extends LinearOpMode implements AutonomousOpMode,Constants {
 
@@ -37,11 +36,13 @@ public class OpenCVTest extends LinearOpMode implements AutonomousOpMode,Constan
 
         waitForStart();
 
-        goldfish.startOpenCVPhone();
+        goldfish.startOpenCV();
 
         while(getOpModeIsActive()){
             telemetry.addData("Found: ",goldfish.isFound());
             telemetry.addData("Aligned: ",goldfish.getAligned());
+            telemetry.addData("X: ",goldfish.getXPosition());
+            telemetry.addData("Found: ",goldfish.detector.isFound());
             telemetry.update();
         }
     }

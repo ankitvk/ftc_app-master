@@ -2,37 +2,28 @@ package org.firstinspires.ftc.teamcode.Subsystems.Components;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
+import org.firstinspires.ftc.teamcode.Control.PIDController;
 import org.firstinspires.ftc.teamcode.Control.Toggle;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
+import org.firstinspires.ftc.teamcode.Subsystems.GoldFind;
 
 public class Endgame implements Constants {
 
      Hardware hardware;
-     Toggle swivelToggle = new Toggle();
+    private AutonomousOpMode auto;
+    private Telemetry telemetry;
+    private GoldFind goldfish;
 
      public Endgame(Hardware hardware){
+
          this.hardware = hardware;
+         auto = hardware.auto;
+         telemetry = hardware.telemetry;
      }
 
-     public void hookSwivel(Gamepad gamepad){
-
-         if(gamepad.right_bumper){
-             hardware.hookSwivel.setPosition(.75);
-         }
-         else if(gamepad.left_bumper){
-             hardware.hookSwivel.setPosition(.45);
-         }
-     }
-
-     public void hookRelease (Gamepad gamepad){
-         if (gamepad.y){
-             hardware.hookRelease.setPosition(1);
-         }
-         else if (gamepad.x){
-             hardware.hookRelease.setPosition(0);
-         }
-     }
 
      public void winch (Gamepad gamepad){
          if (gamepad.right_trigger>.75){
@@ -46,12 +37,21 @@ public class Endgame implements Constants {
          }
      }
 
-     public void drop (Gamepad gamepad){
-         if (gamepad.dpad_down){
-             hardware.drop.setPosition(0);
+     public void lift(){
+         boolean idc = true;
+         double position = 0;
+         double current = hardware.winch.getCurrentPosition();
+         while(opModeIsActive()&& hardware.winch.getCurrentPosition()<current+22000){
+             hardware.winch.setPower(-1);
+             telemetry.addData("encoderticks: ",hardware.winch.getCurrentPosition());
+
+             telemetry.update();
          }
-         else{
-             hardware.drop.setPosition(1);
-         }
+         //return position;
      }
+    public boolean opModeIsActive() {
+        return auto.getOpModeIsActive();
+    }
+
+
 }

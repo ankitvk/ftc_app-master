@@ -34,7 +34,9 @@ public class PIDController implements Constants{
         this.maxI = maxI;
     }
 
+
     public double power(double lock, double currentLoc) {
+
         current = currentLoc;
         target = lock;
         error = lock - currentLoc;
@@ -44,6 +46,20 @@ public class PIDController implements Constants{
         }
         d = (error - previousError)/deltaTime;
         power = (KP*error) + (KI*i) + (KD*d);
+        power = power < 0 ? Math.min(power, -minPower) : Math.max(power, minPower);
+        previousTime = System.nanoTime();
+        previousError = error;
+        return power;
+    }
+
+    public double pom(double lock, double currentLoc, double deltaProcessVariable) {
+        current = currentLoc;
+        target = lock;
+        error = lock - currentLoc;
+        double deltaTime = (System.nanoTime() - previousTime)/NANOSECONDS_PER_MINUTE;
+        i+=error*deltaTime;
+        d = (error - previousError)/deltaTime;
+        power = (KP*deltaProcessVariable) + (KI*i) + (KD*d);
         previousTime = System.nanoTime();
         previousError = error;
         power = power < 0 ? Math.min(power, -minPower) : Math.max(power, minPower);

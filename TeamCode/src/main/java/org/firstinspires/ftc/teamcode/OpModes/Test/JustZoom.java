@@ -8,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
-@Disabled
+
 @Autonomous(name = "JustZoom",group = "Dummy")
 public class JustZoom extends LinearOpMode implements AutonomousOpMode,Constants{
 
@@ -29,12 +29,14 @@ public class JustZoom extends LinearOpMode implements AutonomousOpMode,Constants
         robot.init(hardwareMap);
 
         telemetry.addLine("Instant Run test 3");
+        telemetry.addData("encoder: ",robot.winch.getCurrentPosition());
         telemetry.update();
 
         waitForStart();
 
-        robot.drive.driveForwardDistance(45);
+        //robot.endgame.lift();
+        /*robot.drive.driveForwardDistancePOM(45);
 
-        robot.drive.stop();
+        robot.drive.stop();*/
     }
 }

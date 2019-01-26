@@ -27,22 +27,22 @@ public class OneManGangTeleop extends OpMode implements Constants {
 
     public void init(){
         robot.init(hardwareMap);
-        robot.hookRelease.setPosition(0);
+        /*robot.hookRelease.setPosition(0);
         //robot.led.setPosition(-.41);
         robot.hookSwivel.setPosition(.75);
-        robot.led.setPattern(PATTERN);
+        robot.led.setPattern(PATTERN);*/
 
     }
     public void loop(){
 
         drivetrain.drive(gamepad1);
-        pivot.driverControl(gamepad2,true);
+        pivot.driverControl(gamepad1,true);
         extendo.driverControl(gamepad1);
         intake.intake(gamepad1);
-        intake.index(gamepad2,true);
+        intake.index(gamepad1,true);
         //endgame.hookRelease(gamepad1);
         //endgame.hookSwivel(gamepad1);
-        endgame.winch(gamepad2);
+        endgame.winch(gamepad1);
         //endgame.drop(gamepad1);
 
         //telemetry.addData("Angle: ",robot.imu.getRelativeYaw());

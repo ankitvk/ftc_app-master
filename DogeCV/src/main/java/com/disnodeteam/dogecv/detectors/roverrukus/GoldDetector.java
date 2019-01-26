@@ -34,8 +34,9 @@ public class GoldDetector extends DogeCVDetector {
     private Mat maskYellow = new Mat(); // Yellow Mask returned by color filter
     private Mat hierarchy  = new Mat(); // hierarchy used by coutnours
 
+    public double goldXPos = 0;
     // Results of the detector
-    private boolean found    = false; // Is the gold mineral found
+    public boolean found    = false; // Is the gold mineral found
     private Point   screenPosition = new Point(); // Screen position of the mineral
     private Rect    foundRect = new Rect(); // Found rect
 
@@ -116,6 +117,13 @@ public class GoldDetector extends DogeCVDetector {
 
     }
 
+    public double getX(){
+        return goldXPos;
+    }
+
+    public boolean found(){
+        return found;
+    }
     @Override
     public void useDefaults() {
         addScorer(ratioScorer);

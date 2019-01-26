@@ -18,28 +18,28 @@ public class depotLeft implements Constants {
     private Telemetry telemetry;
     private Hardware hardware;
 
-    private final double ROTATE_TO_GOLD_ANGLE = 25;
-    private final double ROTATE_TO_GOLD_KP = .02725;
+    private final double ROTATE_TO_GOLD_ANGLE = -60;
+    private final double ROTATE_TO_GOLD_KP = 0.015/*.02725*/;
     private final double ROTATE_TO_GOLD_KI = 1.5;
     private final double ROTATE_TO_GOLD_KD = 0;
 
-    private final double DRIVE_TO_GOLD_DISTANCE = 48;
-    private final double DRIVE_TO_GOLD_KP = .00028;
+    private final double DRIVE_TO_GOLD_DISTANCE = 45;
+    private final double DRIVE_TO_GOLD_KP = .0004;
     private final double DRIVE_TO_GOLD_KI = 0.01;
     private final double DRIVE_TO_GOLD_KD = 0;
 
-    private final double ROTATE_TO_DEPOT_ANGLE = -45;
-    private final double ROTATE_TO_DEPOT_KP = .0145;
-    private final double ROTATE_TO_DEPOT_KI = 3;
+    private final double ROTATE_TO_DEPOT_ANGLE = -135;
+    private final double ROTATE_TO_DEPOT_KP = 0.013;
+    private final double ROTATE_TO_DEPOT_KI = 1.5;
     private final double ROTATE_TO_DEPOT_KD = 0;
 
-    private final double DRIVE_TO_DEPOT_DISTANCE = 25;
+    private final double DRIVE_TO_DEPOT_DISTANCE = 10;
     private final double DRIVE_TO_DEPOT_KP = .00032;
     private final double DRIVE_TO_DEPOT_KI = 0.01;
     private final double DRIVE_TO_DEPOT_KD = 0;
 
-    private final double DRIVE_TO_CRATER_DISTANCE = -68;
-    private final double DRIVE_TO_CRATER_KP = .000175;
+    private final double DRIVE_TO_CRATER_DISTANCE = -75;
+    private final double DRIVE_TO_CRATER_KP = /*.000175*/0.0004;
     private final double DRIVE_TO_CRATER_KI = 0.01;
     private final double DRIVE_TO_CRATER_KD = 0;
 
@@ -59,11 +59,7 @@ public class depotLeft implements Constants {
         driveToGold();
         rotateToDepot();
         driveToDepot();
-        stop();
-        hardware.intake.setPower(.75);
-        sleep(1500);
-        hardware.intake.setPower(0);
-        driveToCrater();
+        hardware.marker.setPosition(.15);
     }
 
     private void rotateToGold(){
@@ -97,7 +93,7 @@ public class depotLeft implements Constants {
             else {
                 startTime = System.nanoTime();
             }
-            if(System.nanoTime()/1000000-beginTime/1000000>2000){
+            if(System.nanoTime()/1000000-beginTime/1000000>3000){
                 break;
             }
         }
@@ -107,7 +103,7 @@ public class depotLeft implements Constants {
         double distance = DRIVE_TO_GOLD_DISTANCE;
         eReset();
         PIDController control = new PIDController(DRIVE_TO_GOLD_KP,DRIVE_TO_GOLD_KI,DRIVE_TO_GOLD_KD,1);
-        double ticks = (distance/(WHEEL_DIAMETER*Math.PI))*DT_NEVEREST_GEARBOX;
+        double ticks = (distance/(WHEEL_DIAMETER*Math.PI))*DT_GEARBOX_TICKS_PER_ROTATION;
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
@@ -135,7 +131,7 @@ public class depotLeft implements Constants {
                 startTime = System.nanoTime();
             }
 
-            if(System.nanoTime()/1000000-beginTime/1000000>5500){
+            if(System.nanoTime()/1000000-beginTime/1000000>4000){
                 break;
             }
 
@@ -172,16 +168,16 @@ public class depotLeft implements Constants {
             else {
                 startTime = System.nanoTime();
             }
-            /*if(System.nanoTime()/1000000-beginTime/1000000>3000){
+            if(System.nanoTime()/1000000-beginTime/1000000>3000){
                 break;
-            }*/
+            }
         }
     }
     private void driveToDepot(){
         double distance = DRIVE_TO_DEPOT_DISTANCE;
         eReset();
         PIDController control = new PIDController(DRIVE_TO_DEPOT_KP,DRIVE_TO_DEPOT_KI,DRIVE_TO_DEPOT_KD,1);
-        double ticks = (distance/(WHEEL_DIAMETER*Math.PI))*DT_NEVEREST_GEARBOX;
+        double ticks = (distance/(WHEEL_DIAMETER*Math.PI))*DT_GEARBOX_TICKS_PER_ROTATION;
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
@@ -220,7 +216,7 @@ public class depotLeft implements Constants {
         double distance = DRIVE_TO_CRATER_DISTANCE;
         eReset();
         PIDController control = new PIDController(DRIVE_TO_CRATER_KP,DRIVE_TO_CRATER_KI,DRIVE_TO_CRATER_KD,1);
-        double ticks = (distance/(WHEEL_DIAMETER*Math.PI))*DT_NEVEREST_GEARBOX;
+        double ticks = (distance/(WHEEL_DIAMETER*Math.PI))*DT_GEARBOX_TICKS_PER_ROTATION;
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
@@ -278,10 +274,10 @@ public class depotLeft implements Constants {
     }
 
     private double distanceToTicks(double distance){
-        return (distance/(WHEEL_DIAMETER*Math.PI))*DT_NEVEREST_GEARBOX;
+        return (distance/(WHEEL_DIAMETER*Math.PI))*DT_GEARBOX_TICKS_PER_ROTATION;
     }
     private double ticksToDistance(double ticks){
-        return (ticks*(WHEEL_DIAMETER*Math.PI))/DT_NEVEREST_GEARBOX;
+        return (ticks*(WHEEL_DIAMETER*Math.PI))/DT_GEARBOX_TICKS_PER_ROTATION;
     }
     public boolean opModeIsActive() {
         return auto.getOpModeIsActive();

@@ -4,6 +4,7 @@ import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.OpenCVPipeline;
 import com.disnodeteam.dogecv.scoring.DogeCVScorer;
 
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
@@ -31,7 +32,7 @@ public abstract class DogeCVDetector extends OpenCVPipeline{
 
     public DogeCV.DetectionSpeed speed = DogeCV.DetectionSpeed.BALANCED;
     public double downscale = 0.5;
-    public Size   downscaleResolution = new Size(640, 480);
+    public Size   downscaleResolution = new Size(480, 640);
     public boolean useFixedDownscale = true;
     protected String detectorName = "DogeCV Detector";
 
@@ -63,6 +64,7 @@ public abstract class DogeCVDetector extends OpenCVPipeline{
     public Mat processFrame(Mat rgba, Mat gray) {
         initSize = rgba.size();
 
+
         if(useFixedDownscale){
             adjustedSize = downscaleResolution;
         }else{
@@ -74,8 +76,21 @@ public abstract class DogeCVDetector extends OpenCVPipeline{
         if(workingMat.empty()){
             return rgba;
         }
-        Imgproc.resize(workingMat, workingMat,adjustedSize); // Downscale
-        Imgproc.resize(process(workingMat),workingMat,getInitSize()); // Process and scale back to original size for viewing
+
+
+        Mat tempBefore = workingMat.t(); //wacky
+
+        Core.flip(tempBefore, workingMat, -1); //mRgba.t() is the transpose
+
+        tempBefore.release();//end wacky
+
+        Imgproc.resize(process(workingMat), workingMat,getInitSize()); // Downscale
+
+
+        //Imgproc.resize(process(workingMat),workingMat,getInitSize()); // Process and scale back to original size for viewing*/
+
+
+
         //Print Info
         Imgproc.putText(workingMat,"DogeCV 2018.2 " + detectorName + ": " + getAdjustedSize().toString() + " - " + speed.toString() ,new Point(5,30),0,0.5,new Scalar(0,255,255),2);
 

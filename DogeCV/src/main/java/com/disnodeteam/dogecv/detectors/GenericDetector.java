@@ -105,7 +105,7 @@ public class GenericDetector extends DogeCVDetector {
 
 
         //Print result
-        Imgproc.putText(displayMat,"Result: " + screenPosition.x +"/"+screenPosition.y,new Point(10,getAdjustedSize().height - 30),0,1, new Scalar(255,255,0),1);
+        //Imgproc.putText(displayMat,"Result: " + screenPosition.x +"/"+screenPosition.y,new Point(10,getAdjustedSize().height - 30),0,1, new Scalar(255,255,0),1);
 
 
         return displayMat;
