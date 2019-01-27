@@ -49,7 +49,7 @@ public class SpeedControlledMotor implements Constants {
     public void setSpeed(double speed) {
         double rpm = DT_MAX_RPM*speed;
         rpmTemp = rpm;
-        double power = PIDController.power(100/rpm, getRPM());
+        double power = PIDController.power(rpm, getRPM());
         //motor.setPower((power > 0 && getRPM() > 0) || (power < 0 && getRPM() < 0) ? 0: (power));
         motor.setPower(power);
     }
