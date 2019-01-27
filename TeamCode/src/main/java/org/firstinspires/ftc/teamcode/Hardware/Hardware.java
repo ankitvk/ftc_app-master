@@ -39,10 +39,6 @@ public class Hardware implements Constants {
 
     public DigitalChannel limit;
 
-    //public Servo led;
-
-    //public RevBlinkinLedDriver led;
-
     double kp = 0.00015;
     double ki = 0;
 
@@ -85,8 +81,6 @@ public class Hardware implements Constants {
         backLeft.init(hwMap,"backLeft");
         backRight.init(hwMap,"backRight");
 
-        //led = hardwareMap.get(RevBlinkinLedDriver.class, "led");
-
         extendo.init(hwMap,"extendo");
 
         pivot1.init(hwMap,"pivot1");
@@ -125,6 +119,5 @@ public class Hardware implements Constants {
     public HardwareMap getHwMap() {
         return hwMap;
     }
-
 
 }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes.Test;
+package org.firstinspires.ftc.teamcode.OpModes.Leviathan.Teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -40,10 +40,6 @@ public class OneManGangTeleop extends OpMode implements Constants {
         extendo.driverControl(gamepad1);
         intake.intake(gamepad1);
         intake.index(gamepad1,true);
-        //endgame.hookRelease(gamepad1);
-        //endgame.hookSwivel(gamepad1);
-        endgame.winch(gamepad1);
-        //endgame.drop(gamepad1);
 
         //telemetry.addData("Angle: ",robot.imu.getRelativeYaw());
         telemetry.addData("State: ",robot.limit.getState());
