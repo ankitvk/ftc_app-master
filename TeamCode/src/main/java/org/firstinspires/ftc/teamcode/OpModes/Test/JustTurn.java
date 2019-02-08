@@ -33,9 +33,9 @@ public class JustTurn extends LinearOpMode implements AutonomousOpMode,Constants
 
         waitForStart();
 
-        robot.drive.rotateToAbsoluteAngle(60);
-
         robot.drive.stop();
     }
+
+
 }
 

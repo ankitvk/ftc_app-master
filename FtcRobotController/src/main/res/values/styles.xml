@@ -20,4 +20,14 @@
     <style name="AppThemeTealRC" parent="AppTheme.Teal">
     </style>
 
+    <style name="nigger" parent="AppBaseTheme" >
+        <item name="android:colorBackground">@color/nigger</item>
+        <item name="android:colorForeground">@color/nigger</item>
+        <item name="android:textColorPrimary">@color/nigger</item>
+        <item name="android:textColorPrimaryInverse">@color/nigger</item>
+        <item name="android:textColorSecondary">@color/nigger</item>
+        <item name="android:textColorSecondaryInverse">@color/nigger</item>
+        <item name="android:windowBackground">@color/nigger</item>
+    </style>
+
 </resources>

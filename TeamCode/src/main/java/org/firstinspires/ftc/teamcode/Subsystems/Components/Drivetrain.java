@@ -53,12 +53,12 @@ public class Drivetrain implements Constants {
 
     public void driveForwardDistance(double distance){
         eReset();
-        PIDController control = new PIDController(.001885,dtKI,0,0);
+        PIDController control = new PIDController(.0007,dtKI,0,0);
         double ticks = (distance/(WHEEL_DIAMETER*Math.PI))*DT_GEARBOX_TICKS_PER_ROTATION;
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
-        while(opModeIsActive() && (stopState <= 250)){
+        while(opModeIsActive() && (stopState <= 62.5)){
             double avg = hardware.frontLeft.getCurrentPosition();
             double power = control.power(ticks,avg);
             telemetry.addData("Power: ", power);
@@ -83,9 +83,9 @@ public class Drivetrain implements Constants {
                 startTime = System.nanoTime();
             }
 
-            if(System.nanoTime()/1000000-beginTime/1000000>3000){
+            /*if(System.nanoTime()/1000000-beginTime/1000000>3000){
                 break;
-            }
+            }*/
         }
     }
 

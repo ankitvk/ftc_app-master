@@ -12,24 +12,39 @@ public class VelocityPIDTune extends OpMode implements Constants {
     private Hardware robot = new Hardware();
     SpeedControlledMotor motor = robot.backLeft;
 
+    double rightPower = .6;
+    double leftPower = .6;
+
     public void init(){
         robot.init(hardwareMap);
     }
 
     public void loop(){
 
-        robot.drive.controlDrive(gamepad1);
+        if(gamepad1.dpad_right){
+            leftPower+=.0005;
+            rightPower = leftPower+.1;
+        }
+        else if(gamepad1.dpad_left){
+            leftPower-=.0005;
+            rightPower = leftPower+.1;
+
+        }
+
+        if(gamepad1.a){
+            robot.backRight.setPower(rightPower);
+            robot.frontRight.setPower(rightPower);
+            robot.backLeft.setPower(leftPower);
+            robot.frontLeft.setPower(leftPower);
+        }
 
         telemetry.addData("backRightRPM:",robot.backRight.getRPM());
         telemetry.addData("frontRightRPM:",robot.frontRight.getRPM());
         telemetry.addData("backLeftRPM:",robot.backLeft.getRPM());
         telemetry.addData("frontLeftRPM:",robot.frontLeft.getRPM());
-        telemetry.addData("backRightPower:",robot.backRight.getPower());
-        telemetry.addData("frontRightPower:",robot.frontRight.getPower());
-        telemetry.addData("backLeftPower:",robot.backLeft.getPower());
-        telemetry.addData("frontLeftPower:",robot.frontLeft.getPower());
-        telemetry.addData("Forward speed:",gamepad1.left_stick_y);
-        telemetry.addData("desired rpm:",robot.frontLeft.getRpmTemp());
+        telemetry.addData("RightPower:",rightPower);
+        telemetry.addData("LeftPower:",leftPower);
+
 
         telemetry.update();
     }

@@ -24,7 +24,7 @@ public interface Constants {
     double LENGTH_BETWEEN_WHEELS = 15.789;
     double WHEEL_DIAMETER  =4;
 
-    double DISTANCE_TOLERANCE = .5;
+    double DISTANCE_TOLERANCE = 1.5;
     double IMU_TOLERANCE = .5;
     double ENCODER_TOLERANCE = 50;
 

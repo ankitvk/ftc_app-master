@@ -46,7 +46,7 @@ public class LeviathanDepot extends LinearOpMode implements AutonomousOpMode,Con
 
         waitForStart();
 
-        if(!goldfish.detector.isFound()){
+        /*if(!goldfish.detector.isFound()){
             gold = Positions.RIGHT;
             telemetry.addLine("RIGHT");
             telemetry.update();
@@ -70,7 +70,9 @@ public class LeviathanDepot extends LinearOpMode implements AutonomousOpMode,Con
 
         sleep(5000);
 
-        robot.winch.setPower(0);
+        robot.winch.setPower(0);*/
+
+        gold = Positions.RIGHT;
 
         if(gold == Positions.LEFT){
             robot.depotLeft.run();

@@ -41,7 +41,7 @@ public class LeviathanTeleop extends OpMode implements Constants{
         extendo.driverControl(gamepad1);
         intake.intake(gamepad1);
         intake.index(gamepad2);
-        endgame.winch(gamepad2);
+        //endgame.winch(gamepad2);
 
         /*telemetry.addData("backRightRPM:",robot.backRight.getRPM());
         telemetry.addData("frontRightRPM:",robot.frontRight.getRPM());

@@ -17,13 +17,13 @@ public class Intake implements Constants {
 
     public void intake(Gamepad gamepad){
         if(gamepad.left_bumper){
-            hardware.intake.setPower(-.75);
+            hardware.winch.setPower(1);
         }
         else if(gamepad.left_trigger>0){
-            hardware.intake.setPower(.75);
+            hardware.winch.setPower(-1);
         }
         else{
-            hardware.intake.setPower(0);
+            hardware.winch.setPower(0);
         }
 
         /*if(gamepad.left_trigger>0){

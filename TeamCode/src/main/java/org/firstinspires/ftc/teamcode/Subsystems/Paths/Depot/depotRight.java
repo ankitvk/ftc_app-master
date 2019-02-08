@@ -18,29 +18,29 @@ public class depotRight implements Constants {
     private Telemetry telemetry;
     private Hardware hardware;
 
-    private final double ROTATE_TO_GOLD_ANGLE = -120;
-    private final double ROTATE_TO_GOLD_KP = .0175;
-    private final double ROTATE_TO_GOLD_KI = 1.5;
+    private final double ROTATE_TO_GOLD_ANGLE = -35;
+    private final double ROTATE_TO_GOLD_KP = .0275;
+    private final double ROTATE_TO_GOLD_KI = 3;
     private final double ROTATE_TO_GOLD_KD = 0;
 
-    private final double DRIVE_TO_GOLD_DISTANCE = 48;
-    private final double DRIVE_TO_GOLD_KP = .00028;
-    private final double DRIVE_TO_GOLD_KI = 0.01;
+    private final double DRIVE_TO_GOLD_DISTANCE = 44;
+    private final double DRIVE_TO_GOLD_KP = .000275;
+    private final double DRIVE_TO_GOLD_KI = 0.027;
     private final double DRIVE_TO_GOLD_KD = 0;
 
-    private final double ROTATE_TO_DEPOT_ANGLE = 45-90;
-    private final double ROTATE_TO_DEPOT_KP = .0145;
-    private final double ROTATE_TO_DEPOT_KI = 3;
+    private final double ROTATE_TO_DEPOT_ANGLE = 45;
+    private final double ROTATE_TO_DEPOT_KP = .012;
+    private final double ROTATE_TO_DEPOT_KI = 0;
     private final double ROTATE_TO_DEPOT_KD = 0;
 
-    private final double DRIVE_TO_DEPOT_DISTANCE = 25;
-    private final double DRIVE_TO_DEPOT_KP = .00032;
-    private final double DRIVE_TO_DEPOT_KI = 0.01;
+    private final double DRIVE_TO_DEPOT_DISTANCE = 15;
+    private final double DRIVE_TO_DEPOT_KP = .0006;
+    private final double DRIVE_TO_DEPOT_KI = 0.035;
     private final double DRIVE_TO_DEPOT_KD = 0;
 
-    private final double DRIVE_TO_CRATER_DISTANCE = -68;
-    private final double DRIVE_TO_CRATER_KP = .000175;
-    private final double DRIVE_TO_CRATER_KI = 0.01;
+    private final double DRIVE_TO_CRATER_DISTANCE = -60;
+    private final double DRIVE_TO_CRATER_KP = .0005;
+    private final double DRIVE_TO_CRATER_KI = 0;
     private final double DRIVE_TO_CRATER_KD = 0;
 
     public depotRight(Hardware hardware){
@@ -59,8 +59,8 @@ public class depotRight implements Constants {
         driveToGold();
         rotateToDepot();
         driveToDepot();
-        hardware.marker.setPosition(.15);
-        /*driveToCrater();*/
+        //hardware.marker.setPosition(.15);
+        driveToCrater();
     }
 
     private void rotateToGold(){
@@ -69,7 +69,7 @@ public class depotRight implements Constants {
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
-        while(opModeIsActive() && (stopState <= 1000)){
+        while(opModeIsActive() && (stopState <= 125)){
 
             double position = imu.getRelativeYaw();
             double power = controlRotate.power(degrees,position);
@@ -85,8 +85,8 @@ public class depotRight implements Constants {
 
             frontLeft.setPower(power);
             backLeft.setPower(power);
-            frontRight.setPower(power);
-            backRight.setPower(power);
+            frontRight.setPower(power+.1);
+            backRight.setPower(power+.1);
 
             if (Math.abs(position-degrees) <= IMU_TOLERANCE) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
@@ -108,7 +108,7 @@ public class depotRight implements Constants {
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
-        while(opModeIsActive() && (stopState <= 1000)){
+        while(opModeIsActive() && (stopState <= 125)){
             double avg = hardware.frontLeft.getCurrentPosition();
             double power = control.power(ticks,avg);
             telemetry.addData("Power: ", power);
@@ -132,7 +132,7 @@ public class depotRight implements Constants {
                 startTime = System.nanoTime();
             }
 
-            if(System.nanoTime()/1000000-beginTime/1000000>4000){
+            if(System.nanoTime()/1000000-beginTime/1000000>3000){
                 break;
             }
         }
@@ -143,7 +143,7 @@ public class depotRight implements Constants {
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
-        while(opModeIsActive() && (stopState <= 1000)){
+        while(opModeIsActive() && (stopState <= 125)){
 
             double position = imu.getRelativeYaw();
             double power = controlRotate.power(degrees,position);
@@ -159,8 +159,8 @@ public class depotRight implements Constants {
 
             frontLeft.setPower(power);
             backLeft.setPower(power);
-            frontRight.setPower(power);
-            backRight.setPower(power);
+            frontRight.setPower(power+.1);
+            backRight.setPower(power+.1);
 
             if (Math.abs(position-degrees) <= IMU_TOLERANCE) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
@@ -168,9 +168,9 @@ public class depotRight implements Constants {
             else {
                 startTime = System.nanoTime();
             }
-            /*if(System.nanoTime()/1000000-beginTime/1000000>3000){
+            if(System.nanoTime()/1000000-beginTime/1000000>2000){
                 break;
-            }*/
+            }
         }
     }
     private void driveToDepot(){
@@ -181,7 +181,7 @@ public class depotRight implements Constants {
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
-        while(opModeIsActive() && (stopState <= 1000)){
+        while(opModeIsActive() && (stopState <= 125)){
             double avg = frontLeft.getCurrentPosition();
             double power = control.power(ticks,avg);
             telemetry.addData("Power: ", power);
@@ -204,10 +204,9 @@ public class depotRight implements Constants {
                 startTime = System.nanoTime();
             }
 
-            /*if(System.nanoTime()/1000000-beginTime/1000000>5000){
+            if(System.nanoTime()/1000000-beginTime/1000000>3000){
                 break;
             }
-*/
         }
     }
 
@@ -219,7 +218,7 @@ public class depotRight implements Constants {
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
-        while(opModeIsActive() && (stopState <= 1000)){
+        while(opModeIsActive() && (stopState <= 125)){
             double avg = hardware.frontLeft.getCurrentPosition();
             double power = control.power(ticks,avg);
             telemetry.addData("Power: ", power);
@@ -242,10 +241,9 @@ public class depotRight implements Constants {
                 startTime = System.nanoTime();
             }
 
-            /*if(System.nanoTime()/1000000-beginTime/1000000>5000){
+            if(System.nanoTime()/1000000-beginTime/1000000>3000){
                 break;
             }
-*/
         }
     }
 
