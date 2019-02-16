@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Control.PIDController;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 
+@Disabled
 @Autonomous(name = "JustZoom",group = "Dummy")
 public class JustZoom extends LinearOpMode implements AutonomousOpMode,Constants{
 

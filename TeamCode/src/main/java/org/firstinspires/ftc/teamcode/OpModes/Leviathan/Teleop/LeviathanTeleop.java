@@ -27,11 +27,6 @@ public class LeviathanTeleop extends OpMode implements Constants{
 
     public void init(){
         robot.init(hardwareMap);
-        //robot.hookRelease.setPosition(0);
-        //robot.led.setPosition(-.41);
-        //robot.hookSwivel.setPosition(.75);
-        //robot.led.setPattern(PATTERN);
-        robot.marker.setPosition(.15);
 
     }
     public void loop(){
@@ -41,6 +36,13 @@ public class LeviathanTeleop extends OpMode implements Constants{
         extendo.driverControl(gamepad1);
         intake.intake(gamepad1);
         intake.index(gamepad2);
+
+        telemetry.addData("pivot1",robot.pivot1.getCurrentPosition());
+        telemetry.addData("pivot2",robot.pivot2.getCurrentPosition());
+        telemetry.addData("winch?",robot.winch.getCurrentPosition());
+        telemetry.addData("extendo",robot.extendo.getCurrentPosition());
+
+        //robot.ledRiver.setColor(Color.BLUE);
         //endgame.winch(gamepad2);
 
         /*telemetry.addData("backRightRPM:",robot.backRight.getRPM());
@@ -52,13 +54,7 @@ public class LeviathanTeleop extends OpMode implements Constants{
         telemetry.addData("backLeftPower:",robot.backLeft.getPower());
         telemetry.addData("frontLeftPower:",robot.frontLeft.getPower());
 */
-        telemetry.addData("pivot1Power:",robot.pivot1.getPower());
-        telemetry.addData("pivot2Power:",robot.pivot2.getPower());
-        telemetry.addData("extendoPower",robot.extendo.getPower());
-        telemetry.addData("pivot1Encoder:",robot.pivot1.getCurrentPosition());
-        telemetry.addData("pivot2Encoder:",robot.pivot2.getCurrentPosition());
-        telemetry.addData("extendoEncoder",robot.extendo.getCurrentPosition());
-        telemetry.addData("limit",robot.limit.getState());
+        //telemetry.addData("limit",robot.limit.getState());
         telemetry.update();
 
     }

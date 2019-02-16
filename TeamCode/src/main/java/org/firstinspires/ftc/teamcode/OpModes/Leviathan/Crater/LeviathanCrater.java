@@ -35,7 +35,6 @@ public class LeviathanCrater extends LinearOpMode implements AutonomousOpMode,Co
         robot.init(hardwareMap);
 
         robot.index.setPosition(.15);
-        robot.marker.setPosition(.75);
 
         goldfish = new GoldFind(this, robot);
         goldfish.setAlignSettings(ALIGN_POSITION, 100);

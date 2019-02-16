@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Subsystems.GoldFind;
 
+@Disabled
 @Autonomous(name = "OpenCVTest",group = "Depot")
 public class OpenCVTest extends LinearOpMode implements AutonomousOpMode,Constants {
 

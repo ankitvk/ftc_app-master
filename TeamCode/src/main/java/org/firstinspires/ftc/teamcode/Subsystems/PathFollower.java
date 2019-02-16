@@ -6,7 +6,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
-import org.firstinspires.ftc.teamcode.Sensors.BNO055_IMU;
+import org.firstinspires.ftc.teamcode.Drivers.BNO055_IMU;
 
 public class PathFollower implements Constants {
 

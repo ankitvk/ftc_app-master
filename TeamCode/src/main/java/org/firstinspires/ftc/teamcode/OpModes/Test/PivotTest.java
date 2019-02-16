@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes.Test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Subsystems.PathFollower;
 
+@Disabled
 @Autonomous(name = "PivotTest")
 public class PivotTest extends LinearOpMode implements AutonomousOpMode {
 
@@ -37,11 +39,11 @@ public class PivotTest extends LinearOpMode implements AutonomousOpMode {
 
         robot.index.setPosition(.15);
 
-        robot.intake.setPower(-.75);
+        //robot.intake.setPower(-.75);
 
         sleep(2000);
 
-        robot.intake.setPower(0);
+        //robot.intake.setPower(0);
 
         robot.index.setPosition(.95);
 

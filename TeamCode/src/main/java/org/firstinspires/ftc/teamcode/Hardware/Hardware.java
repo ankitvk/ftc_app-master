@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -10,11 +9,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Control.SpeedControlledMotor;
-import org.firstinspires.ftc.teamcode.Sensors.BNO055_IMU;
+import org.firstinspires.ftc.teamcode.Drivers.BNO055_IMU;
+import org.firstinspires.ftc.teamcode.Drivers.LEDRiver;
 import org.firstinspires.ftc.teamcode.Subsystems.Components.Drivetrain;
 import org.firstinspires.ftc.teamcode.Subsystems.Components.Endgame;
 import org.firstinspires.ftc.teamcode.Subsystems.Components.Extendo;
-import org.firstinspires.ftc.teamcode.Subsystems.Components.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Paths.Crater.craterLeft;
 import org.firstinspires.ftc.teamcode.Subsystems.Paths.Crater.craterMiddle;
 import org.firstinspires.ftc.teamcode.Subsystems.Paths.Crater.craterRight;
@@ -22,6 +21,8 @@ import org.firstinspires.ftc.teamcode.Subsystems.Paths.Depot.depotLeft;
 import org.firstinspires.ftc.teamcode.Subsystems.Paths.Depot.depotMiddle;
 import org.firstinspires.ftc.teamcode.Subsystems.Paths.Depot.depotRight;
 import org.firstinspires.ftc.teamcode.Subsystems.Components.Pivot;
+import org.firstinspires.ftc.teamcode.Subsystems.Paths.Prototype.KetoAuto;
+import org.firstinspires.ftc.teamcode.Subsystems.Paths.Prototype.MineralTime;
 
 public class Hardware implements Constants {
 
@@ -31,16 +32,17 @@ public class Hardware implements Constants {
 
     public Telemetry telemetry;
 
-    public Servo /*hookRelease,hookSwivel,drop,*/index,marker;
+    public LEDRiver ledRiver;
 
-    public CRServo intake;
+    public Servo index;
+
+    public CRServo hangLeftTop,hangLeftBottom,hangRightTop,hangRightBottom;
+
+    public Servo hangLeftRelease,hangRightRelease;
 
     public BNO055_IMU imu;
 
     public DigitalChannel limit;
-
-    double kp = 0.00015;
-    double ki = 0;
 
     public SpeedControlledMotor
             frontLeft = new SpeedControlledMotor(.0031,0,0,1),
@@ -56,6 +58,8 @@ public class Hardware implements Constants {
 
     public SpeedControlledMotor[] pivotMotors = {pivot1,pivot2};
 
+    public CRServo[] theHangGang = {hangLeftTop,hangLeftBottom,hangRightTop,hangRightBottom};
+
 
     public Drivetrain drive;
     public Pivot pivot ;
@@ -70,11 +74,16 @@ public class Hardware implements Constants {
     public craterMiddle craterMiddle;
     public craterRight craterRight;
 
+    public KetoAuto ketoAuto;
+    public MineralTime mineralTime;
+
     public void init(HardwareMap hardwareMap){
 
         this.hwMap = hardwareMap;
 
         imu = new BNO055_IMU("imu",this);
+
+        ledRiver = hardwareMap.get(LEDRiver.IMPL, "led");
 
         frontLeft.init(hwMap,"frontLeft");
         frontRight.init(hwMap,"frontRight");
@@ -88,16 +97,15 @@ public class Hardware implements Constants {
 
         winch.init(hwMap,"winch");
 
-        //hookRelease = hardwareMap.servo.get("hookRelease");
-        //hookSwivel = hardwareMap.servo.get("hookSwivel");
-
-        marker = hardwareMap.servo.get("marker");
-
-        //drop = hardwareMap.servo.get("drop");
-
         index = hardwareMap.servo.get("index");
 
-        intake = hardwareMap.crservo.get("intake");
+        hangLeftBottom = hardwareMap.crservo.get("hangLeftBottom");
+        hangLeftTop = hardwareMap.crservo.get("hangLeftTop");
+        hangRightBottom = hardwareMap.crservo.get("hangRightBottom");
+        hangRightTop = hardwareMap.crservo.get("hangRightTop");
+
+        hangLeftRelease = hardwareMap.servo.get("hangLeftRelease");
+        hangRightRelease = hardwareMap.servo.get("hangRightRelease");
 
         drive = new Drivetrain(this);
         pivot = new Pivot(this);
@@ -107,6 +115,9 @@ public class Hardware implements Constants {
         depotLeft = new depotLeft(this);
         depotMiddle = new depotMiddle(this);
         depotRight = new depotRight(this);
+
+        ketoAuto = new KetoAuto();
+        mineralTime = new MineralTime();
 
         limit = hardwareMap.digitalChannel.get("limit");
     }

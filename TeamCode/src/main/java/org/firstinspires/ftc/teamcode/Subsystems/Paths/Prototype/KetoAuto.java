@@ -39,9 +39,9 @@ public class KetoAuto extends LinearOpMode implements AutonomousOpMode,Constants
         firstTurn();
         goForward();
         secondTurn();
-        driveToDepot();
+        //driveToDepot();
         sleep(3000);
-        driveFromDepot();
+        //driveFromDepot();
         thirdTurn();
         goBack();
         fourthTurn();
@@ -76,23 +76,23 @@ public class KetoAuto extends LinearOpMode implements AutonomousOpMode,Constants
             else {
                 startTime = System.nanoTime();
             }
-            /*if(System.nanoTime()/1000000-beginTime/1000000>1500){
+            if(System.nanoTime()/1000000-beginTime/1000000>1250){
                 break;
-            }*/
+            }
         }
     }
 
     private void goForward(){
         eReset();
-        PIDController controlDistance = new PIDController(.0003,0,0,0); //increase Ki .00005
+        PIDController controlDistance = new PIDController(.000385,0,0,0); //increase Ki .00005
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 125/4)){
             double position = robot.frontLeft.getCurrentPosition();
-            double power = controlDistance.power(distanceToTicks(30),position);
+            double power = controlDistance.power(distanceToTicks(25),position);
 
-            if(ticksToDistance(position)>28.5){
+            if(ticksToDistance(position)>23){
                 power = 1;
             }
 
@@ -108,23 +108,23 @@ public class KetoAuto extends LinearOpMode implements AutonomousOpMode,Constants
             robot.frontRight.setPower(power);
             robot.backRight.setPower(power);
 
-            if (ticksToDistance(Math.abs(position-distanceToTicks(30))) <= 1) {
+            if (ticksToDistance(Math.abs(position-distanceToTicks(25))) <= 1) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
             }
             else {
                 startTime = System.nanoTime();
             }
 
-            /*if(System.nanoTime()/1000000-beginTime/1000000>3000){
+            if(System.nanoTime()/1000000-beginTime/1000000>2500){
                 break;
-            }*/
+            }
 
         }
     }
 
     private void secondTurn(){
 
-        PIDController controlRotate = new PIDController(0.023,0.2,0,0); //increase Ki .00005
+        PIDController controlRotate = new PIDController(0.01775,0.2,0,0); //increase Ki .00005
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
@@ -152,9 +152,9 @@ public class KetoAuto extends LinearOpMode implements AutonomousOpMode,Constants
             else {
                 startTime = System.nanoTime();
             }
-            /*if(System.nanoTime()/1000000-beginTime/1000000>1500){
+            if(System.nanoTime()/1000000-beginTime/1000000>1500){
                 break;
-            }*/
+            }
         }
     }
 
@@ -233,13 +233,13 @@ public class KetoAuto extends LinearOpMode implements AutonomousOpMode,Constants
     }
 
     private void thirdTurn(){
-        PIDController controlRotate = new PIDController(0.023,0.2,0,0); //increase Ki .00005
+        PIDController controlRotate = new PIDController(0.02325,0,0,0); //increase Ki .00005
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 125)){
             double position = robot.imu.getRelativeYaw();
-            double power = controlRotate.power(90,position);
+            double power = controlRotate.power(92.5,position);
 
             telemetry.addLine("third Turn");
             telemetry.addData("power", power);
@@ -255,27 +255,27 @@ public class KetoAuto extends LinearOpMode implements AutonomousOpMode,Constants
             robot.frontRight.setPower(power);
             robot.backRight.setPower(power);
 
-            if (Math.abs(position-90) <= 1) {
+            if (Math.abs(position-92.5) <= 1) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
             }
             else {
                 startTime = System.nanoTime();
             }
-            /*if(System.nanoTime()/1000000-beginTime/1000000>1500){
+            if(System.nanoTime()/1000000-beginTime/1000000>1500){
                 break;
-            }*/
+            }
         }
     }
 
     private void goBack(){
         eReset();
-        PIDController controlDistance = new PIDController(.0003,0,0,0); //increase Ki .00005
+        PIDController controlDistance = new PIDController(.000425,0,0,0); //increase Ki .00005
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 125/4)){
             double position = robot.frontLeft.getCurrentPosition();
-            double power = controlDistance.power(distanceToTicks(-40),position);
+            double power = controlDistance.power(distanceToTicks(-23),position);
 
             telemetry.addLine("goBack");
             telemetry.addData("power", power);
@@ -289,22 +289,22 @@ public class KetoAuto extends LinearOpMode implements AutonomousOpMode,Constants
             robot.frontRight.setPower(power);
             robot.backRight.setPower(power);
 
-            if (ticksToDistance(Math.abs(position-distanceToTicks(-40))) <= DISTANCE_TOLERANCE) {
+            if (ticksToDistance(Math.abs(position-distanceToTicks(-23))) <= 1) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
             }
             else {
                 startTime = System.nanoTime();
             }
 
-            /*if(System.nanoTime()/1000000-beginTime/1000000>3000){
+            if(System.nanoTime()/1000000-beginTime/1000000>2000){
                 break;
-            }*/
+            }
 
         }
     }
 
     private void fourthTurn(){
-        PIDController controlRotate = new PIDController(0.025,0,0,0); //increase Ki .00005
+        PIDController controlRotate = new PIDController(0.0245,0,0,0); //increase Ki .00005
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
@@ -332,9 +332,9 @@ public class KetoAuto extends LinearOpMode implements AutonomousOpMode,Constants
             else {
                 startTime = System.nanoTime();
             }
-            /*if(System.nanoTime()/1000000-beginTime/1000000>1500){
+            if(System.nanoTime()/1000000-beginTime/1000000>1500){
                 break;
-            }*/
+            }
         }
     }
 

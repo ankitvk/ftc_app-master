@@ -34,7 +34,6 @@ public class LeviathanDepot extends LinearOpMode implements AutonomousOpMode,Con
         robot.init(hardwareMap);
 
         robot.index.setPosition(.15);
-        robot.marker.setPosition(.75);
 
         goldfish = new GoldFind(this, robot);
         goldfish.setAlignSettings(ALIGN_POSITION, 100);
