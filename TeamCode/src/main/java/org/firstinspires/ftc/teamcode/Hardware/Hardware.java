@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.Drivers.LEDRiver;
 import org.firstinspires.ftc.teamcode.Subsystems.Components.Drivetrain;
 import org.firstinspires.ftc.teamcode.Subsystems.Components.Endgame;
 import org.firstinspires.ftc.teamcode.Subsystems.Components.Extendo;
+import org.firstinspires.ftc.teamcode.Subsystems.Components.Hang;
 import org.firstinspires.ftc.teamcode.Subsystems.Paths.Crater.craterLeft;
 import org.firstinspires.ftc.teamcode.Subsystems.Paths.Crater.craterMiddle;
 import org.firstinspires.ftc.teamcode.Subsystems.Paths.Crater.craterRight;
@@ -36,35 +37,37 @@ public class Hardware implements Constants {
 
     public Servo index;
 
-    public CRServo hangLeftTop,hangLeftBottom,hangRightTop,hangRightBottom;
+    public CRServo hangLeftTop, hangLeftBottom, hangRightTop, hangRightBottom;
 
-    public Servo hangLeftRelease,hangRightRelease;
+    public Servo hangLeftRelease, hangRightRelease;
 
     public BNO055_IMU imu;
 
     public DigitalChannel limit;
 
+
     public SpeedControlledMotor
-            frontLeft = new SpeedControlledMotor(.0031,0,0,1),
-            backLeft = new SpeedControlledMotor(.0031,0,0,1),
-            frontRight = new SpeedControlledMotor(.0031,0,0,1),
-            backRight = new SpeedControlledMotor(.0031,0,0,1),
-            extendo = new SpeedControlledMotor(extensionKP,extensionKI,extensionKD,extensionMaxI),
-            winch = new SpeedControlledMotor(0,0,0,1),
-            pivot1 = new SpeedControlledMotor(0,0,0,0),
-            pivot2 = new SpeedControlledMotor(0,0,0,0);
+            frontLeft = new SpeedControlledMotor(.0031, 0, 0, 1),
+            backLeft = new SpeedControlledMotor(.0031, 0, 0, 1),
+            frontRight = new SpeedControlledMotor(.0031, 0, 0, 1),
+            backRight = new SpeedControlledMotor(.0031, 0, 0, 1),
+            extendo = new SpeedControlledMotor(extensionKP, extensionKI, extensionKD, extensionMaxI),
+            winch = new SpeedControlledMotor(0, 0, 0, 1),
+            pivot1 = new SpeedControlledMotor(0, 0, 0, 0),
+            pivot2 = new SpeedControlledMotor(0, 0, 0, 0);
 
     public SpeedControlledMotor[] drivetrainMotors = {frontLeft, backLeft, frontRight, backRight};
 
-    public SpeedControlledMotor[] pivotMotors = {pivot1,pivot2};
+    public SpeedControlledMotor[] pivotMotors = {pivot1, pivot2};
 
-    public CRServo[] theHangGang = {hangLeftTop,hangLeftBottom,hangRightTop,hangRightBottom};
+    public CRServo[] theHangGang = {hangLeftTop, hangLeftBottom, hangRightTop, hangRightBottom};
 
 
     public Drivetrain drive;
-    public Pivot pivot ;
+    public Pivot pivot;
     public Extendo extendoo;
     public Endgame endgame;
+    public Hang hang;
 
     public depotLeft depotLeft;
     public depotMiddle depotMiddle;
@@ -77,25 +80,27 @@ public class Hardware implements Constants {
     public KetoAuto ketoAuto;
     public MineralTime mineralTime;
 
-    public void init(HardwareMap hardwareMap){
+    public void init(HardwareMap hardwareMap) {
 
         this.hwMap = hardwareMap;
 
-        imu = new BNO055_IMU("imu",this);
+        ledRiver = hardwareMap.get(LEDRiver.IMPL, "ledriver");
+
+        imu = new BNO055_IMU("imu", this);
 
         ledRiver = hardwareMap.get(LEDRiver.IMPL, "led");
 
-        frontLeft.init(hwMap,"frontLeft");
-        frontRight.init(hwMap,"frontRight");
-        backLeft.init(hwMap,"backLeft");
-        backRight.init(hwMap,"backRight");
+        frontLeft.init(hwMap, "frontLeft");
+        frontRight.init(hwMap, "frontRight");
+        backLeft.init(hwMap, "backLeft");
+        backRight.init(hwMap, "backRight");
 
-        extendo.init(hwMap,"extendo");
+        extendo.init(hwMap, "extendo");
 
-        pivot1.init(hwMap,"pivot1");
-        pivot2.init(hwMap,"pivot2");
+        pivot1.init(hwMap, "pivot1");
+        pivot2.init(hwMap, "pivot2");
 
-        winch.init(hwMap,"winch");
+        winch.init(hwMap, "winch");
 
         index = hardwareMap.servo.get("index");
 
@@ -111,18 +116,23 @@ public class Hardware implements Constants {
         pivot = new Pivot(this);
         extendoo = new Extendo(this);
         endgame = new Endgame(this);
+        hang = new Hang(this);
 
         depotLeft = new depotLeft(this);
         depotMiddle = new depotMiddle(this);
         depotRight = new depotRight(this);
 
-        ketoAuto = new KetoAuto();
-        mineralTime = new MineralTime();
+        craterLeft = new craterLeft(this);
+        craterMiddle = new craterMiddle(this);
+        craterRight = new craterRight(this);
+
+        ketoAuto = new KetoAuto(this);
+        mineralTime = new MineralTime(this);
 
         limit = hardwareMap.digitalChannel.get("limit");
     }
 
-    public void setAuto (AutonomousOpMode auto, Telemetry telemetry) {
+    public void setAuto(AutonomousOpMode auto, Telemetry telemetry) {
         this.auto = auto;
         this.telemetry = telemetry;
     }

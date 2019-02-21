@@ -8,10 +8,12 @@ import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Subsystems.GoldFind;
+import org.firstinspires.ftc.teamcode.Subsystems.Paths.Prototype.IdentifyGold;
 
 @Autonomous(name = "LeviathanDepot",group = "Depot")
 public class LeviathanDepot extends LinearOpMode implements AutonomousOpMode,Constants {
     Hardware robot = new Hardware();
+    IdentifyGold inspect;
     private GoldFind goldfish;
 
 
@@ -23,9 +25,7 @@ public class LeviathanDepot extends LinearOpMode implements AutonomousOpMode,Con
         return telemetry;
     }
 
-    enum Positions{LEFT,MIDDLE,RIGHT}
-
-    Positions gold;
+    IdentifyGold.Positions gold;
 
     @Override
     public void runOpMode() {
@@ -40,46 +40,24 @@ public class LeviathanDepot extends LinearOpMode implements AutonomousOpMode,Con
 
         goldfish.startOpenCV();
 
+        inspect = new IdentifyGold(robot,goldfish);
+
         telemetry.addLine("Instant Run test 3");
         telemetry.update();
 
         waitForStart();
 
-        /*if(!goldfish.detector.isFound()){
-            gold = Positions.RIGHT;
-            telemetry.addLine("RIGHT");
-            telemetry.update();
-        }
-        else if(goldfish.getXPosition()<150){
-            gold = Positions.LEFT;
-            telemetry.addLine("LEFT");
-            telemetry.update();
-        }
-        else if(goldfish.getXPosition()>=150){
-            gold = Positions.MIDDLE;
-            telemetry.addLine("MIDDLE");
-            telemetry.update();
-        }
+        gold = inspect.identify();
 
-        robot.endgame.lift();
+        robot.hang.drop();
 
-        robot.drive.driveForwardDistance(-6);
-
-        robot.winch.setPower(1);
-
-        sleep(5000);
-
-        robot.winch.setPower(0);*/
-
-        gold = Positions.RIGHT;
-
-        if(gold == Positions.LEFT){
+        if(gold == IdentifyGold.Positions.LEFT){
             robot.depotLeft.run();
         }
-        else if(gold == Positions.MIDDLE){
+        else if(gold ==  IdentifyGold.Positions.MIDDLE){
             robot.depotMiddle.run();
         }
-        else if(gold == Positions.RIGHT){
+        else if(gold ==  IdentifyGold.Positions.RIGHT){
             robot.depotRight.run();
         }
     }

@@ -111,6 +111,20 @@ public interface LEDRiver {
             this.b = android.graphics.Color.blue(androidColor);
             this.w = 1 - android.graphics.Color.alpha(androidColor);
         }
+
+        public int getR(){
+            return r;
+        }
+        public int getG(){
+            return g;
+        }
+        public int getB(){
+            return b;
+        }
+        public int getW(){
+            return w;
+        }
+
     }
 
     class PatternID<T extends Pattern> {

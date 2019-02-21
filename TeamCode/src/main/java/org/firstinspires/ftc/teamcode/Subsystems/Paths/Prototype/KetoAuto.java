@@ -11,20 +11,39 @@ import org.firstinspires.ftc.teamcode.Control.PIDController;
 import org.firstinspires.ftc.teamcode.Control.SpeedControlledMotor;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 
-@Autonomous(name = "Keto Auto",group = "Dummy")
-public class KetoAuto extends LinearOpMode implements AutonomousOpMode,Constants {
+public class KetoAuto implements Constants {
 
-    Hardware robot = new Hardware();
+    Hardware robot;
+    Telemetry telemetry;
+    AutonomousOpMode auto;
 
-    public boolean getOpModeIsActive() {
-        return opModeIsActive();
+    public boolean opModeIsActive() {
+        return auto.getOpModeIsActive();
     }
 
     public Telemetry getTelemetry() {
         return telemetry;
     }
 
-    @Override
+    public KetoAuto(Hardware hardware){
+
+        this.robot = hardware;
+        this.telemetry = hardware.telemetry;
+        this.auto = hardware.auto;
+
+    }
+
+    public void ketonomous(){
+        firstTurn();
+        goForward();
+        secondTurn();
+        sleep(1000);
+        thirdTurn();
+        goBack();
+        fourthTurn();
+    }
+
+   /* @Override
     public void runOpMode(){
 
         robot.setAuto(this, telemetry);
@@ -36,18 +55,11 @@ public class KetoAuto extends LinearOpMode implements AutonomousOpMode,Constants
 
         waitForStart();
 
-        firstTurn();
-        goForward();
-        secondTurn();
-        //driveToDepot();
-        sleep(3000);
-        //driveFromDepot();
-        thirdTurn();
-        goBack();
-        fourthTurn();
-    }
+        ketonomous();
 
-    private void firstTurn(){
+    }*/
+
+    private void  firstTurn(){
         PIDController controlRotate = new PIDController(0.02175 ,1,0,0); //increase Ki .00005
         long startTime = System.nanoTime();
         long beginTime = startTime;
@@ -115,9 +127,9 @@ public class KetoAuto extends LinearOpMode implements AutonomousOpMode,Constants
                 startTime = System.nanoTime();
             }
 
-            if(System.nanoTime()/1000000-beginTime/1000000>2500){
+            /*if(System.nanoTime()/1000000-beginTime/1000000>2500){
                 break;
-            }
+            }*/
 
         }
     }
@@ -353,4 +365,14 @@ public class KetoAuto extends LinearOpMode implements AutonomousOpMode,Constants
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
     }
+
+    private void sleep(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+
 }

@@ -265,17 +265,6 @@ public class GoldFind extends DogeCVDetector implements Constants {
         dogeForia.showDebug();
         dogeForia.start();
 
-        /*init(hardwareMap.appContext, CameraViewDisplay.getInstance());
-        useDefaults();
-        // Optional Tuning
-        alignSize = 5; // How wide (in pixels) is the range in which the gold object will be aligned. (Represented by green bars in the preview)
-        downscale = 0.4; // How much to downscale the input frames
-        areaScoringMethod = DogeCV.AreaScoringMethod.MAX_AREA; // Can also be PERFECT_AREA
-        //falcon.goldAlignDetector.perfectAreaScorer.perfectArea = 10000; // if using PERFECT_AREA scoring
-        maxAreaScorer.weight = 0.005;
-        ratioScorer.weight = 5;
-        ratioScorer.perfectRatio = 1.0;
-        enable();*/
     }
 
     public void startOpenCVPhone(){

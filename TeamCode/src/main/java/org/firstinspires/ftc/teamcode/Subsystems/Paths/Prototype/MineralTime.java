@@ -24,6 +24,19 @@ public class MineralTime extends LinearOpMode implements AutonomousOpMode,Consta
         return telemetry;
     }
 
+    public MineralTime(Hardware hardware){
+        this.robot = hardware;
+    }
+
+    public void mineralGang(){
+        extend();
+        down();
+        telemetry.addLine("sleepTigor");
+        telemetry.update();
+        sleep(2000);
+        up();
+    }
+
     @Override
     public void runOpMode(){
 
@@ -35,13 +48,8 @@ public class MineralTime extends LinearOpMode implements AutonomousOpMode,Consta
         telemetry.update();
 
         waitForStart();
-        extend();
-        down();
-        telemetry.addLine("sleepTigor");
-        telemetry.update();
-        sleep(2000);
-        up();
 
+        mineralGang();
     }
 
     private void extend(){

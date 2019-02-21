@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Subsystems.GoldFind;
+import org.firstinspires.ftc.teamcode.Subsystems.Paths.Prototype.IdentifyGold;
 
-@Disabled
 @Autonomous(name = "OpenCVTest",group = "Depot")
 public class OpenCVTest extends LinearOpMode implements AutonomousOpMode,Constants {
 
@@ -23,6 +23,10 @@ public class OpenCVTest extends LinearOpMode implements AutonomousOpMode,Constan
     public Telemetry getTelemetry() {
         return telemetry;
     }
+
+    IdentifyGold inspect;
+
+    IdentifyGold.Positions gold;
 
     @Override
     public void runOpMode() {
@@ -39,12 +43,20 @@ public class OpenCVTest extends LinearOpMode implements AutonomousOpMode,Constan
 
         goldfish.startOpenCV();
 
-        while(getOpModeIsActive()){
-            telemetry.addData("Found: ",goldfish.isFound());
-            telemetry.addData("Aligned: ",goldfish.getAligned());
-            telemetry.addData("X: ",goldfish.getXPosition());
-            telemetry.addData("Found: ",goldfish.detector.isFound());
+        inspect = new IdentifyGold(robot,goldfish);
+
+        while(opModeIsActive()) {
+            gold = inspect.identify();
+            if (gold == IdentifyGold.Positions.LEFT) {
+                telemetry.addLine("LEFT");
+            } else if (gold == IdentifyGold.Positions.MIDDLE) {
+                telemetry.addLine("MIDDLE");
+            } else if (gold == IdentifyGold.Positions.RIGHT) {
+                telemetry.addLine("RIGHT");
+            }
+            telemetry.addData("xPos, ",inspect.returnX());
             telemetry.update();
         }
+
     }
 }

@@ -52,8 +52,8 @@ public class depotMiddle implements Constants {
     public void run(){
         rotateToGold();
         driveToDepot();
-        /*rotateToCrater();
-        driveToCrater();*/
+        rotateToCrater();
+        driveToCrater();
     }
 
     private void rotateToGold(){
@@ -87,9 +87,9 @@ public class depotMiddle implements Constants {
             else {
                 startTime = System.nanoTime();
             }
-            if(System.nanoTime()/1000000-beginTime/1000000>5000){
+            /*if(System.nanoTime()/1000000-beginTime/1000000>5000){
                 break;
-            }
+            }*/
         }
     }
 

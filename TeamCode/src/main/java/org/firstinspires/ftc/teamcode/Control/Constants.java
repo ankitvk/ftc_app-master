@@ -34,6 +34,8 @@ public interface Constants {
 
     int TARGET_GOLD_X_POS = 425;
 
+    int ledCount = 150;
+
     double MIN_ROTATE_POWER = 0.39;
     double MIN_DRIVE_POWER = 0;
 

@@ -9,10 +9,13 @@ import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.OpModes.Leviathan.Depot.LeviathanDepot;
 import org.firstinspires.ftc.teamcode.Subsystems.GoldFind;
+import org.firstinspires.ftc.teamcode.Subsystems.Paths.Prototype.IdentifyGold;
 
 @Autonomous(name = "LeviathanCrater",group = "Crater")
 public class LeviathanCrater extends LinearOpMode implements AutonomousOpMode,Constants {
+
     Hardware robot = new Hardware();
+    IdentifyGold inspect;
     private GoldFind goldfish;
 
 
@@ -24,9 +27,7 @@ public class LeviathanCrater extends LinearOpMode implements AutonomousOpMode,Co
         return telemetry;
     }
 
-    enum Positions{LEFT,MIDDLE,RIGHT}
-
-    LeviathanCrater.Positions gold;
+    IdentifyGold.Positions gold;
 
     @Override
     public void runOpMode() {
@@ -41,42 +42,28 @@ public class LeviathanCrater extends LinearOpMode implements AutonomousOpMode,Co
 
         goldfish.startOpenCV();
 
+        inspect = new IdentifyGold(robot,goldfish);
+
         telemetry.addLine("Instant Run test 3");
         telemetry.update();
 
         waitForStart();
 
-        if(!goldfish.detector.isFound()){
-            gold = LeviathanCrater.Positions.RIGHT;
-            telemetry.addLine("RIGHT");
-            telemetry.update();
-        }
-        else if(goldfish.getXPosition()<150){
-            gold = LeviathanCrater.Positions.LEFT;
-            telemetry.addLine("LEFT");
-            telemetry.update();
-        }
-        else if(goldfish.getXPosition()>=150){
-            gold = LeviathanCrater.Positions.MIDDLE;
-            telemetry.addLine("MIDDLE");
-            telemetry.update();
-        }
+        gold = inspect.identify();
 
-        robot.endgame.lift();
+        //robot.hang.drop();
 
-        robot.drive.driveForwardDistance(-6);
+        robot.ketoAuto.ketonomous();
 
-        sleep(2000);
-
-        if(gold == LeviathanCrater.Positions.LEFT){
+        /*if(gold == IdentifyGold.Positions.LEFT){
             robot.craterLeft.run();
         }
-        else if(gold == LeviathanCrater.Positions.MIDDLE){
+        else if(gold ==  IdentifyGold.Positions.MIDDLE){
             robot.craterMiddle.run();
         }
-        else if(gold == LeviathanCrater.Positions.RIGHT){
+        else if(gold ==  IdentifyGold.Positions.RIGHT){
             robot.craterRight.run();
-        }
+        }*/
     }
 
 }

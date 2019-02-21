@@ -31,19 +31,19 @@ public class VEXHang extends LinearOpMode{
         hangRightRelease = hardwareMap.servo.get("hangRightRelease");
         hangLeftRelease = hardwareMap.servo.get("hangLeftRelease");
 
-        hangLeftRelease.setPosition(-.25);
-        hangRightRelease.setPosition(1.25);
+        hangLeftRelease.setPosition(.3);
+        hangRightRelease.setPosition(.85);
 
         waitForStart();
 
         while(opModeIsActive()){
             if(gamepad1.a){
-                hangRightRelease.setPosition(-.25);
-                hangLeftRelease.setPosition(1.25);
+                hangRightRelease.setPosition(.25);
+                hangLeftRelease.setPosition(.75);
             }
             else{
-                hangLeftRelease.setPosition(-.25);
-                hangRightRelease.setPosition(1.25);
+                hangLeftRelease.setPosition(.3);
+                hangRightRelease.setPosition(.85);
             }
 
             if(gamepad1.left_trigger>0){

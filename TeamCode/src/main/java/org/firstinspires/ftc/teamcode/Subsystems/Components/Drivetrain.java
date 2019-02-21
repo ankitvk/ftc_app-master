@@ -224,10 +224,10 @@ public class Drivetrain implements Constants {
         return auto.getOpModeIsActive();
     }
 
-    public double distanceToTicks(double distance){
+    private double distanceToTicks(double distance){
         return (distance/(WHEEL_DIAMETER*Math.PI))*DT_GEARBOX_TICKS_PER_ROTATION;
     }
-    public double ticksToDistance(double ticks){
+    private double ticksToDistance(double ticks){
         return (ticks*(WHEEL_DIAMETER*Math.PI))/DT_GEARBOX_TICKS_PER_ROTATION;
     }
 
