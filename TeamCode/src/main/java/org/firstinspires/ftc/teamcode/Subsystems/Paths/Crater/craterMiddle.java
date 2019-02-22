@@ -23,8 +23,8 @@ public class craterMiddle implements Constants {
     private final double ROTATE_TO_GOLD_KI = 1.5;
     private final double ROTATE_TO_GOLD_KD = 0;
 
-    private final double DRIVE_TO_DEPOT_DISTANCE = 15;
-    private final double DRIVE_TO_DEPOT_KP = .0022;
+    private final double DRIVE_TO_DEPOT_DISTANCE = 20;
+    private final double DRIVE_TO_DEPOT_KP = .001;
     private final double DRIVE_TO_DEPOT_KI = 0.1;
     private final double DRIVE_TO_DEPOT_KD = 0;
 
@@ -123,10 +123,9 @@ public class craterMiddle implements Constants {
                 startTime = System.nanoTime();
             }
 
-            /*if(System.nanoTime()/1000000-beginTime/1000000>5000){
+            if(System.nanoTime()/1000000-beginTime/1000000>2500){
                 break;
             }
-*/
         }
     }
 
@@ -150,10 +149,10 @@ public class craterMiddle implements Constants {
             telemetry.addData("KI*i: ",controlRotate.returnVal()[1]);
             telemetry.update();
 
-            frontLeft.setPower(power*.0001);
-            backLeft.setPower(power*.0001);
-            frontRight.setPower(power);
-            backRight.setPower(power);
+            frontLeft.setPower(power);
+            backLeft.setPower(power);
+            frontRight.setPower(power*.1);
+            backRight.setPower(power*.1);
 
             if (Math.abs(position-degrees) <= IMU_TOLERANCE) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
@@ -161,7 +160,7 @@ public class craterMiddle implements Constants {
             else {
                 startTime = System.nanoTime();
             }
-            if(System.nanoTime()/1000000-beginTime/1000000>1500){
+            if(System.nanoTime()/1000000-beginTime/1000000>2500){
                 break;
             }
         }

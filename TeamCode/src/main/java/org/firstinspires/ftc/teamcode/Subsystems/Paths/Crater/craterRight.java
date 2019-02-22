@@ -95,9 +95,9 @@ public class craterRight implements Constants {
             else {
                 startTime = System.nanoTime();
             }
-            /*if(System.nanoTime()/1000000-beginTime/1000000>1500){
+            if(System.nanoTime()/1000000-beginTime/1000000>2500){
                 break;
-            }*/
+            }
         }
     }
 
@@ -121,10 +121,10 @@ public class craterRight implements Constants {
             telemetry.addData("KI*i: ",controlRotate.returnVal()[1]);
             telemetry.update();
 
-            frontLeft.setPower(power*.0001);
-            backLeft.setPower(power*.0001);
-            frontRight.setPower(power);
-            backRight.setPower(power);
+            frontLeft.setPower(power);
+            backLeft.setPower(power);
+            frontRight.setPower(power*.3);
+            backRight.setPower(power*.3);
 
             if (Math.abs(position-degrees) <= IMU_TOLERANCE) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
@@ -132,9 +132,9 @@ public class craterRight implements Constants {
             else {
                 startTime = System.nanoTime();
             }
-            /*if(System.nanoTime()/1000000-beginTime/1000000>1500){
+            if(System.nanoTime()/1000000-beginTime/1000000>2500){
                 break;
-            }*/
+            }
         }
     }
 

@@ -28,8 +28,8 @@ public class depotRight implements Constants {
     private final double ROTATE_TO_LANDER_KI = 0;
     private final double ROTATE_TO_LANDER_KD = 0;
 
-    private final double DRIVE_UP_DISTANCE = -35;
-    private final double DRIVE_UP_KP = .000275;
+    private final double DRIVE_UP_DISTANCE = -37.5;
+    private final double DRIVE_UP_KP = .000285;
     private final double DRIVE_UP_KI = 0.027;
     private final double DRIVE_UP_KD = 0;
 
@@ -39,7 +39,7 @@ public class depotRight implements Constants {
     private final double ROTATE_TO_DEPOT_KD = 0;
 
     private final double DRIVE_TO_DEPOT_DISTANCE = 55;
-    private final double DRIVE_TO_DEPOT_KP = .0006;
+    private final double DRIVE_TO_DEPOT_KP = .0004;
     private final double DRIVE_TO_DEPOT_KI = 0.035;
     private final double DRIVE_TO_DEPOT_KD = 0;
 

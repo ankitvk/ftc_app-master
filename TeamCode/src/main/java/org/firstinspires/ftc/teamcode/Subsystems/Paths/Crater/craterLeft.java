@@ -139,9 +139,9 @@ public class craterLeft implements Constants {
             else {
                 startTime = System.nanoTime();
             }
-            /*if(System.nanoTime()/1000000-beginTime/1000000>1500){
+            if(System.nanoTime()/1000000-beginTime/1000000>2500){
                 break;
-            }*/
+            }
         }
     }
 

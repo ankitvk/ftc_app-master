@@ -28,9 +28,9 @@ public class depotMiddle implements Constants {
     private final double DRIVE_TO_DEPOT_KI = 0.1;
     private final double DRIVE_TO_DEPOT_KD = 0;
 
-    private final double ROTATE_TO_CRATER_ANGLE = -46-90;
+    private final double ROTATE_TO_CRATER_ANGLE = -46;
     private final double ROTATE_TO_CRATER_KP = .015;
-    private final double ROTATE_TO_CRATER_KI = 2;
+    private final double ROTATE_TO_CRATER_KI = 0;
     private final double ROTATE_TO_CRATER_KD = 0;
 
     private final double DRIVE_TO_CRATER_DISTANCE = -68;
@@ -50,9 +50,9 @@ public class depotMiddle implements Constants {
     }
 
     public void run(){
-        rotateToGold();
         driveToDepot();
         rotateToCrater();
+        marker();
         driveToCrater();
     }
 
@@ -210,9 +210,23 @@ public class depotMiddle implements Constants {
         }
     }
 
+    private void marker(){
+        hardware.winch.setPower(1);
+        sleep(2000);
+        hardware.winch.setPower(0);
+    }
+
     public void stop(){
         for(SpeedControlledMotor motor: hardware.drivetrainMotors) {
             motor.setPower(0);
+        }
+    }
+
+    public final void sleep(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 

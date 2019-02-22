@@ -20,7 +20,7 @@ public class depotLeft implements Constants {
 
     private final double ROTATE_TO_GOLD_ANGLE = 45;
     private final double ROTATE_TO_GOLD_KP = .039;
-    private final double ROTATE_TO_GOLD_KI = 1.65;
+    private final double ROTATE_TO_GOLD_KI = 0;
     private final double ROTATE_TO_GOLD_KD = 0;
 
     private final double DRIVE_TO_GOLD_DISTANCE = 37;
@@ -173,8 +173,8 @@ public class depotLeft implements Constants {
             telemetry.addData("KI*i: ", controlRotate.returnVal()[1]);
             telemetry.update();
 
-            frontRight.setPower(power*.1);
-            backRight.setPower(power*.1);
+            frontRight.setPower(power*.07);
+            backRight.setPower(power*.07);
             frontLeft.setPower(power);
             backLeft.setPower(power);
 
