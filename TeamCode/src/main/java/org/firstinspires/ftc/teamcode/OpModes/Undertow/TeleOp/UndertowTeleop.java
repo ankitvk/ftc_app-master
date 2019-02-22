@@ -43,13 +43,13 @@ public class UndertowTeleop extends OpMode implements Constants{
         robot.frontRight.setPower(-(xDirection-yDirection)*(SPEED_MULTIPLIER));
 
         if(gamepad1.right_bumper){
-            robot.extendo.setPower(1);
+            robot.extend.setPower(1);
         }
         else if(gamepad1.left_bumper){
-            robot.extendo.setPower(-1);
+            robot.extend.setPower(-1);
         }
         else{
-            robot.extendo.setPower(0);
+            robot.extend.setPower(0);
         }
 
         /*if(gamepad2.a){
@@ -71,7 +71,7 @@ public class UndertowTeleop extends OpMode implements Constants{
         telemetry.addData("BiggAngle", robot.imu.getRelativeYaw());
         telemetry.addData("LeftSpeed:",robot.frontLeft.getPower());
         telemetry.addData("RightSpeed:",robot.frontRight.getPower());
-        telemetry.addData("Extendo:",robot.extendo.getCurrentPosition());
+        telemetry.addData("Extendo:",robot.extend.getCurrentPosition());
         telemetry.addData("Pos:",goldfish.getXPosition());
         telemetry.update();
 

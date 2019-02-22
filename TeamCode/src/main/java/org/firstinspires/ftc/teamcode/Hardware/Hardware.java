@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Components.Drivetrain;
 import org.firstinspires.ftc.teamcode.Subsystems.Components.Endgame;
 import org.firstinspires.ftc.teamcode.Subsystems.Components.Extendo;
 import org.firstinspires.ftc.teamcode.Subsystems.Components.Hang;
+import org.firstinspires.ftc.teamcode.Subsystems.Components.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Paths.Crater.craterLeft;
 import org.firstinspires.ftc.teamcode.Subsystems.Paths.Crater.craterMiddle;
 import org.firstinspires.ftc.teamcode.Subsystems.Paths.Crater.craterRight;
@@ -51,7 +52,7 @@ public class Hardware implements Constants {
             backLeft = new SpeedControlledMotor(.0031, 0, 0, 1),
             frontRight = new SpeedControlledMotor(.0031, 0, 0, 1),
             backRight = new SpeedControlledMotor(.0031, 0, 0, 1),
-            extendo = new SpeedControlledMotor(extensionKP, extensionKI, extensionKD, extensionMaxI),
+            extend = new SpeedControlledMotor(extensionKP, extensionKI, extensionKD, extensionMaxI),
             winch = new SpeedControlledMotor(0, 0, 0, 1),
             pivot1 = new SpeedControlledMotor(0, 0, 0, 0),
             pivot2 = new SpeedControlledMotor(0, 0, 0, 0);
@@ -63,11 +64,12 @@ public class Hardware implements Constants {
     public CRServo[] theHangGang = {hangLeftTop, hangLeftBottom, hangRightTop, hangRightBottom};
 
 
-    public Drivetrain drive;
+    public Drivetrain drivetrain;
     public Pivot pivot;
-    public Extendo extendoo;
+    public Extendo extendo;
     public Endgame endgame;
     public Hang hang;
+    public Intake intake;
 
     public depotLeft depotLeft;
     public depotMiddle depotMiddle;
@@ -95,7 +97,7 @@ public class Hardware implements Constants {
         backLeft.init(hwMap, "backLeft");
         backRight.init(hwMap, "backRight");
 
-        extendo.init(hwMap, "extendo");
+        extend.init(hwMap, "extendo");
 
         pivot1.init(hwMap, "pivot1");
         pivot2.init(hwMap, "pivot2");
@@ -112,11 +114,12 @@ public class Hardware implements Constants {
         hangLeftRelease = hardwareMap.servo.get("hangLeftRelease");
         hangRightRelease = hardwareMap.servo.get("hangRightRelease");
 
-        drive = new Drivetrain(this);
+        drivetrain = new Drivetrain(this);
         pivot = new Pivot(this);
-        extendoo = new Extendo(this);
+        extendo = new Extendo(this);
         endgame = new Endgame(this);
         hang = new Hang(this);
+        intake = new Intake(this);
 
         depotLeft = new depotLeft(this);
         depotMiddle = new depotMiddle(this);
@@ -130,6 +133,9 @@ public class Hardware implements Constants {
         mineralTime = new MineralTime(this);
 
         limit = hardwareMap.digitalChannel.get("limit");
+
+        extendo.setTargetPosition();
+
     }
 
     public void setAuto(AutonomousOpMode auto, Telemetry telemetry) {

@@ -1,22 +1,19 @@
 package org.firstinspires.ftc.teamcode.Subsystems.Paths.Prototype;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
-import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Control.PIDController;
-import org.firstinspires.ftc.teamcode.Control.SpeedControlledMotor;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 
-@Autonomous(name = "Mineral Time")
-public class MineralTime extends LinearOpMode implements AutonomousOpMode,Constants {
+public class MineralTime {
 
-    Hardware robot = new Hardware();
+    Hardware robot;
+    Telemetry telemetry;
+    AutonomousOpMode auto;
 
-    public boolean getOpModeIsActive() {
+    public boolean opModeIsActive() {
         return opModeIsActive();
     }
 
@@ -26,6 +23,8 @@ public class MineralTime extends LinearOpMode implements AutonomousOpMode,Consta
 
     public MineralTime(Hardware hardware){
         this.robot = hardware;
+        this.telemetry = hardware.telemetry;
+        this.auto = hardware.auto;
     }
 
     public void mineralGang(){
@@ -33,23 +32,12 @@ public class MineralTime extends LinearOpMode implements AutonomousOpMode,Consta
         down();
         telemetry.addLine("sleepTigor");
         telemetry.update();
-        sleep(2000);
+        robot.winch.setPower(1);
+        sleep(3000);
+        robot.winch.setPower(0);
+        robot.index.setPosition(.15);
         up();
-    }
-
-    @Override
-    public void runOpMode(){
-
-        robot.setAuto(this, telemetry);
-
-        robot.init(hardwareMap);
-
-        telemetry.addLine("b o x");
-        telemetry.update();
-
-        waitForStart();
-
-        mineralGang();
+        sleep(1000);
     }
 
     private void extend(){
@@ -61,19 +49,19 @@ public class MineralTime extends LinearOpMode implements AutonomousOpMode,Consta
         pivotReset();
 
         while(opModeIsActive() && (stopState <= 125/4)){
-            double position = robot.extendo.getCurrentPosition();
+            double position = robot.extend.getCurrentPosition();
             double power = controlExtend.power(-2950,position);
 
             telemetry.addLine("extend");
             telemetry.addData("power", power);
             telemetry.addData("stopstate: ", stopState);
-            telemetry.addData("extendo: ", robot.extendo.getCurrentPosition());
+            telemetry.addData("extend: ", robot.extend.getCurrentPosition());
             telemetry.addLine(" ");
             telemetry.addData("error: ",controlExtend.getError());
             telemetry.addData("KP*error: ",controlExtend.returnVal()[0]);
             telemetry.addData("KI*i: ",controlExtend.returnVal()[1]);
             telemetry.update();
-            robot.extendo.setPower(power);
+            robot.extend.setPower(power);
 
             if (Math.abs(position+2950) <= 25) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
@@ -88,7 +76,7 @@ public class MineralTime extends LinearOpMode implements AutonomousOpMode,Consta
         PIDController controlPivot = new PIDController(0.001 ,0,0,0); //increase Ki .00005
         PIDController extendControl = new PIDController(0.001,0,0,1);
 
-        double targetPosition = robot.extendo.getCurrentPosition();
+        double targetPosition = robot.extend.getCurrentPosition();
 
 
         long startTime = System.nanoTime();
@@ -110,9 +98,9 @@ public class MineralTime extends LinearOpMode implements AutonomousOpMode,Consta
             robot.pivot1.setPower(power);
             robot.pivot2.setPower(power);
 
-            double currentPosition = robot.extendo.getCurrentPosition();
+            double currentPosition = robot.extend.getCurrentPosition();
 
-            robot.extendo.setPower(-extendControl.power(currentPosition, targetPosition));
+            robot.extend.setPower(-extendControl.power(currentPosition, targetPosition));
 
             if (Math.abs(position+1000) <= 25) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
@@ -159,19 +147,19 @@ public class MineralTime extends LinearOpMode implements AutonomousOpMode,Consta
                 startTime = System.nanoTime();
             }
 
-            double extendoPosition = robot.extendo.getCurrentPosition();
+            double extendoPosition = robot.extend.getCurrentPosition();
             double extendoPower = controlExtend.power(-2450,extendoPosition);
 
             telemetry.addLine("extend");
             telemetry.addData("power", extendoPower);
             telemetry.addData("stopstate: ", extendoStopState);
-            telemetry.addData("extendo: ", robot.extendo.getCurrentPosition());
+            telemetry.addData("extend: ", robot.extend.getCurrentPosition());
             telemetry.addLine(" ");
             telemetry.addData("error: ",controlExtend.getError());
             telemetry.addData("KP*error: ",controlExtend.returnVal()[0]);
             telemetry.addData("KI*i: ",controlExtend.returnVal()[1]);
             telemetry.update();
-            robot.extendo.setPower(extendoPower);
+            robot.extend.setPower(extendoPower);
 
             if (Math.abs(extendoPosition+2450) <= 25) {
                 extendoStopState = (System.nanoTime() - startTime) / 1000000;
@@ -183,8 +171,8 @@ public class MineralTime extends LinearOpMode implements AutonomousOpMode,Consta
     }
 
     private void extendReset() {
-         robot.extendo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-         robot.extendo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+         robot.extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+         robot.extend.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
 
@@ -195,5 +183,13 @@ public class MineralTime extends LinearOpMode implements AutonomousOpMode,Consta
         robot.pivot2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
+    }
+
+    private void sleep(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

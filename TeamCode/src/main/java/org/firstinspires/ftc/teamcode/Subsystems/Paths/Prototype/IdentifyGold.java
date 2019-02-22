@@ -24,14 +24,14 @@ public class IdentifyGold {
             telemetry.addLine("RIGHT");
             telemetry.update();
         }
-        else if(goldfish.getXPosition()>35){
-            gold = Positions.LEFT;
-            telemetry.addLine("LEFT");
-            telemetry.update();
-        }
-        else if(goldfish.getXPosition()<=35){
+        else if(goldfish.getYPosition()>340){
             gold = Positions.MIDDLE;
             telemetry.addLine("MIDDLE");
+            telemetry.update();
+        }
+        else if(goldfish.getYPosition()<=340){
+            gold = Positions.LEFT;
+            telemetry.addLine("LEFT");
             telemetry.update();
         }
         return gold;

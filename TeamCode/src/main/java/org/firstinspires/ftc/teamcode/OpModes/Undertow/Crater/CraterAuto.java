@@ -44,16 +44,16 @@ public class CraterAuto extends LinearOpMode implements AutonomousOpMode,Constan
         /*robot.marker.setPosition(.9);
 
         robot.hook.setPosition(.5);*/
-        robot.extendo.setPower(1);
+        robot.extend.setPower(1);
         sleep(1250);
-        robot.extendo.setPower(0);
+        robot.extend.setPower(0);
 
         drivetrain.rotateForTime(-.5, 350);
         drivetrain.stop();
 
-        robot.extendo.setPower(-1);
+        robot.extend.setPower(-1);
         sleep(1500);
-        robot.extendo.setPower(0);
+        robot.extend.setPower(0);
 
 
 

@@ -16,7 +16,7 @@ public class Extendo implements Constants {
     public Extendo(Hardware hardware){
 
         this.hardware = hardware;
-        this.extendo = hardware.extendo;
+        this.extendo = hardware.extend;
     }
 
     private double kp = 0.01;
@@ -26,21 +26,24 @@ public class Extendo implements Constants {
     public PIDController extendControl = new PIDController(kp,ki,kd,1);
     public double targetPosition;
 
+    public void setTargetPosition() {
+        targetPosition = extendo.getCurrentPosition();
+    }
 
     public void driverControl(Gamepad gamepad){
         /*if(gamepad.right_bumper){
-            hardware.extendo.setPower(1);
+            hardware.extend.setPower(1);
         }
         else if(gamepad.right_trigger>0){
             if(!(gamepad.right_trigger<.1)) {
-                hardware.extendo.setPower(-1);
+                hardware.extend.setPower(-1);
             }
         }
         else{
-            hardware.extendo.setPower(0);
+            hardware.extend.setPower(0);
         }*/
 
-        kp = /*Math.abs((0.000005* -extendo.getCurrentPosition()) + 0.001)*/0.001;
+        kp = /*Math.abs((0.000005* -extend.getCurrentPosition()) + 0.001)*/0.001;
         if (gamepad.right_bumper) {
             extendo.setPower(-1);
         }
@@ -58,19 +61,19 @@ public class Extendo implements Constants {
         extendControl.setKp(kp);
     }
     private void eReset(){
-        hardware.extendo.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        hardware.extendo.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        hardware.extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        hardware.extend.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void stop(){
-        hardware.extendo.setPower(0);
+        hardware.extend.setPower(0);
     }
 
     public void extend(double power){
-        hardware.extendo.setPower(power);
+        hardware.extend.setPower(power);
     }
 
     public void retract(double power){
-        hardware.extendo.setPower(-power);
+        hardware.extend.setPower(-power);
     }
 }

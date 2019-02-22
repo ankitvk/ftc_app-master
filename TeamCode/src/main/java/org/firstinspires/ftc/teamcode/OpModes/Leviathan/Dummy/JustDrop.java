@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpModes.Leviathan.Dummy;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -35,6 +34,6 @@ public class JustDrop extends LinearOpMode implements AutonomousOpMode,Constants
 
         robot.endgame.lift();
 
-        robot.drive.driveForwardDistance(-5);
+        robot.drivetrain.driveForwardDistance(-5);
     }
 }

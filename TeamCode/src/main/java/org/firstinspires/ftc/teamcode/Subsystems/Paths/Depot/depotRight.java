@@ -20,7 +20,7 @@ public class depotRight implements Constants {
 
     private final double ROTATE_TO_GOLD_ANGLE = -45;
     private final double ROTATE_TO_GOLD_KP = .039;
-    private final double ROTATE_TO_GOLD_KI = 1.65;
+    private final double ROTATE_TO_GOLD_KI = 0/*1.65*/;
     private final double ROTATE_TO_GOLD_KD = 0;
 
     private final double ROTATE_TO_LANDER_ANGLE = -90;

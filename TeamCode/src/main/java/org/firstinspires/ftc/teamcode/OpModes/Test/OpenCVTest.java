@@ -30,7 +30,6 @@ public class OpenCVTest extends LinearOpMode implements AutonomousOpMode,Constan
 
     @Override
     public void runOpMode() {
-
         robot.setAuto(this, telemetry);
 
         robot.init(hardwareMap);
@@ -55,6 +54,8 @@ public class OpenCVTest extends LinearOpMode implements AutonomousOpMode,Constan
                 telemetry.addLine("RIGHT");
             }
             telemetry.addData("xPos, ",inspect.returnX());
+            telemetry.addData("yPos,",goldfish.getYPosition());
+            telemetry.addData("x2",goldfish.getXPosition());
             telemetry.update();
         }
 

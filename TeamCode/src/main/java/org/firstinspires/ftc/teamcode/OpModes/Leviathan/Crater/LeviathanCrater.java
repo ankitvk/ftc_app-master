@@ -37,6 +37,9 @@ public class LeviathanCrater extends LinearOpMode implements AutonomousOpMode,Co
 
         robot.index.setPosition(.15);
 
+        robot.hangLeftRelease.setPosition(.3);
+        robot.hangRightRelease.setPosition(.85);
+
         goldfish = new GoldFind(this, robot);
         goldfish.setAlignSettings(ALIGN_POSITION, 100);
 
@@ -44,18 +47,18 @@ public class LeviathanCrater extends LinearOpMode implements AutonomousOpMode,Co
 
         inspect = new IdentifyGold(robot,goldfish);
 
-        telemetry.addLine("Instant Run test 3");
+        telemetry.addLine("Icey");
         telemetry.update();
 
         waitForStart();
 
         gold = inspect.identify();
 
-        //robot.hang.drop();
+        robot.hang.drop();
 
-        robot.ketoAuto.ketonomous();
+        //robot.ketoAuto.ketonomous();
 
-        /*if(gold == IdentifyGold.Positions.LEFT){
+        if(gold == IdentifyGold.Positions.LEFT){
             robot.craterLeft.run();
         }
         else if(gold ==  IdentifyGold.Positions.MIDDLE){
@@ -63,7 +66,7 @@ public class LeviathanCrater extends LinearOpMode implements AutonomousOpMode,Co
         }
         else if(gold ==  IdentifyGold.Positions.RIGHT){
             robot.craterRight.run();
-        }*/
+        }
     }
 
 }

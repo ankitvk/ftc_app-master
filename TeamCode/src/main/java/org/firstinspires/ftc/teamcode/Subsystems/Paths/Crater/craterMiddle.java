@@ -18,19 +18,19 @@ public class craterMiddle implements Constants {
     private Telemetry telemetry;
     private Hardware hardware;
 
-    private final double ROTATE_TO_GOLD_ANGLE = -85;
+    private final double ROTATE_TO_GOLD_ANGLE = 0;
     private final double ROTATE_TO_GOLD_KP = 0.015/*.02725*/;
     private final double ROTATE_TO_GOLD_KI = 1.5;
     private final double ROTATE_TO_GOLD_KD = 0;
 
-    private final double DRIVE_TO_DEPOT_DISTANCE = 64;
-    private final double DRIVE_TO_DEPOT_KP = .00022;
+    private final double DRIVE_TO_DEPOT_DISTANCE = 15;
+    private final double DRIVE_TO_DEPOT_KP = .0022;
     private final double DRIVE_TO_DEPOT_KI = 0.1;
     private final double DRIVE_TO_DEPOT_KD = 0;
 
-    private final double ROTATE_TO_CRATER_ANGLE = -46-90;
-    private final double ROTATE_TO_CRATER_KP = .015;
-    private final double ROTATE_TO_CRATER_KI = 2;
+    private final double ROTATE_TO_CRATER_ANGLE = 90;
+    private final double ROTATE_TO_CRATER_KP = .039;
+    private final double ROTATE_TO_CRATER_KI = 0;
     private final double ROTATE_TO_CRATER_KD = 0;
 
     private final double DRIVE_TO_CRATER_DISTANCE = -68;
@@ -50,11 +50,8 @@ public class craterMiddle implements Constants {
     }
 
     public void run(){
-        rotateToGold();
         driveToDepot();
-        //hardware.marker.setPosition(.15);
-        /*rotateToCrater();
-        driveToCrater();*/
+        rotateToCrater();
     }
 
     private void rotateToGold(){
@@ -139,25 +136,24 @@ public class craterMiddle implements Constants {
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
-        while(opModeIsActive() && (stopState <= 500)){
+        while(opModeIsActive() && (stopState <= 125)){
 
-            double position = hardware.imu.getRelativeYaw();
+            double position = imu.getRelativeYaw();
             double power = controlRotate.power(degrees,position);
 
             telemetry.addData("power", power);
             telemetry.addData("stopstate: ", stopState);
-            telemetry.addData("Angle: ", hardware.imu.getRelativeYaw());
+            telemetry.addData("Angle: ", imu.getRelativeYaw());
             telemetry.addLine(" ");
             telemetry.addData("error: ",controlRotate.getError());
             telemetry.addData("KP*error: ",controlRotate.returnVal()[0]);
             telemetry.addData("KI*i: ",controlRotate.returnVal()[1]);
-            telemetry.addData("KD*d: ",controlRotate.returnVal()[2]);
             telemetry.update();
 
-            hardware.frontLeft.setPower(power);
-            hardware.backLeft.setPower(power);
-            hardware.frontRight.setPower(power);
-            hardware.backRight.setPower(power);
+            frontLeft.setPower(power*.0001);
+            backLeft.setPower(power*.0001);
+            frontRight.setPower(power);
+            backRight.setPower(power);
 
             if (Math.abs(position-degrees) <= IMU_TOLERANCE) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
@@ -165,9 +161,9 @@ public class craterMiddle implements Constants {
             else {
                 startTime = System.nanoTime();
             }
-            /*if(System.nanoTime()/1000000-beginTime/1000000>3000){
+            if(System.nanoTime()/1000000-beginTime/1000000>1500){
                 break;
-            }*/
+            }
         }
     }
 

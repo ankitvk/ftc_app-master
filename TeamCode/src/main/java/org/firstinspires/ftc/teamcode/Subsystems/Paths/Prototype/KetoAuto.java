@@ -37,7 +37,9 @@ public class KetoAuto implements Constants {
         firstTurn();
         goForward();
         secondTurn();
+        driveToDepot();
         sleep(1000);
+        driveFromDepot();
         thirdTurn();
         goBack();
         fourthTurn();
@@ -60,7 +62,7 @@ public class KetoAuto implements Constants {
     }*/
 
     private void  firstTurn(){
-        PIDController controlRotate = new PIDController(0.02175 ,1,0,0); //increase Ki .00005
+        PIDController controlRotate = new PIDController(0.027 ,0,0,0); //increase Ki .00005
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
@@ -88,23 +90,23 @@ public class KetoAuto implements Constants {
             else {
                 startTime = System.nanoTime();
             }
-            if(System.nanoTime()/1000000-beginTime/1000000>1250){
+            /*if(System.nanoTime()/1000000-beginTime/1000000>1250){
                 break;
-            }
+            }*/
         }
     }
 
     private void goForward(){
         eReset();
-        PIDController controlDistance = new PIDController(.000385,0,0,0); //increase Ki .00005
+        PIDController controlDistance = new PIDController(.000490,0,0,0); //increase Ki .00005
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 125/4)){
             double position = robot.frontLeft.getCurrentPosition();
-            double power = controlDistance.power(distanceToTicks(25),position);
+            double power = controlDistance.power(distanceToTicks(20),position);
 
-            if(ticksToDistance(position)>23){
+            if(ticksToDistance(position)>19){
                 power = 1;
             }
 
@@ -120,7 +122,7 @@ public class KetoAuto implements Constants {
             robot.frontRight.setPower(power);
             robot.backRight.setPower(power);
 
-            if (ticksToDistance(Math.abs(position-distanceToTicks(25))) <= 1) {
+            if (ticksToDistance(Math.abs(position-distanceToTicks(20))) <= 1) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
             }
             else {
@@ -136,7 +138,7 @@ public class KetoAuto implements Constants {
 
     private void secondTurn(){
 
-        PIDController controlRotate = new PIDController(0.01775,0.2,0,0); //increase Ki .00005
+        PIDController controlRotate = new PIDController(0.01990,0.2,0,0); //increase Ki .00005
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
@@ -164,21 +166,21 @@ public class KetoAuto implements Constants {
             else {
                 startTime = System.nanoTime();
             }
-            if(System.nanoTime()/1000000-beginTime/1000000>1500){
+            /*if(System.nanoTime()/1000000-beginTime/1000000>1500){
                 break;
-            }
+            }*/
         }
     }
 
     private void driveToDepot(){
         eReset();
-        PIDController controlDistance = new PIDController(.001,0,0,0); //increase Ki .00005
+        PIDController controlDistance = new PIDController(.00065,0,0,0); //increase Ki .00005
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 125/4)){
             double position = robot.frontLeft.getCurrentPosition();
-            double power = controlDistance.power(distanceToTicks(10),position);
+            double power = controlDistance.power(distanceToTicks(25),position);
 
             telemetry.addLine("driveToDepot");
             telemetry.addData("power", power);
@@ -193,7 +195,7 @@ public class KetoAuto implements Constants {
             robot.frontRight.setPower(power);
             robot.backRight.setPower(power);
 
-            if (ticksToDistance(Math.abs(position-distanceToTicks(10))) <= DISTANCE_TOLERANCE) {
+            if (ticksToDistance(Math.abs(position-distanceToTicks(25))) <= DISTANCE_TOLERANCE) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
             }
             else {
@@ -209,13 +211,13 @@ public class KetoAuto implements Constants {
 
     private void driveFromDepot(){
         eReset();
-        PIDController controlDistance = new PIDController(.001,0,0,0); //increase Ki .00005
+        PIDController controlDistance = new PIDController(.0005,0,0,0); //increase Ki .00005
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 125/4)){
             double position = robot.frontLeft.getCurrentPosition();
-            double power = controlDistance.power(distanceToTicks(-12.5),position);
+            double power = controlDistance.power(distanceToTicks(-23),position);
 
             telemetry.addLine("driveFromDepot");
             telemetry.addData("power", power);
@@ -230,7 +232,7 @@ public class KetoAuto implements Constants {
             robot.frontRight.setPower(power);
             robot.backRight.setPower(power);
 
-            if (ticksToDistance(Math.abs(position-distanceToTicks(-12.5))) <= DISTANCE_TOLERANCE) {
+            if (ticksToDistance(Math.abs(position-distanceToTicks(-23))) <= DISTANCE_TOLERANCE) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
             }
             else {
@@ -245,13 +247,13 @@ public class KetoAuto implements Constants {
     }
 
     private void thirdTurn(){
-        PIDController controlRotate = new PIDController(0.02325,0,0,0); //increase Ki .00005
+        PIDController controlRotate = new PIDController(0.027,0,0,0); //increase Ki .00005
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 125)){
             double position = robot.imu.getRelativeYaw();
-            double power = controlRotate.power(92.5,position);
+            double power = controlRotate.power(87,position);
 
             telemetry.addLine("third Turn");
             telemetry.addData("power", power);
@@ -267,15 +269,15 @@ public class KetoAuto implements Constants {
             robot.frontRight.setPower(power);
             robot.backRight.setPower(power);
 
-            if (Math.abs(position-92.5) <= 1) {
+            if (Math.abs(position-87) <= 1) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
             }
             else {
                 startTime = System.nanoTime();
             }
-            if(System.nanoTime()/1000000-beginTime/1000000>1500){
+            /*if(System.nanoTime()/1000000-beginTime/1000000>1500){
                 break;
-            }
+            }*/
         }
     }
 
@@ -287,7 +289,7 @@ public class KetoAuto implements Constants {
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 125/4)){
             double position = robot.frontLeft.getCurrentPosition();
-            double power = controlDistance.power(distanceToTicks(-23),position);
+            double power = controlDistance.power(distanceToTicks(-27),position);
 
             telemetry.addLine("goBack");
             telemetry.addData("power", power);
@@ -301,22 +303,22 @@ public class KetoAuto implements Constants {
             robot.frontRight.setPower(power);
             robot.backRight.setPower(power);
 
-            if (ticksToDistance(Math.abs(position-distanceToTicks(-23))) <= 1) {
+            if (ticksToDistance(Math.abs(position-distanceToTicks(-27))) <= 1) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
             }
             else {
                 startTime = System.nanoTime();
             }
 
-            if(System.nanoTime()/1000000-beginTime/1000000>2000){
+            /*if(System.nanoTime()/1000000-beginTime/1000000>2000){
                 break;
-            }
+            }*/
 
         }
     }
 
     private void fourthTurn(){
-        PIDController controlRotate = new PIDController(0.0245,0,0,0); //increase Ki .00005
+        PIDController controlRotate = new PIDController(0.026,0,0,0); //increase Ki .00005
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
@@ -344,9 +346,9 @@ public class KetoAuto implements Constants {
             else {
                 startTime = System.nanoTime();
             }
-            if(System.nanoTime()/1000000-beginTime/1000000>1500){
+            /*if(System.nanoTime()/1000000-beginTime/1000000>1500){
                 break;
-            }
+            }*/
         }
     }
 

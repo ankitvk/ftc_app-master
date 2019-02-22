@@ -149,8 +149,8 @@ public class GoldFind extends DogeCVDetector implements Constants {
             xPos = bestRect.x + (bestRect.width / 2);
             goldXPos = xPos;
             // Set align Y pos
-            /*yPos = bestRect.y + (bestRect.height / 2);
-            goldYPos = yPos;*/
+            yPos = bestRect.y + (bestRect.height / 2);
+            goldYPos = yPos;
 
             // Draw center point
             Imgproc.circle(displayMat, new Point( xPos, bestRect.y + (bestRect.height / 2)), 5, new Scalar(0,255,0),2);
@@ -231,7 +231,7 @@ public class GoldFind extends DogeCVDetector implements Constants {
     }
 
     public double getYPosition(){
-        return  goldYPos;
+        return  detector.getYPosition();
     }
 
     /**

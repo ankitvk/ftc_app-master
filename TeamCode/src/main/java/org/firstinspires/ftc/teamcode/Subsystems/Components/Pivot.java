@@ -23,6 +23,7 @@ public class Pivot implements Constants {
     private double rotatorPower = basePower;
     private double downPower = -0.1;
 
+
     public PIDController pivotControl = new PIDController(kp,ki,kd,1);
 
     private double liftPosition = 0;
@@ -48,6 +49,8 @@ public class Pivot implements Constants {
         }
         else if (controller.right_bumper) {
             setPower(downPower);
+        } else if (controller.b) {
+            setAngle(90);
         } else {
             setPower(0);
         }
@@ -60,14 +63,14 @@ public class Pivot implements Constants {
 
         /*if(!hardware.limit.getState()){
             eReset();
-        }
-*/
+        }*/
+
         pivotControl.setKp(kp);
         pivotControl.setKi(ki);
         pivotControl.setKd(kd);
     }
 
-    public void driverControl(Gamepad controller,boolean idc) {
+    public void driverControlSingle(Gamepad controller) {
         kp = (pivotKP * -liftPosition) + 0.001;
         ki = 0.0;
         kd = 0.0;
@@ -82,19 +85,30 @@ public class Pivot implements Constants {
             setPower(0);
         }
 
-        if (controller.dpad_left|| controller.dpad_right) targetPosition = getPosition();
+        if (controller.dpad_left|| controller.dpad_right)
+            targetPosition = getPosition();
         else {
             double currentPosition = getPosition();
             //setPower(pivotControl.power(targetPosition,currentPosition));
         }
 
-        /*if(!hardware.limit.getState()){
+/*        if(!hardware.limit.getState()){
             eReset();
-        }
-*/
+        }*/
+
         pivotControl.setKp(kp);
         pivotControl.setKi(ki);
         pivotControl.setKd(kd);
+    }
+
+    public void setAngle(double angle){
+        PIDController pivotAngleController = new PIDController(Math.abs(Math.cos(getAngle()))*0.006 + 0.05 ,0,0,0);
+
+        double power = pivotAngleController.power(angle, getAngle());
+
+        hardware.pivot1.setPower(power);
+        hardware.pivot2.setPower(power);
+
     }
 
     public void scoringPosition(){
@@ -161,7 +175,7 @@ public class Pivot implements Constants {
 
     }
 
-    private void eReset(){
+    public void eReset(){
         for(SpeedControlledMotor motor: hardware.pivotMotors) {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -178,7 +192,7 @@ public class Pivot implements Constants {
     }
 
     public double getPosition() {
-        return (hardware.pivotMotors[1].getCurrentPosition())+(hardware.pivotMotors[0].getCurrentPosition())-1;
+        return hardware.pivot1.getCurrentPosition();
     }
 
     public void setPower(double power){
@@ -191,11 +205,8 @@ public class Pivot implements Constants {
         return hardware.pivotMotors[0].getPower();
     }
 
-    private double getAngle(){
-        double angle = 0;
-        for(SpeedControlledMotor motor: hardware.pivotMotors) {
-            angle += motor.getAngle(PIVOT_TICKS_PER_INCH,PIVOT_TICKS_PER_ROTATION);
-        }
+    public double getAngle(){
+        double angle = PIVOT_START_ANGLE + hardware.pivot1.getAngle(PIVOT_TICKS_PER_ROTATION);
         return angle;
     }
 

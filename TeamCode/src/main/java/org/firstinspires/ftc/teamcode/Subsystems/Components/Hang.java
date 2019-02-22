@@ -70,7 +70,7 @@ public class Hang implements Constants {
 
         long startTime = System.nanoTime();
         long stopState = 0;
-        while((stopState <= 2000)&&(opModeIsActive())){
+        while((stopState <= 2500)&&(opModeIsActive())){
             hangLeftBottom.setPower(.85);
             hangRightTop.setPower(.85);
             hangLeftTop.setPower(-.85);

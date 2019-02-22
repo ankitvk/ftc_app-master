@@ -27,6 +27,7 @@ public class LeviathanDepot extends LinearOpMode implements AutonomousOpMode,Con
 
     IdentifyGold.Positions gold;
 
+
     @Override
     public void runOpMode() {
         robot.setAuto(this, telemetry);
@@ -35,6 +36,9 @@ public class LeviathanDepot extends LinearOpMode implements AutonomousOpMode,Con
 
         robot.index.setPosition(.15);
 
+        robot.hangLeftRelease.setPosition(.3);
+        robot.hangRightRelease.setPosition(.85);
+
         goldfish = new GoldFind(this, robot);
         goldfish.setAlignSettings(ALIGN_POSITION, 100);
 
@@ -42,7 +46,7 @@ public class LeviathanDepot extends LinearOpMode implements AutonomousOpMode,Con
 
         inspect = new IdentifyGold(robot,goldfish);
 
-        telemetry.addLine("Instant Run test 3");
+        telemetry.addLine("Icey");
         telemetry.update();
 
         waitForStart();

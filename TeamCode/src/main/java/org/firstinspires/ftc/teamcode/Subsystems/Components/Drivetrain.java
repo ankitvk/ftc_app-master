@@ -238,13 +238,21 @@ public class Drivetrain implements Constants {
     public void drive(Gamepad gamepad){
         double yDirection = gamepad.left_stick_y;
         double xDirection = gamepad.right_stick_x;
+        double speedReducer = 1;
 
         double leftPower = (yDirection-xDirection)*(SPEED_MULTIPLIER);
         double rightPower = (-yDirection-xDirection)*(SPEED_MULTIPLIER);
-        hardware.backLeft.setPower(leftPower);
-        hardware.frontLeft.setPower(leftPower);
-        hardware.backRight.setPower(rightPower);
-        hardware.frontRight.setPower(rightPower);
+
+        if(gamepad.a){
+            speedReducer = 0.25;
+        }
+        else{
+            speedReducer = 1;
+        }
+        hardware.backLeft.setPower(leftPower*speedReducer);
+        hardware.frontLeft.setPower(leftPower*speedReducer);
+        hardware.backRight.setPower(rightPower*speedReducer);
+        hardware.frontRight.setPower(rightPower*speedReducer);
     }
 
     public void controlDrive(Gamepad gamepad){

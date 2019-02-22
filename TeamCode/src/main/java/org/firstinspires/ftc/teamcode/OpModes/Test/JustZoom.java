@@ -63,7 +63,7 @@ public class JustZoom extends LinearOpMode implements AutonomousOpMode,Constants
             angle = robot.imu.getRelativeYaw();
         }
 
-        robot.drive.driveForwardDistance(20);
+        robot.drivetrain.driveForwardDistance(20);
 
         while(opModeIsActive() && (Math.abs(angle-133)>=3)){
 
@@ -86,11 +86,11 @@ public class JustZoom extends LinearOpMode implements AutonomousOpMode,Constants
 
         }
 
-        robot.drive.driveForwardDistance(20);
+        robot.drivetrain.driveForwardDistance(20);
 
         sleep(500);
 
-        robot.drive.driveForwardDistance(-20);
+        robot.drivetrain.driveForwardDistance(-20);
 
         while(opModeIsActive() && (Math.abs(angle-87)>=3)){
 
@@ -109,7 +109,7 @@ public class JustZoom extends LinearOpMode implements AutonomousOpMode,Constants
 
         }
 
-        robot.drive.driveForwardDistance(-15);
+        robot.drivetrain.driveForwardDistance(-15);
 
         while(opModeIsActive() && (Math.abs(angle)>=2)){
 

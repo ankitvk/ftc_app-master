@@ -18,9 +18,9 @@ public class craterLeft implements Constants {
     private Telemetry telemetry;
     private Hardware hardware;
 
-    private final double ROTATE_TO_GOLD_ANGLE = -60;
-    private final double ROTATE_TO_GOLD_KP = 0.015/*.02725*/;
-    private final double ROTATE_TO_GOLD_KI = 1.5;
+    private final double ROTATE_TO_GOLD_ANGLE = 45;
+    private final double ROTATE_TO_GOLD_KP = 0.04/*.02725*/;
+    private final double ROTATE_TO_GOLD_KI = 0/*1.65*/;
     private final double ROTATE_TO_GOLD_KD = 0;
 
     private final double DRIVE_TO_GOLD_DISTANCE = 45;
@@ -56,24 +56,72 @@ public class craterLeft implements Constants {
 
     public void run(){
         rotateToGold();
-        driveToGold();
+        rotateToCrater();
 
     }
 
-    private void rotateToGold(){
+    private void rotateToGold() {
         double degrees = ROTATE_TO_GOLD_ANGLE;
-        PIDController controlRotate = new PIDController(ROTATE_TO_GOLD_KP,ROTATE_TO_GOLD_KI,ROTATE_TO_GOLD_KD,1);
+        PIDController controlRotate = new PIDController(ROTATE_TO_GOLD_KP, ROTATE_TO_GOLD_KI, ROTATE_TO_GOLD_KD, 1);
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
-        while(opModeIsActive() && (stopState <= 250)){
+        while (opModeIsActive() && (stopState <= 10)) {
 
             double position = hardware.imu.getRelativeYaw();
-            double power = controlRotate.power(degrees,position);
+            double power = controlRotate.power(degrees, position);
+
+            /*if(Math.abs(power)<.6){
+                if(Math.abs(power)<.1){
+                    break;
+                }
+                power = 0.6*(power/Math.abs(power));
+            }*/
 
             telemetry.addData("power", power);
             telemetry.addData("stopstate: ", stopState);
             telemetry.addData("Angle: ", hardware.imu.getRelativeYaw());
+            telemetry.addLine(" ");
+            telemetry.addData("error: ", controlRotate.getError());
+            telemetry.addData("KP*error: ", controlRotate.returnVal()[0]);
+            telemetry.addData("KI*i: ", controlRotate.returnVal()[1]);
+            telemetry.update();
+
+            /*frontLeft.setPower(power);
+            backLeft.setPower(power);
+            frontRight.setPower(power+.1);
+            backRight.setPower(power+.1);*/
+
+            frontLeft.setPower(power * .001);
+            backLeft.setPower(power * .001);
+            frontRight.setPower(power);
+            backRight.setPower(power);
+
+            if (Math.abs(position - degrees) <= IMU_TOLERANCE) {
+                stopState = (System.nanoTime() - startTime) / 1000000;
+            } else {
+                startTime = System.nanoTime();
+            }
+            /*if(System.nanoTime()/1000000-beginTime/1000000>1500){
+                break;
+            }*/
+        }
+    }
+
+    private void rotateToCrater(){
+        double degrees = 90;
+        PIDController controlRotate = new PIDController(.0395,0,0,1);
+        long startTime = System.nanoTime();
+        long beginTime = startTime;
+        long stopState = 0;
+        while(opModeIsActive() && (stopState <= 125)){
+
+            double position = imu.getRelativeYaw();
+            double power = controlRotate.power(degrees,position);
+
+            telemetry.addData("power", power);
+            telemetry.addData("stopstate: ", stopState);
+            telemetry.addData("Angle: ", imu.getRelativeYaw());
             telemetry.addLine(" ");
             telemetry.addData("error: ",controlRotate.getError());
             telemetry.addData("KP*error: ",controlRotate.returnVal()[0]);
@@ -82,8 +130,8 @@ public class craterLeft implements Constants {
 
             frontLeft.setPower(power);
             backLeft.setPower(power);
-            frontRight.setPower(power);
-            backRight.setPower(power);
+            frontRight.setPower(power*.0001);
+            backRight.setPower(power*.0001);
 
             if (Math.abs(position-degrees) <= IMU_TOLERANCE) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
@@ -91,9 +139,9 @@ public class craterLeft implements Constants {
             else {
                 startTime = System.nanoTime();
             }
-            if(System.nanoTime()/1000000-beginTime/1000000>3000){
+            /*if(System.nanoTime()/1000000-beginTime/1000000>1500){
                 break;
-            }
+            }*/
         }
     }
 

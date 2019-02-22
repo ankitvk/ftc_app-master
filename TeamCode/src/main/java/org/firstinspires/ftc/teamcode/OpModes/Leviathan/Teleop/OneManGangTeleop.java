@@ -36,7 +36,7 @@ public class OneManGangTeleop extends OpMode implements Constants {
     public void loop(){
 
         drivetrain.drive(gamepad1);
-        pivot.driverControl(gamepad1,true);
+        pivot.driverControlSingle(gamepad1);
         extendo.driverControl(gamepad1);
         intake.intake(gamepad1);
         intake.index(gamepad1,true);

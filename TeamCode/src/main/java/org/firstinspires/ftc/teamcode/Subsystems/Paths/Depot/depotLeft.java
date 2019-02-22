@@ -173,8 +173,8 @@ public class depotLeft implements Constants {
             telemetry.addData("KI*i: ", controlRotate.returnVal()[1]);
             telemetry.update();
 
-            frontRight.setPower(power*.001);
-            backRight.setPower(power*.001);
+            frontRight.setPower(power*.1);
+            backRight.setPower(power*.1);
             frontLeft.setPower(power);
             backLeft.setPower(power);
 
@@ -183,9 +183,9 @@ public class depotLeft implements Constants {
             } else {
                 startTime = System.nanoTime();
             }
-            /*if(System.nanoTime()/1000000-beginTime/1000000>3000){
+            if(System.nanoTime()/1000000-beginTime/1000000>3000){
                 break;
-            }*/
+            }
         }
     }
 

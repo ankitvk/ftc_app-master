@@ -18,9 +18,9 @@ public class craterRight implements Constants {
     private Telemetry telemetry;
     private Hardware hardware;
 
-    private final double ROTATE_TO_GOLD_ANGLE = -120;
-    private final double ROTATE_TO_GOLD_KP = .015;
-    private final double ROTATE_TO_GOLD_KI = 1.5;
+    private final double ROTATE_TO_GOLD_ANGLE = -45;
+    private final double ROTATE_TO_GOLD_KP = .039;
+    private final double ROTATE_TO_GOLD_KI = 0/*1.65*/;
     private final double ROTATE_TO_GOLD_KD = 0;
 
     private final double DRIVE_TO_GOLD_DISTANCE = 48;
@@ -56,7 +56,8 @@ public class craterRight implements Constants {
 
     public void run(){
         rotateToGold();
-        driveToGold();
+        //driveToGold();
+        rotateToCrater();
         /*rotateToDepot();
         driveToDepot();
         hardware.marker.setPosition(.15);*/
@@ -69,7 +70,7 @@ public class craterRight implements Constants {
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
-        while(opModeIsActive() && (stopState <= 1000)){
+        while(opModeIsActive() && (stopState <= 125)){
 
             double position = imu.getRelativeYaw();
             double power = controlRotate.power(degrees,position);
@@ -85,6 +86,43 @@ public class craterRight implements Constants {
 
             frontLeft.setPower(power);
             backLeft.setPower(power);
+            frontRight.setPower(power *.001);
+            backRight.setPower(power *.001);
+
+            if (Math.abs(position-degrees) <= IMU_TOLERANCE) {
+                stopState = (System.nanoTime() - startTime) / 1000000;
+            }
+            else {
+                startTime = System.nanoTime();
+            }
+            /*if(System.nanoTime()/1000000-beginTime/1000000>1500){
+                break;
+            }*/
+        }
+    }
+
+    private void rotateToCrater(){
+        double degrees = 90;
+        PIDController controlRotate = new PIDController(.039,0,0,1);
+        long startTime = System.nanoTime();
+        long beginTime = startTime;
+        long stopState = 0;
+        while(opModeIsActive() && (stopState <= 125)){
+
+            double position = imu.getRelativeYaw();
+            double power = controlRotate.power(degrees,position);
+
+            telemetry.addData("power", power);
+            telemetry.addData("stopstate: ", stopState);
+            telemetry.addData("Angle: ", imu.getRelativeYaw());
+            telemetry.addLine(" ");
+            telemetry.addData("error: ",controlRotate.getError());
+            telemetry.addData("KP*error: ",controlRotate.returnVal()[0]);
+            telemetry.addData("KI*i: ",controlRotate.returnVal()[1]);
+            telemetry.update();
+
+            frontLeft.setPower(power*.0001);
+            backLeft.setPower(power*.0001);
             frontRight.setPower(power);
             backRight.setPower(power);
 
@@ -94,9 +132,9 @@ public class craterRight implements Constants {
             else {
                 startTime = System.nanoTime();
             }
-            if(System.nanoTime()/1000000-beginTime/1000000>3000){
+            /*if(System.nanoTime()/1000000-beginTime/1000000>1500){
                 break;
-            }
+            }*/
         }
     }
 
