@@ -34,15 +34,21 @@ public class KetoAuto implements Constants {
     }
 
     public void ketonomous(){
-        firstTurn();
-        goForward();
+        /*firstTurn();
+        goForward();*/
         secondTurn();
         driveToDepot();
-        sleep(1000);
+        marker();
         driveFromDepot();
-        thirdTurn();
+        /*thirdTurn();
         goBack();
-        fourthTurn();
+        fourthTurn();*/
+    }
+
+    private void marker(){
+        robot.winch.setPower(-1);
+        sleep(2000);
+        robot.winch.setPower(0);
     }
 
    /* @Override
@@ -217,7 +223,7 @@ public class KetoAuto implements Constants {
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 125/4)){
             double position = robot.frontLeft.getCurrentPosition();
-            double power = controlDistance.power(distanceToTicks(-23),position);
+            double power = controlDistance.power(distanceToTicks(-50),position);
 
             telemetry.addLine("driveFromDepot");
             telemetry.addData("power", power);
@@ -232,7 +238,7 @@ public class KetoAuto implements Constants {
             robot.frontRight.setPower(power);
             robot.backRight.setPower(power);
 
-            if (ticksToDistance(Math.abs(position-distanceToTicks(-23))) <= DISTANCE_TOLERANCE) {
+            if (ticksToDistance(Math.abs(position-distanceToTicks(-50))) <= DISTANCE_TOLERANCE) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
             }
             else {

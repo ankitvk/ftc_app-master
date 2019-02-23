@@ -19,17 +19,17 @@ public class depotLeft implements Constants {
     private Hardware hardware;
 
     private final double ROTATE_TO_GOLD_ANGLE = 45;
-    private final double ROTATE_TO_GOLD_KP = .039;
+    private final double ROTATE_TO_GOLD_KP = .07;
     private final double ROTATE_TO_GOLD_KI = 0;
     private final double ROTATE_TO_GOLD_KD = 0;
 
-    private final double DRIVE_TO_GOLD_DISTANCE = 37;
+    private final double DRIVE_TO_GOLD_DISTANCE = 15;
     private final double DRIVE_TO_GOLD_KP = .00025;
     private final double DRIVE_TO_GOLD_KI = 0.03;
     private final double DRIVE_TO_GOLD_KD = 0;
 
     private final double ROTATE_TO_DEPOT_ANGLE = -47;
-    private final double ROTATE_TO_DEPOT_KP = .039;
+    private final double ROTATE_TO_DEPOT_KP = .005;
     private final double ROTATE_TO_DEPOT_KI = 0;
     private final double ROTATE_TO_DEPOT_KD = 0;
 
@@ -56,8 +56,9 @@ public class depotLeft implements Constants {
 
     public void run() {
         rotateToGold();
-        //driveToGold();
+        driveToGold();
         rotateToDepot();
+        marker();
         //driveToDepot();
         driveToCrater();
     }
@@ -99,14 +100,14 @@ public class depotLeft implements Constants {
             frontRight.setPower(power);
             backRight.setPower(power);
 
-            if (Math.abs(position - degrees) <= IMU_TOLERANCE) {
+            if (Math.abs(position - degrees) <= 3) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
             } else {
                 startTime = System.nanoTime();
             }
-            if(System.nanoTime()/1000000-beginTime/1000000>1500){
+            /*if(System.nanoTime()/1000000-beginTime/1000000>3000){
                 break;
-            }
+            }*/
         }
     }
 
@@ -173,10 +174,10 @@ public class depotLeft implements Constants {
             telemetry.addData("KI*i: ", controlRotate.returnVal()[1]);
             telemetry.update();
 
-            frontRight.setPower(power*.07);
-            backRight.setPower(power*.07);
-            frontLeft.setPower(power);
-            backLeft.setPower(power);
+            frontRight.setPower(power);
+            backRight.setPower(power);
+            frontLeft.setPower(power+.1);
+            backLeft.setPower(power+.1);
 
             if (Math.abs(position - degrees) <= IMU_TOLERANCE) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
@@ -279,6 +280,12 @@ public class depotLeft implements Constants {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    private void marker(){
+        hardware.winch.setPower(-1);
+        sleep(2000);
+        hardware.winch.setPower(0);
     }
 
     private void eReset() {

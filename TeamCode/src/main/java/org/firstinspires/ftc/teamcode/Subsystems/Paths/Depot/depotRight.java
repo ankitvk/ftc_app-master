@@ -18,23 +18,23 @@ public class depotRight implements Constants {
     private Telemetry telemetry;
     private Hardware hardware;
 
-    private final double ROTATE_TO_GOLD_ANGLE = -45;
-    private final double ROTATE_TO_GOLD_KP = .039;
+    private final double ROTATE_TO_GOLD_ANGLE = -50;
+    private final double ROTATE_TO_GOLD_KP = .02;
     private final double ROTATE_TO_GOLD_KI = 0/*1.65*/;
     private final double ROTATE_TO_GOLD_KD = 0;
 
-    private final double ROTATE_TO_LANDER_ANGLE = -90;
-    private final double ROTATE_TO_LANDER_KP = .039;
+    private final double ROTATE_TO_LANDER_ANGLE = -92;
+    private final double ROTATE_TO_LANDER_KP = .02;
     private final double ROTATE_TO_LANDER_KI = 0;
     private final double ROTATE_TO_LANDER_KD = 0;
 
-    private final double DRIVE_UP_DISTANCE = -37.5;
-    private final double DRIVE_UP_KP = .000285;
+    private final double DRIVE_UP_DISTANCE = -39;
+    private final double DRIVE_UP_KP = .0006;
     private final double DRIVE_UP_KI = 0.027;
     private final double DRIVE_UP_KD = 0;
 
     private final double ROTATE_TO_DEPOT_ANGLE = -45;
-    private final double ROTATE_TO_DEPOT_KP = .045;
+    private final double ROTATE_TO_DEPOT_KP = .0175;
     private final double ROTATE_TO_DEPOT_KI = 0;
     private final double ROTATE_TO_DEPOT_KD = 0;
 
@@ -65,6 +65,7 @@ public class depotRight implements Constants {
         driveUp();
         rotateToDepot();
         driveToDepot();
+        marker();
         driveToCrater();
     }
 
@@ -90,8 +91,8 @@ public class depotRight implements Constants {
 
             frontLeft.setPower(power);
             backLeft.setPower(power);
-            frontRight.setPower(power *.001);
-            backRight.setPower(power *.001);
+            frontRight.setPower(power *.0001);
+            backRight.setPower(power *.0001);
 
             if (Math.abs(position-degrees) <= IMU_TOLERANCE) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
@@ -99,7 +100,7 @@ public class depotRight implements Constants {
             else {
                 startTime = System.nanoTime();
             }
-            if(System.nanoTime()/1000000-beginTime/1000000>1500){
+            if(System.nanoTime()/1000000-beginTime/1000000>2000){
                 break;
             }
         }
@@ -289,6 +290,19 @@ public class depotRight implements Constants {
         }
     }
 
+    private void marker(){
+        hardware.winch.setPower(-1);
+        sleep(2000);
+        hardware.winch.setPower(0);
+    }
+
+    public final void sleep(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
 
     public void stop(){
         for(SpeedControlledMotor motor: hardware.drivetrainMotors) {

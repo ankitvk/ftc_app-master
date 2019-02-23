@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
+import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.lynx.LynxNackException;
+import com.qualcomm.hardware.lynx.commands.core.LynxI2cConfigureChannelCommand;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -33,6 +36,8 @@ public class Hardware implements Constants {
     public AutonomousOpMode auto;
 
     public Telemetry telemetry;
+
+    LynxModule revHub;
 
     public LEDRiver ledRiver;
 
@@ -86,11 +91,22 @@ public class Hardware implements Constants {
 
         this.hwMap = hardwareMap;
 
+        /*revHub = hwMap.get(LynxModule.class, "Expansion Hub 2");
+        try {
+            new LynxI2cConfigureChannelCommand(revHub, 1, LynxI2cConfigureChannelCommand.SpeedCode.FAST_400K).send();
+        } catch (LynxNackException | InterruptedException ex) {
+            ex.printStackTrace();
+        }
+
         ledRiver = hardwareMap.get(LEDRiver.IMPL, "ledriver");
+
+        ledRiver.setLEDCount(ledCount);
+        ledRiver.setMode(LEDRiver.Mode.PATTERN);
+        ledRiver.setLEDMode(LEDRiver.LEDMode.RGB);
+        ledRiver.setColorDepth(LEDRiver.ColorDepth.BIT_16);*/
 
         imu = new BNO055_IMU("imu", this);
 
-        ledRiver = hardwareMap.get(LEDRiver.IMPL, "led");
 
         frontLeft.init(hwMap, "frontLeft");
         frontRight.init(hwMap, "frontRight");

@@ -23,6 +23,9 @@ public class Pivot implements Constants {
     private double rotatorPower = basePower;
     private double downPower = -0.1;
 
+    private boolean isReset = false;
+    private boolean scoringPosition = false;
+
 
     public PIDController pivotControl = new PIDController(kp,ki,kd,1);
 
@@ -49,21 +52,27 @@ public class Pivot implements Constants {
         }
         else if (controller.right_bumper) {
             setPower(downPower);
-        } else if (controller.b) {
-            setAngle(90);
+        } else if (scoringPosition) {
+            setAngle(135);
         } else {
             setPower(0);
         }
 
-        if (controller.right_bumper|| controller.left_bumper) targetPosition = getPosition();
+        if (controller.right_bumper|| controller.left_bumper) {
+            targetPosition = getPosition();
+            scoringPosition = false;
+        }
         else {
+            if (controller.b) {
+                scoringPosition = true;
+            }
             double currentPosition = getPosition();
             //setPower(pivotControl.power(targetPosition,currentPosition));
         }
 
-        /*if(!hardware.limit.getState()){
+        if(!hardware.limit.getState() && !isReset){
             eReset();
-        }*/
+        }
 
         pivotControl.setKp(kp);
         pivotControl.setKi(ki);
@@ -92,9 +101,9 @@ public class Pivot implements Constants {
             //setPower(pivotControl.power(targetPosition,currentPosition));
         }
 
-/*        if(!hardware.limit.getState()){
+        if(!hardware.limit.getState() && !isReset){
             eReset();
-        }*/
+        }
 
         pivotControl.setKp(kp);
         pivotControl.setKi(ki);
@@ -102,7 +111,7 @@ public class Pivot implements Constants {
     }
 
     public void setAngle(double angle){
-        PIDController pivotAngleController = new PIDController(Math.abs(Math.cos(getAngle()))*0.006 + 0.05 ,0,0,0);
+        PIDController pivotAngleController = new PIDController(Math.abs(Math.cos(getAngle()))*0.003 + 0.05 ,0,0,0);
 
         double power = pivotAngleController.power(angle, getAngle());
 
@@ -206,7 +215,7 @@ public class Pivot implements Constants {
     }
 
     public double getAngle(){
-        double angle = PIVOT_START_ANGLE + hardware.pivot1.getAngle(PIVOT_TICKS_PER_ROTATION);
+        double angle = PIVOT_LIMIT_ANGLE + hardware.pivot1.getAngle(PIVOT_TICKS_PER_ROTATION);
         return angle;
     }
 

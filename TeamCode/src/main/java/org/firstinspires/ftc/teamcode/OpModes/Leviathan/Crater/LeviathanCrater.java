@@ -56,8 +56,6 @@ public class LeviathanCrater extends LinearOpMode implements AutonomousOpMode,Co
 
         robot.hang.drop();
 
-        //robot.ketoAuto.ketonomous();
-
         if(gold == IdentifyGold.Positions.LEFT){
             robot.craterLeft.run();
         }
@@ -67,6 +65,8 @@ public class LeviathanCrater extends LinearOpMode implements AutonomousOpMode,Co
         else if(gold ==  IdentifyGold.Positions.RIGHT){
             robot.craterRight.run();
         }
+
+        robot.ketoAuto.ketonomous();
     }
 
 }

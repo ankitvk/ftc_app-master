@@ -18,6 +18,8 @@ public class Drivetrain implements Constants {
     private AutonomousOpMode auto;
     private Telemetry telemetry;
     private Hardware hardware;
+    private double desiredPitch = 0;
+
 
     public Drivetrain(Hardware hardware){
         this.hardware = hardware;
@@ -236,6 +238,8 @@ public class Drivetrain implements Constants {
     }
 
     public void drive(Gamepad gamepad){
+        PIDController pitchCorrection = new PIDController(.02,0,0,0);
+        double antiTipPower = Math.abs(desiredPitch - imu.getPitch()) > 2?  pitchCorrection.power(desiredPitch, imu.getPitch()) : 0;
         double yDirection = gamepad.left_stick_y;
         double xDirection = gamepad.right_stick_x;
         double speedReducer = 1;
@@ -249,10 +253,14 @@ public class Drivetrain implements Constants {
         else{
             speedReducer = 1;
         }
-        hardware.backLeft.setPower(leftPower*speedReducer);
-        hardware.frontLeft.setPower(leftPower*speedReducer);
-        hardware.backRight.setPower(rightPower*speedReducer);
-        hardware.frontRight.setPower(rightPower*speedReducer);
+        hardware.backLeft.setPower(leftPower*speedReducer + antiTipPower);
+        hardware.frontLeft.setPower(leftPower*speedReducer + antiTipPower);
+        hardware.backRight.setPower(rightPower*speedReducer - antiTipPower);
+        hardware.frontRight.setPower(rightPower*speedReducer - antiTipPower);
+    }
+
+    public void resetDesiredPitch() {
+        desiredPitch = imu.getPitch();
     }
 
     public void controlDrive(Gamepad gamepad){

@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Control.Toggle;
 import org.firstinspires.ftc.teamcode.Drivers.Music;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
+import org.firstinspires.ftc.teamcode.Subsystems.Paths.Prototype.TeleopLED;
 
 @TeleOp(name="LeviathanTeleop")
 public class LeviathanTeleop extends OpMode implements Constants{
@@ -15,7 +16,13 @@ public class LeviathanTeleop extends OpMode implements Constants{
 
     private Music music;
 
+    //private TeleopLED teleopLED;
+
     public boolean playing;
+    public boolean start = true;
+
+    public long startTime;
+    public long elapsedTime = 0;
 
     private boolean resetimu = true;
 
@@ -28,13 +35,24 @@ public class LeviathanTeleop extends OpMode implements Constants{
 
         playing = true;
 
+        robot.drivetrain.resetDesiredPitch();
+
+        //teleopLED = new TeleopLED(robot);
+
     }
     public void loop(){
 
-        if(playing){
+        if(start){
+            startTime = System.nanoTime();
+        }
+        elapsedTime = System.nanoTime()-startTime;
+
+        //teleopLED.run(elapsedTime);
+
+        /*if(playing){
             music.start(Music.Songs.SEA_SHANTY_2);
             playing = !playing;
-        }
+        }*/
 
         robot.drivetrain.drive(gamepad1);
         robot.pivot.driverControl(gamepad2);
@@ -56,6 +74,7 @@ public class LeviathanTeleop extends OpMode implements Constants{
         telemetry.addData("winch?",robot.winch.getCurrentPosition());
         telemetry.addData("extend",robot.extend.getCurrentPosition());
         telemetry.addData("pivot angle:", robot.pivot.getAngle());
+        telemetry.addData("pitch angle:", robot.imu.getPitch());
         telemetry.update();
 
         telemetry.update();

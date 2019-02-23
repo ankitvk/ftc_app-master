@@ -52,6 +52,7 @@ public class craterMiddle implements Constants {
     public void run(){
         driveToDepot();
         rotateToCrater();
+        driveToDepot();
     }
 
     private void rotateToGold(){

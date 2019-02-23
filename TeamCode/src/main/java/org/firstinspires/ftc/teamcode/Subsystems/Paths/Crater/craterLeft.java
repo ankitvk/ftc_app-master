@@ -19,7 +19,7 @@ public class craterLeft implements Constants {
     private Hardware hardware;
 
     private final double ROTATE_TO_GOLD_ANGLE = 45;
-    private final double ROTATE_TO_GOLD_KP = 0.04/*.02725*/;
+    private final double ROTATE_TO_GOLD_KP = 0.042/*.02725*/;
     private final double ROTATE_TO_GOLD_KI = 0/*1.65*/;
     private final double ROTATE_TO_GOLD_KD = 0;
 
@@ -57,6 +57,7 @@ public class craterLeft implements Constants {
     public void run(){
         rotateToGold();
         rotateToCrater();
+        driveToDepot();
 
     }
 
@@ -106,11 +107,13 @@ public class craterLeft implements Constants {
                 break;
             }*/
         }
+        stop();
+        sleep(500);
     }
 
     private void rotateToCrater(){
         double degrees = 90;
-        PIDController controlRotate = new PIDController(.0395,0,0,1);
+        PIDController controlRotate = new PIDController(.02,0,0,1);
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
@@ -143,6 +146,8 @@ public class craterLeft implements Constants {
                 break;
             }
         }
+        stop();
+        sleep(500);
     }
 
     private void driveToGold(){
