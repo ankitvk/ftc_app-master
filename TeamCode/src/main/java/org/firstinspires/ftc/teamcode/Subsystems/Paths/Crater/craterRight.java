@@ -18,13 +18,13 @@ public class craterRight implements Constants {
     private Telemetry telemetry;
     private Hardware hardware;
 
-    private final double ROTATE_TO_GOLD_ANGLE = -45;
+    private final double ROTATE_TO_GOLD_ANGLE = -35;
     private final double ROTATE_TO_GOLD_KP = .039;
     private final double ROTATE_TO_GOLD_KI = 0/*1.65*/;
     private final double ROTATE_TO_GOLD_KD = 0;
 
-    private final double DRIVE_TO_GOLD_DISTANCE = 48;
-    private final double DRIVE_TO_GOLD_KP = .00028;
+    private final double DRIVE_TO_GOLD_DISTANCE = 20;
+    private final double DRIVE_TO_GOLD_KP = .0025;
     private final double DRIVE_TO_GOLD_KI = 0.01;
     private final double DRIVE_TO_GOLD_KD = 0;
 
@@ -56,8 +56,10 @@ public class craterRight implements Constants {
 
     public void run(){
         rotateToGold();
-        //driveToGold();
+        driveToGold();
+/*
         rotateToCrater();
+*/
         /*rotateToDepot();
         driveToDepot();
         hardware.marker.setPosition(.15);*/
@@ -126,7 +128,7 @@ public class craterRight implements Constants {
             frontRight.setPower(power*.3);
             backRight.setPower(power*.3);
 
-            if (Math.abs(position-degrees) <= IMU_TOLERANCE) {
+            if (Math.abs(position-degrees) <= 5) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
             }
             else {

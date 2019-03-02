@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="nigger" parent="android:Theme.Material.NoActionBar" >
+        <item name="android:colorAccent">@color/nigger</item>
+        <item name="android:colorPrimaryDark">@color/nigger</item>
+        <item name="android:colorPrimary">@color/nigger</item>
+        <item name="android:colorBackground">@color/nigger</item>
+        <item name="android:colorForeground">@color/nigger</item>
+        <item name="android:textColorPrimary">@color/nigger</item>
+        <item name="android:textColorPrimaryInverse">@color/nigger</item>
+        <item name="android:textColorSecondary">@color/nigger</item>
+        <item name="android:textColorSecondaryInverse">@color/nigger</item>
+        <item name="android:windowBackground">@color/nigger</item>
+        <item name="android:statusBarColor">@color/nigger</item>
+        <item name="android:navigationBarColor">@color/nigger</item>
+    </style>
+</resources>

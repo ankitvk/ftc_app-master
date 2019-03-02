@@ -34,12 +34,12 @@ public class KetoAuto implements Constants {
     }
 
     public void ketonomous(){
-        /*firstTurn();
-        goForward();*/
+        firstTurn();
+        goForward();
         secondTurn();
         driveToDepot();
-        marker();
-        driveFromDepot();
+        /*marker();
+        driveFromDepot();*/
         /*thirdTurn();
         goBack();
         fourthTurn();*/

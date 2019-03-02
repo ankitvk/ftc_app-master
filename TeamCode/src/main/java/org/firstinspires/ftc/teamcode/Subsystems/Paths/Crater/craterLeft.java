@@ -18,13 +18,13 @@ public class craterLeft implements Constants {
     private Telemetry telemetry;
     private Hardware hardware;
 
-    private final double ROTATE_TO_GOLD_ANGLE = 45;
+    private final double ROTATE_TO_GOLD_ANGLE = 35;
     private final double ROTATE_TO_GOLD_KP = 0.042/*.02725*/;
     private final double ROTATE_TO_GOLD_KI = 0/*1.65*/;
     private final double ROTATE_TO_GOLD_KD = 0;
 
-    private final double DRIVE_TO_GOLD_DISTANCE = 45;
-    private final double DRIVE_TO_GOLD_KP = .0004;
+    private final double DRIVE_TO_GOLD_DISTANCE = 20;
+    private final double DRIVE_TO_GOLD_KP = .0025;
     private final double DRIVE_TO_GOLD_KI = 0.01;
     private final double DRIVE_TO_GOLD_KD = 0;
 
@@ -56,8 +56,8 @@ public class craterLeft implements Constants {
 
     public void run(){
         rotateToGold();
-        rotateToCrater();
-        driveToDepot();
+        //rotateToCrater();
+        driveToGold();
 
     }
 
@@ -103,9 +103,9 @@ public class craterLeft implements Constants {
             } else {
                 startTime = System.nanoTime();
             }
-            /*if(System.nanoTime()/1000000-beginTime/1000000>1500){
+            if(System.nanoTime()/1000000-beginTime/1000000>3000){
                 break;
-            }*/
+            }
         }
         stop();
         sleep(500);

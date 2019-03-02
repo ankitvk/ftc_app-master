@@ -19,7 +19,7 @@ public class depotRight implements Constants {
     private Hardware hardware;
 
     private final double ROTATE_TO_GOLD_ANGLE = -50;
-    private final double ROTATE_TO_GOLD_KP = .02;
+    private final double ROTATE_TO_GOLD_KP = .0225;
     private final double ROTATE_TO_GOLD_KI = 0/*1.65*/;
     private final double ROTATE_TO_GOLD_KD = 0;
 
@@ -291,7 +291,7 @@ public class depotRight implements Constants {
     }
 
     private void marker(){
-        hardware.winch.setPower(-1);
+        hardware.winch.setPower(-.35);
         sleep(2000);
         hardware.winch.setPower(0);
     }

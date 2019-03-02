@@ -63,7 +63,7 @@ public class Pivot implements Constants {
             scoringPosition = false;
         }
         else {
-            if (controller.b) {
+            if (controller.dpad_right) {
                 scoringPosition = true;
             }
             double currentPosition = getPosition();

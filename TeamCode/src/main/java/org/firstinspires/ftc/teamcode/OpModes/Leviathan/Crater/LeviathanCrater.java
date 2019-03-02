@@ -66,7 +66,10 @@ public class LeviathanCrater extends LinearOpMode implements AutonomousOpMode,Co
             robot.craterRight.run();
         }
 
-        robot.ketoAuto.ketonomous();
+        robot.extendo.extend(1);
+        sleep(4000);
+        robot.extendo.stop();
+
     }
 
 }

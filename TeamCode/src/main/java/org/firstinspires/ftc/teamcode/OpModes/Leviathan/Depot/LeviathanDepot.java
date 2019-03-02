@@ -55,6 +55,11 @@ public class LeviathanDepot extends LinearOpMode implements AutonomousOpMode,Con
 
         robot.hang.drop();
 
+        //robot.depotLeft.run();
+
+        //robot.ketoAuto.ketonomous();
+
+
         if(gold == IdentifyGold.Positions.LEFT){
             robot.depotLeft.run();
         }

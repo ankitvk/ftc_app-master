@@ -24,7 +24,7 @@ public class craterMiddle implements Constants {
     private final double ROTATE_TO_GOLD_KD = 0;
 
     private final double DRIVE_TO_DEPOT_DISTANCE = 20;
-    private final double DRIVE_TO_DEPOT_KP = .001;
+    private final double DRIVE_TO_DEPOT_KP = .0025;
     private final double DRIVE_TO_DEPOT_KI = 0.1;
     private final double DRIVE_TO_DEPOT_KD = 0;
 
@@ -51,8 +51,8 @@ public class craterMiddle implements Constants {
 
     public void run(){
         driveToDepot();
-        rotateToCrater();
-        driveToDepot();
+        /*rotateToCrater();
+        driveToDepot();*/
     }
 
     private void rotateToGold(){

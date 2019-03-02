@@ -18,13 +18,13 @@ public class depotLeft implements Constants {
     private Telemetry telemetry;
     private Hardware hardware;
 
-    private final double ROTATE_TO_GOLD_ANGLE = 45;
-    private final double ROTATE_TO_GOLD_KP = .07;
+    private final double ROTATE_TO_GOLD_ANGLE = 35;
+    private final double ROTATE_TO_GOLD_KP = 0.027;
     private final double ROTATE_TO_GOLD_KI = 0;
     private final double ROTATE_TO_GOLD_KD = 0;
 
-    private final double DRIVE_TO_GOLD_DISTANCE = 15;
-    private final double DRIVE_TO_GOLD_KP = .00025;
+    private final double DRIVE_TO_GOLD_DISTANCE = 5;
+    private final double DRIVE_TO_GOLD_KP = .004;
     private final double DRIVE_TO_GOLD_KI = 0.03;
     private final double DRIVE_TO_GOLD_KD = 0;
 
@@ -58,8 +58,9 @@ public class depotLeft implements Constants {
         rotateToGold();
         driveToGold();
         rotateToDepot();
+        driveToDepot();
         marker();
-        //driveToDepot();
+
         driveToCrater();
     }
 
@@ -95,8 +96,8 @@ public class depotLeft implements Constants {
             frontRight.setPower(power+.1);
             backRight.setPower(power+.1);*/
 
-            frontLeft.setPower(power * .001);
-            backLeft.setPower(power * .001);
+            frontLeft.setPower(power * .165);
+            backLeft.setPower(power * .165);
             frontRight.setPower(power);
             backRight.setPower(power);
 
@@ -105,9 +106,9 @@ public class depotLeft implements Constants {
             } else {
                 startTime = System.nanoTime();
             }
-            /*if(System.nanoTime()/1000000-beginTime/1000000>3000){
+            if(System.nanoTime()/1000000-beginTime/1000000>3000){
                 break;
-            }*/
+            }
         }
     }
 
@@ -143,9 +144,9 @@ public class depotLeft implements Constants {
                 startTime = System.nanoTime();
             }
 
-            /*if(System.nanoTime()/1000000-beginTime/1000000>4000){
+            if(System.nanoTime()/1000000-beginTime/1000000>4000){
                 break;
-            }*/
+            }
 
         }
     }
@@ -283,7 +284,7 @@ public class depotLeft implements Constants {
     }
 
     private void marker(){
-        hardware.winch.setPower(-1);
+        hardware.winch.setPower(-.35);
         sleep(2000);
         hardware.winch.setPower(0);
     }

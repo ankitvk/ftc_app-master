@@ -23,13 +23,13 @@ public class depotMiddle implements Constants {
     private final double ROTATE_TO_GOLD_KI = 1.5;
     private final double ROTATE_TO_GOLD_KD = 0;
 
-    private final double DRIVE_TO_DEPOT_DISTANCE = 55;
+    private final double DRIVE_TO_DEPOT_DISTANCE = 57.5;
     private final double DRIVE_TO_DEPOT_KP = .00025;
     private final double DRIVE_TO_DEPOT_KI = 0;
     private final double DRIVE_TO_DEPOT_KD = 0;
 
     private final double ROTATE_TO_CRATER_ANGLE = -48;
-    private final double ROTATE_TO_CRATER_KP = .0175;
+    private final double ROTATE_TO_CRATER_KP = .02;
     private final double ROTATE_TO_CRATER_KI = 0;
     private final double ROTATE_TO_CRATER_KD = 0;
 
@@ -164,9 +164,9 @@ public class depotMiddle implements Constants {
             else {
                 startTime = System.nanoTime();
             }
-            /*if(System.nanoTime()/1000000-beginTime/1000000>3000){
+            if(System.nanoTime()/1000000-beginTime/1000000>3000){
                 break;
-            }*/
+            }
         }
     }
 
@@ -211,7 +211,7 @@ public class depotMiddle implements Constants {
     }
 
     private void marker(){
-        hardware.winch.setPower(-1);
+        hardware.winch.setPower(-.35);
         sleep(2000);
         hardware.winch.setPower(0);
     }
