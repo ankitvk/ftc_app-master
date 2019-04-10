@@ -1,0 +1,38 @@
+apply plugin: 'com.android.library'
+android {
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 26
+    }
+
+    compileSdkVersion 26
+    buildToolsVersion '28.0.3'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+}
+repositories {
+    google()
+    flatDir {
+        dirs '../libs'
+    }
+}
+task deleteJar(type: Delete) {
+    delete 'libs/jars/maelstromLib.jar'
+}
+task createJar(type: Copy) {
+    from('build/intermediates/bundles/release/')
+    into('libs/jars/')
+    include('classes.jar')
+    rename('classes.jar', 'maelstromLib.jar')
+}
+createJar.dependsOn(deleteJar, build)
+apply from: 'build.release.gradle'
+/*
+createJar.dependsOn(deleteJar, build)*/
+
+dependencies {
+    implementation project(':FtcRobotController')
+}

@@ -11,6 +11,8 @@ import org.firstinspires.ftc.teamcode.Control.SpeedControlledMotor;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Drivers.BNO055_IMU;
 
+import ftc.library.MaelstromUtils.MaelstromUtils;
+
 public class Drivetrain implements Constants {
 
     private SpeedControlledMotor frontLeft,backLeft,frontRight,backRight;
@@ -259,6 +261,39 @@ public class Drivetrain implements Constants {
         hardware.frontRight.setPower(rightPower*speedReducer - antiTipPower);
     }
 
+    public void mecanum(Gamepad gamepad){
+
+        double leftY = gamepad.left_stick_y;
+        double leftX = gamepad.left_stick_x;
+        double rightX = gamepad.right_stick_x;
+        double x = -leftY;
+        double y = leftX;
+        double angle = Math.atan2(y,x);
+        double adjustedAngle = angle + Math.PI / 4;
+        double speedMagnitude = Math.hypot(x,y);
+
+        double speeds[] = {Math.sin(adjustedAngle), Math.cos(adjustedAngle), Math.cos(adjustedAngle), Math.sin(adjustedAngle)};
+
+        MaelstromUtils.normalizeValues(speeds);
+
+        speeds[0] = (speeds[0] * speedMagnitude) + rightX;
+        speeds[1] = (speeds[1] * speedMagnitude) + rightX;
+        speeds[2] = (-speeds[2] * speedMagnitude) + rightX;
+        speeds[3] = (-speeds[3] * speedMagnitude) + rightX;
+
+        frontLeft.setPower(speeds[0]);
+        backLeft.setPower(speeds[1]);
+        frontRight.setPower(speeds[2]);
+        backRight.setPower(speeds[3]);
+
+        telemetry.addData("FL:",frontLeft.getPower());
+        telemetry.addData("BL:",backLeft.getPower());
+        telemetry.addData("FR:",frontRight.getPower());
+        telemetry.addData("BR:",backRight.getPower());
+        telemetry.addData("imu:",imu.getYaw());
+        telemetry.update();
+
+    }
     public void resetDesiredPitch() {
         desiredPitch = imu.getPitch();
     }

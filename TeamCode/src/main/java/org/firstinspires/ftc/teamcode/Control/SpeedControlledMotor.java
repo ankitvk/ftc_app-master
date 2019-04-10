@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Control;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class SpeedControlledMotor implements Constants {
@@ -69,6 +70,13 @@ public class SpeedControlledMotor implements Constants {
         return 360 * motor.getCurrentPosition()/ ticksPerRotation;
     }
 
+    public void setReverseMode(){
+        motor.setDirection(DcMotorSimple.Direction.REVERSE);
+    }
+
+    public void setForwardMode(){
+        motor.setDirection(DcMotorSimple.Direction.FORWARD);
+    }
 
     public int getCurrentPosition() {
         return motor.getCurrentPosition();

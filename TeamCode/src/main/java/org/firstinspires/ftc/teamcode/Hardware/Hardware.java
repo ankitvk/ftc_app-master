@@ -154,6 +154,19 @@ public class Hardware implements Constants {
 
     }
 
+    public void opportunityInit(HardwareMap hardwareMap) {
+        this.hwMap = hardwareMap;
+
+        frontLeft.init(hwMap, "frontLeft");
+        frontRight.init(hwMap, "frontRight");
+        backLeft.init(hwMap, "backLeft");
+        backRight.init(hwMap, "backRight");
+
+        imu = new BNO055_IMU("imu", this);
+
+        drivetrain = new Drivetrain(this);
+    }
+
     public void setAuto(AutonomousOpMode auto, Telemetry telemetry) {
         this.auto = auto;
         this.telemetry = telemetry;

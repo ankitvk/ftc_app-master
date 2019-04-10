@@ -10,6 +10,7 @@ public interface Constants {
 
     double NEVEREST_CLASSIC_TICKS_PER_ROTATION = 28;
     double DT_GEAR_RATIO = 55/3;
+    double mecanum_ratio = 1;
     double DT_GEARBOX_TICKS_PER_ROTATION = DT_GEAR_RATIO*NEVEREST_CLASSIC_TICKS_PER_ROTATION;
     double DT_MAX_RPM = NEVEREST_CLASSIC_MAX_RPM/DT_GEAR_RATIO;
     double PIVOT_GEAR_RATIO = 235;
@@ -65,6 +66,61 @@ public interface Constants {
     double pivotKI = 0;
     double pivotKD = 0;
     double pivotMaxI = 1;
+
+    //tarun's stuff
+    double PIVOT_UP = 1;
+    double PIVOT_DOWN = -1;
+
+    double INTAKE_POWER = 1;
+    double OUTTAKE_POWER = -1;
+
+    double LIFT_EXTEND = 1;
+    double LIFT_RETRACT = -1;
+
+    double distanceKP = 0.00125;
+    double distanceKI = 0.1;
+    double distanceKD = 0;
+    double distanceMaxI = 1;
+
+    //angle correction PID
+    double angleCorrectionKP = 0.001;
+    double angleCorrectionKI = 0;
+    double angleCorrectionKD = 0;
+    double angleCorrectionMaxI = 1;
+
+    //turn angle (< 50) PID
+    double turnKP = 0.03;
+    double turnKI = 0;
+    double turnKD = 0;
+    double turnMaxI = 1;
+
+    //turn big angle (> 50) PID
+    double turnBigKP = 0.039;
+    double turnBigKI = 0;
+    double turnBigKD = 0;
+    double turnBigMaxI = 1;
+
+    //test turn PID
+    double testTurnKP = 0.002;
+    double testTurnKI = 0;
+    double testTurnKD = 0;
+    double testTurnMaxI = 1;
+
+    double bigTestTurnKP = 0.013;
+    double bigTestTurnKI = 0;
+    double bigTestTurnKD = 0;
+    double bigTestTurnMaxI = 1;
+
+    //turn one side PID
+    double sideKP = 0.001;
+    double sideKI = 0;
+    double sideKD = 0;
+    double sideMaxI = 1;
+
+    double bigSideKP = 0.001;
+    double bigSideKI = 0;
+    double bigSideKD = 0;
+    double bigSideMaxI = 1;
 
     String LICENSE_KEY = "AbxcZxf/////AAABmYehhkt9/k+lgWzWDZFG64eH2XR0TK1U2WbaJWSXrI" +
             "BuB4xBU9FpE1oHH3WHomRfTKwInQH9f18rQNXlH0LoYQmYHUR30N4" +

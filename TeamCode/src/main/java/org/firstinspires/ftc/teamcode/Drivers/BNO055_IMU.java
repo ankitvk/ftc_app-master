@@ -116,6 +116,11 @@ public class BNO055_IMU /*implements Runnable*/ {
         return getAngles()[2];
     }
 
+    public void resetYaw(){
+        relativeYaw = 0;
+    }
+
+
  /*   public void run() {
 
         if (auto == null) {
