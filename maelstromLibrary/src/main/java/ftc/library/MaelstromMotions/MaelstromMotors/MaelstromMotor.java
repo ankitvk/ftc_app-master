@@ -120,10 +120,11 @@ public class MaelstromMotor implements TimeConstants {
 
     public void setVelocity(double velocity){
         targetPower = velocity;
-        double rpm = encoder.getCPR() * velocity;
-        power = PID.power(rpm, getVelocity());
+        double targetVelocity = encoder.getCPR() * velocity;
+        power = PID.power(targetVelocity, getVelocity());
 /* motor.setPower((power > 0 && getVelocity() < 0) || (power < 0 && getVelocity() > 0) ? 0: power);*/
         if(!closedLoop) motorPower = targetPower;
+        else motorPower = power;
         if(limitDetection){
             if (minLim != null && minLim.pressed() && power < 0 ||
                     maxLim != null && maxLim.pressed() && power > 0)
@@ -262,6 +263,7 @@ public class MaelstromMotor implements TimeConstants {
         double power = PID.power(angle, getAngle());
         motor.setPower(/*(power > 0 && getRPM() < 0) || (power < 0 && getRPM() > 0) ? 0:*/ power);
     }
+
 
     public void runWithoutEncoders(){
         motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

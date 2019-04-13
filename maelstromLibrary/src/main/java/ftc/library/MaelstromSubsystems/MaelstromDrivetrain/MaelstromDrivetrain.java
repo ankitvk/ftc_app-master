@@ -153,4 +153,9 @@ public class MaelstromDrivetrain {
     public MaelstromUtils.AutonomousOpMode opModeActive(){
         return auto;
     }
+
+    public void setClosedLoop(boolean state){
+        leftDrive.setClosedLoop(state);
+        rightDrive.setClosedLoop(state);
+    }
 }

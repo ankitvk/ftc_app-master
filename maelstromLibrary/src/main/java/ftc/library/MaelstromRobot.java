@@ -137,10 +137,10 @@ public abstract class MaelstromRobot implements TimeConstants {
 
                 MaelstromUtils.normalizeSpeedsToMax(speeds, maxSpeed);
 
-                dt.leftDrive.motor1.setPower(speeds[0]);
-                dt.leftDrive.motor2.setPower(speeds[1]);
-                dt.rightDrive.motor1.setPower(speeds[2]);
-                dt.rightDrive.motor2.setPower(speeds[3]);
+                dt.leftDrive.motor1.setVelocity(speeds[0]);
+                dt.leftDrive.motor2.setVelocity(speeds[1]);
+                dt.rightDrive.motor1.setVelocity(speeds[2]);
+                dt.rightDrive.motor2.setVelocity(speeds[3]);
 
                 feed.add("frontLeft:",speeds[0]);
                 feed.add("backLeft:",speeds[1]);
@@ -172,8 +172,8 @@ public abstract class MaelstromRobot implements TimeConstants {
     }
 
     public void rotate(double speed){
-        dt.leftDrive.setPower(-speed);
-        dt.rightDrive.setPower(speed);
+        dt.leftDrive.setVelocity(-speed);
+        dt.rightDrive.setVelocity(speed);
     }
 
     public void turnAbsolute(double degrees, double speed, Direction direction, double stopTime){
@@ -294,10 +294,10 @@ public abstract class MaelstromRobot implements TimeConstants {
 
             MaelstromUtils.normalizeSpeedsToMax(speeds, maxSpeed);
 
-            dt.leftDrive.motor1.setPower(speeds[0]);
-            dt.leftDrive.motor2.setPower(speeds[1]);
-            dt.rightDrive.motor1.setPower(speeds[2]);
-            dt.rightDrive.motor2.setPower(speeds[3]);
+            dt.leftDrive.motor1.setVelocity(speeds[0]);
+            dt.leftDrive.motor2.setVelocity(speeds[1]);
+            dt.rightDrive.motor1.setVelocity(speeds[2]);
+            dt.rightDrive.motor2.setVelocity(speeds[3]);
 
             feed.add("X Position:",xPos.trackPosition());
             feed.add("Y Position:",yPos.trackPosition());
@@ -347,10 +347,10 @@ public abstract class MaelstromRobot implements TimeConstants {
 
             while(opModeActive() && stopState <= stopTime){
                 stopState = (System.nanoTime() - startTime) / NANOSECS_PER_MILISEC;
-                dt.leftDrive.motor1.setPower(frontLeft);
-                dt.leftDrive.motor2.setPower(backLeft);
-                dt.rightDrive.motor1.setPower(frontRight);
-                dt.rightDrive.motor2.setPower(backRight);
+                dt.leftDrive.motor1.setVelocity(frontLeft);
+                dt.leftDrive.motor2.setVelocity(backLeft);
+                dt.rightDrive.motor1.setVelocity(frontRight);
+                dt.rightDrive.motor2.setVelocity(backRight);
 
                 feed.add("frontLeft:",frontLeft);
                 feed.add("backLeft:",backLeft);
@@ -371,14 +371,14 @@ public abstract class MaelstromRobot implements TimeConstants {
     }
 
     public void stop(){
-        dt.setPower(0);
+        dt.setVelocity(0);
     }
 
     public void drive(double power){
-        dt.setPower(power);
+        dt.setVelocity(power);
     }
     public void drive(double left, double right){
-        dt.setPower(left,right);
+        dt.setVelocity(left,right);
     }
 
     public void driveTeleop(MaelstromController controller){
@@ -433,10 +433,10 @@ public abstract class MaelstromRobot implements TimeConstants {
             speeds[3] = (speeds[3] * speedMagnitude) + rightX;
             this.speeds = speeds;
 
-            dt.leftDrive.motor1.setPower(speeds[0] + pitchCorrection);
-            dt.leftDrive.motor2.setPower(speeds[1] + pitchCorrection);
-            dt.rightDrive.motor1.setPower(speeds[2] + pitchCorrection);
-            dt.rightDrive.motor2.setPower(speeds[3] + pitchCorrection);
+            dt.leftDrive.motor1.setVelocity(speeds[0] + pitchCorrection);
+            dt.leftDrive.motor2.setVelocity(speeds[1] + pitchCorrection);
+            dt.rightDrive.motor1.setVelocity(speeds[2] + pitchCorrection);
+            dt.rightDrive.motor2.setVelocity(speeds[3] + pitchCorrection);
         }
         else if(model == DrivetrainModels.MECH_ROBOT){
 
@@ -466,10 +466,10 @@ public abstract class MaelstromRobot implements TimeConstants {
             speeds[3] = (speeds[3] * speedMagnitude) + rightX;
             this.speeds = speeds;
 
-            dt.leftDrive.motor1.setPower(speeds[0] + pitchCorrection);
-            dt.leftDrive.motor2.setPower(speeds[1] + pitchCorrection);
-            dt.rightDrive.motor1.setPower(speeds[2] + pitchCorrection);
-            dt.rightDrive.motor2.setPower(speeds[3] + pitchCorrection);
+            dt.leftDrive.motor1.setVelocity(speeds[0] + pitchCorrection);
+            dt.leftDrive.motor2.setVelocity(speeds[1] + pitchCorrection);
+            dt.rightDrive.motor1.setVelocity(speeds[2] + pitchCorrection);
+            dt.rightDrive.motor2.setVelocity(speeds[3] + pitchCorrection);
         }
         if(stabilization){
             pitchCorrection = pitchPid.power(pitchTarget,imu.getPitch());

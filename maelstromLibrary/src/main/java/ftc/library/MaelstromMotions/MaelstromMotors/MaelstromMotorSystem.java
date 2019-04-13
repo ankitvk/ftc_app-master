@@ -248,6 +248,10 @@ public class MaelstromMotorSystem {
         }
     }
 
+    public void setClosedLoop(boolean state){
+        for(MaelstromMotor motor : motors) motor.setClosedLoop(state);
+    }
+
 
 
 }
