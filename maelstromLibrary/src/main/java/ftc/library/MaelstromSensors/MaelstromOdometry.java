@@ -32,6 +32,12 @@ public class MaelstromOdometry implements TimeConstants {
         this.imu = imu;
     }
 
+    public MaelstromOdometry(MaelstromMotor motor, MaelstromIMU imu) {
+        this.motor = motor;
+        this.imu = imu;
+        this.reset();
+    }
+
     public double getPosition(){
         return motor.getCounts();
     }
@@ -51,6 +57,10 @@ public class MaelstromOdometry implements TimeConstants {
     public void reset(){
         motor.stopAndReset();
         motor.runWithoutEncoders();
+    }
+
+    public double getVelocity(){
+        return motor.getVelocity();
     }
 
     public void setTargetCounts(double target){
