@@ -4,14 +4,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Leviathan;
-import org.firstinspires.ftc.teamcode.Hardware.Mecanum;
 
 import ftc.library.MaelstromWrappers.MaelstromController;
 import ftc.library.MaelstromWrappers.MaelstromOp;
 
 @TeleOp(name = "Tarun's Teleop", group = "Lib_Teleop")
-public class LibTeleop extends MaelstromOp implements Constants {
-    //public Mecanum robot = new Mecanum();
+public class LibTeleop_Leviathan extends MaelstromOp implements Constants {
+    //public Opportunity robot = new Opportunity();
     public Leviathan robot = new Leviathan();
     @Override
     public void init() {
