@@ -8,11 +8,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 
 import ftc.library.MaelstromUtils.AxesSigns;
 import ftc.library.MaelstromUtils.MaelstromUtils;
-import ftc.library.MaelstromUtils.TimeConstants;
+import ftc.library.MaelstromUtils.LibConstants;
 
 
 /*Custon class for gyro imu*/
-public class MaelstromIMU implements TimeConstants/*Runnable*/ {
+public class MaelstromIMU implements LibConstants/*Runnable*/ {
 
     private double relativeYaw = 0;
     private double lastAngle = 0;

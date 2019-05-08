@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 
 import ftc.library.MaelstromControl.MaelstromPID.PIDController;
-import ftc.library.MaelstromControl.MaelstromPID.PIDPackage;
 
 import ftc.library.MaelstromControl.MaelstromPurePursuit.WayPoint;
 import ftc.library.MaelstromMotions.MaelstromMotors.Direction;
@@ -17,14 +16,14 @@ import ftc.library.MaelstromSubsystems.MaelstromDrivetrain.DrivetrainModels;
 import ftc.library.MaelstromSubsystems.MaelstromDrivetrain.MaelstromDrivetrain;
 import ftc.library.MaelstromUtils.AxesSigns;
 import ftc.library.MaelstromUtils.MaelstromUtils;
-import ftc.library.MaelstromUtils.TimeConstants;
+import ftc.library.MaelstromUtils.LibConstants;
+import ftc.library.MaelstromUtils.TimeUnits;
 import ftc.library.MaelstromWrappers.MaelstromController;
-import ftc.library.MaelstromWrappers.MaelstromTelemetry;
+import ftc.library.MaelstromWrappers.MaelstromTellemetry;
 
-public abstract class MaelstromRobot implements TimeConstants {
+public abstract class MaelstromRobot implements LibConstants {
     public abstract void initHardware(HardwareMap hwMap);
-    public abstract PIDPackage pidPackage();
-    public MaelstromTelemetry feed;
+    public MaelstromTellemetry feed;
     public MaelstromDrivetrain dt;
     public MaelstromOdometry xPos;
     public MaelstromOdometry yPos;
@@ -43,8 +42,12 @@ public abstract class MaelstromRobot implements TimeConstants {
     private double desiredAngle = 0;
     private double pitchCorrection = 0;
     private double speeds[];
-    public PIDController distanceDrive = new PIDController(pidPackage().getDistanceKp(),pidPackage().getDistanceKi(),pidPackage().getDistanceKd(),1);
-    public PIDController pitchPid = new PIDController(0,0,0,1);
+    //public PIDController distanceDrive = new PIDController(pidPackage().getDistanceKp(),pidPackage().getDistanceKi(),pidPackage().getDistanceKd(),1);
+    public PIDController distancePid = new PIDController(0.01,0,0,1);
+    public PIDController pitchPid = new PIDController(0.01,0,0,1);
+    public PIDController turnPid = new PIDController(0.01,0,0,1);
+    public PIDController sideTurnPid = new PIDController(0.01,0,0,1);
+
 
     public static void reMapAxis(MaelstromIMU imu, AxesOrder order, AxesSigns signs){
         imu.remapAxes(imu,order,signs);
@@ -64,26 +67,26 @@ public abstract class MaelstromRobot implements TimeConstants {
             //double position = dt.getCounts();
             double position = dt.getInches();
             //double power = (distanceDrive.power(counts,position))*speed;
-            double power = (distanceDrive.power(distance,position))*speed;
+            double power = (distancePid.power(distance,position))*speed;
             timeoutTimer.reset();
             //double power = distanceDrive.power(distance,dt.getInches());
 
             drive(power);
 
             feed.add("Power:",power);
-            feed.add("Kp*error:",distanceDrive.getP());
-            feed.add("Ki*i:",distanceDrive.getI());
+            feed.add("Kp*error:",distancePid.getP());
+            feed.add("Ki*i:",distancePid.getI());
             feed.add("Distance:",/*countsToDistance(dt.getCounts())*/dt.getInches());
             feed.add("Stop state:",stopState);
             feed.update();
 
-            if(distanceDrive.getError() <= 0.5){
+            if(distancePid.getError() <= 0.5){
                 //stopState = (System.nanoTime() - startTime) / NANOSECS_PER_MILISEC;
                 stopState = timer.stopState();
             }
             else startTime = timer.startTime();
 
-            if(/*startTime/NANOSECS_PER_MILISEC >= 5000*/timeoutTimer.elapsedTime(timeout, MaelstromTimer.Time.SECS)) break;
+            if(/*startTime/NANOSECS_PER_MILISEC >= 5000*/timeoutTimer.elapsedTime(timeout, TimeUnits.SECS)) break;
         }
         stop();
         MaelstromUtils.sleep(sleep);
@@ -128,7 +131,7 @@ public abstract class MaelstromRobot implements TimeConstants {
 
             while (opModeActive() && (stopState <= stopTime)) {
                 double position = dt.getCounts();
-                double power = (distanceDrive.power(counts,position));
+                double power = (distancePid.power(counts,position));
 
                 speeds[0] = frontLeftPower * power;
                 speeds[1] = backLeftPower * power;
@@ -149,7 +152,7 @@ public abstract class MaelstromRobot implements TimeConstants {
                 feed.add("IMU:",imu.getRelativeYaw());
                 feed.add("Stop State:",stopState);
 
-                if(distanceDrive.getError() <= 0.5){
+                if(distancePid.getError() <= 0.5){
                     stopState = (System.nanoTime() - startTime) / NANOSECS_PER_MILISEC;
                 }
                 else startTime = System.nanoTime();
@@ -177,7 +180,6 @@ public abstract class MaelstromRobot implements TimeConstants {
     }
 
     public void turnAbsolute(double degrees, double speed, Direction direction, double stopTime){
-        PIDController turnAngle = new PIDController(pidPackage().getTurnKp(),pidPackage().getTurnKi(),pidPackage().getTurnKd(),1);
         long startTime = System.nanoTime();
         long stopState = 0;
         degrees *= direction.value;
@@ -185,18 +187,18 @@ public abstract class MaelstromRobot implements TimeConstants {
 
         while (opModeActive() && (stopState <= stopTime)){
             double position = imu.getRelativeYaw();
-            double power = (turnAngle.power(degrees,position))*speed;
+            double power = (turnPid.power(degrees,position))*speed;
 
             rotate(power);
 
             feed.add("Power:",power);
-            feed.add("Kp*error:",turnAngle.getP());
-            feed.add("Ki*i:",turnAngle.getI());
+            feed.add("Kp*error:",turnPid.getP());
+            feed.add("Ki*i:",turnPid.getI());
             feed.add("Angle:",imu.getRelativeYaw());
             feed.add("Stop state:",stopState);
             feed.update();
 
-            if(turnAngle.getError() <= 0.5){
+            if(turnPid.getError() <= 0.5){
                 stopState = (System.nanoTime() - startTime) / NANOSECS_PER_MILISEC;
             }
             else startTime = System.nanoTime();
@@ -223,13 +225,12 @@ public abstract class MaelstromRobot implements TimeConstants {
     public void sideTurn(double degrees, double ratio, String side, Direction direction){
         long startTime = System.nanoTime();
         long stopState = 0;
-        PIDController turnSide = new PIDController(pidPackage().getSideKp(), pidPackage().getSideKi(), pidPackage().getSideKd(), 1);
 
         while(opModeActive() && (stopState <= 1000)){
 
             double position = imu.getRelativeYaw();
             degrees *= direction.value;
-            double power = turnSide.power(degrees,position);
+            double power = sideTurnPid.power(degrees,position);
 
             dt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             if(side == "left") drive(power,0);
@@ -237,14 +238,14 @@ public abstract class MaelstromRobot implements TimeConstants {
 
             feed.add("Angle:",imu.getRelativeYaw());
             feed.add("");
-            feed.add("KP*error: ", turnSide.returnVal()[0]);
-            feed.add("KI*i: ", turnSide.returnVal()[1]);
-            feed.add("KD*d: ", turnSide.returnVal()[2]);
-            feed.add("Error: ", turnSide.getError());
+            feed.add("KP*error: ", sideTurnPid.returnVal()[0]);
+            feed.add("KI*i: ", sideTurnPid.returnVal()[1]);
+            feed.add("KD*d: ", sideTurnPid.returnVal()[2]);
+            feed.add("Error: ", sideTurnPid.getError());
             feed.add("Power: ", power);
             feed.update();
 
-            if (/*Math.abs(distance - currDistance) */ turnSide.getError() <= 0.5) {
+            if (/*Math.abs(distance - currDistance) */ sideTurnPid.getError() <= 0.5) {
                 stopState = (System.nanoTime() - startTime) / NANOSECS_PER_MILISEC;
             } else startTime = System.nanoTime();
 
@@ -285,7 +286,7 @@ public abstract class MaelstromRobot implements TimeConstants {
             backRightPower = Math.sin(adjustedAngle);
 
             double currDistance = Math.hypot(xPos.getPosition(),yPos.getPosition());
-            double pidPower = distanceDrive.power(distance,currDistance);
+            double pidPower = distancePid.power(distance,currDistance);
 
             speeds[0] = frontLeftPower*pidPower;
             speeds[1] = backLeftPower*pidPower;
@@ -303,12 +304,12 @@ public abstract class MaelstromRobot implements TimeConstants {
             feed.add("Y Position:",yPos.trackPosition());
             feed.add("Distance:",distance);
             feed.add("Stop state:",stopState);
-            feed.add("Kp*error:",distanceDrive.getP());
-            feed.add("Ki*i:",distanceDrive.getI());
-            feed.add("Kd*d:",distanceDrive.getD());
+            feed.add("Kp*error:",distancePid.getP());
+            feed.add("Ki*i:",distancePid.getI());
+            feed.add("Kd*d:",distancePid.getD());
             feed.update();
 
-            if (/*Math.abs(distance - currDistance) */ distanceDrive.getError() <= 0.5) {
+            if (/*Math.abs(distance - currDistance) */ distancePid.getError() <= 0.5) {
                 stopState = (System.nanoTime() - startTime) / NANOSECS_PER_MILISEC;
                 if(stopState == stopTime - 10) {
                     prevX = xPos.trackPosition();

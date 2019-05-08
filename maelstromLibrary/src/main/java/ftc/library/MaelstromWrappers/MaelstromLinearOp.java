@@ -10,19 +10,18 @@ import ftc.library.MaelstromUtils.MaelstromUtils;
 
 /*custom class for linear op mode */
 public abstract class MaelstromLinearOp extends LinearOpMode {
-    protected MaelstromTelemetry feed;
+    protected MaelstromTellemetry feed;
     protected MaelstromController controller1, controller2;
     public Direction forward = Direction.FORWARD;
     public Direction backward = Direction.BACKWARD;
     public Direction left = Direction.LEFT;
     public Direction right = Direction.RIGHT;
     public Direction def = Direction.DEFAULT;
-    public Direction in = Direction.IN;
-    public Direction out = Direction.OUT;
-    public Direction unknown  = Direction.UNKNOWN;
+    public Direction unknown = Direction.UNKNOWN;
+
     public final void runOpMode() throws InterruptedException {
         try{
-            feed = new MaelstromTelemetry(super.telemetry);
+            feed = new MaelstromTellemetry(super.telemetry);
             feed.setNewFirst();
             MaelstromUtils.setLinearOpMode(this);
             controller1 = new MaelstromController(super.gamepad1,"controller1");
@@ -33,6 +32,9 @@ public abstract class MaelstromLinearOp extends LinearOpMode {
             stopLinearOpMode();
         }
     }
+
+
+
     public abstract void runLinearOpMode() throws InterruptedException;
     public void stopLinearOpMode() {}
     public void runSimultaneously(Runnable r1, Runnable r2){

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import ftc.library.MaelstromControl.MaelstromPID.PIDController;
 import ftc.library.MaelstromMotions.MaelstromMotors.MaelstromMotorSystem;
-import ftc.library.MaelstromMotions.MaelstromMotors.MotorModel;
+import ftc.library.MaelstromMotions.MaelstromMotors.Motor;
 import ftc.library.MaelstromRobot;
 import ftc.library.MaelstromSensors.MaelstromEncoder;
 import ftc.library.MaelstromUtils.MaelstromUtils;
@@ -31,12 +31,12 @@ public class MaelstromDrivetrain {
     public PIDController sidePid = new PIDController(sideKp,sideKi,sideKd,sideMaxI);
 
 
-    public MaelstromDrivetrain(String name1, String name2, String name3, String name4, HardwareMap hwMap, MotorModel encoder) {
+    public MaelstromDrivetrain(String name1, String name2, String name3, String name4, HardwareMap hwMap, Motor encoder) {
         leftDrive = new MaelstromMotorSystem(name1, name2, DcMotorSimple.Direction.REVERSE, hwMap, encoder);
         rightDrive = new MaelstromMotorSystem(name3, name4, DcMotorSimple.Direction.FORWARD, hwMap, encoder);
     }
 
-    public MaelstromDrivetrain(DrivetrainModels model, double gearRatio, double Kp, double Ki, double Kd, HardwareMap hwMap, MotorModel type) {
+    public MaelstromDrivetrain(DrivetrainModels model, double gearRatio, double Kp, double Ki, double Kd, HardwareMap hwMap, Motor type) {
         //leftDrive = new MotorSystem("leftFront", "leftBack", "Left Drive",DcMotor.Direction.REVERSE, "LEFTDRIVE", hwMap, type);
         leftDrive = new MaelstromMotorSystem(MaelstromUtils.LEFT_FRONT_KEY, MaelstromUtils.LEFT_BACK_KEY, Kp, Ki, Kd, DcMotor.Direction.REVERSE, hwMap, type);
         rightDrive = new MaelstromMotorSystem(MaelstromUtils.RIGHT_FRONT_KEY, MaelstromUtils.RIGHT_BACK_KEY, Kp, Ki, Kd, DcMotor.Direction.FORWARD, hwMap, type);
@@ -47,13 +47,13 @@ public class MaelstromDrivetrain {
         this.model = model;
     }
 
-    public MaelstromDrivetrain(DrivetrainModels model, MotorModel type, HardwareMap hwMap){
+    public MaelstromDrivetrain(DrivetrainModels model, Motor type, HardwareMap hwMap){
         leftDrive = new MaelstromMotorSystem("leftFront", "leftBack", DcMotor.Direction.REVERSE, hwMap, type);
         rightDrive = new MaelstromMotorSystem("rightFront", "rightBack", DcMotor.Direction.FORWARD, hwMap, type);
         this.model = model;
     }
 
-    public MaelstromDrivetrain(DrivetrainModels model, double gearRatio, double Kp, double Ki, double Kd, HardwareMap hwMap, MotorModel type, MaelstromRobot robot) {
+    public MaelstromDrivetrain(DrivetrainModels model, double gearRatio, double Kp, double Ki, double Kd, HardwareMap hwMap, Motor type, MaelstromRobot robot) {
         //leftDrive = new MotorSystem("leftFront", "leftBack", "Left Drive",DcMotor.Direction.REVERSE, "LEFTDRIVE", hwMap, type);
         leftDrive = new MaelstromMotorSystem("frontLeft", "backLeft", Kp, Ki, Kd, DcMotor.Direction.REVERSE, hwMap, type);
         rightDrive = new MaelstromMotorSystem("frontRight", "backRight", Kp, Ki, Kd, DcMotor.Direction.FORWARD, hwMap, type);

@@ -1,7 +1,7 @@
 package ftc.library.MaelstromUtils;
 
 
-public class Delta implements TimeConstants {
+public class Delta implements LibConstants {
 
     private long prevTime = 0;
     private double deltaTime = 0;

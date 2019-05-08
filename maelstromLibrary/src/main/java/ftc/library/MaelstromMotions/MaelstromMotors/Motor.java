@@ -1,12 +1,12 @@
 package ftc.library.MaelstromMotions.MaelstromMotors;
 
 /*class for motor types and its rpm and cpr*/
-public enum  MotorModel {
+public enum Motor {
 
     ORBITAL20, NEVEREST_3_7, E4T_ENCODER, NEVEREST40, NEVEREST60, USDIGITAL_E4T, REVHDHEX,NEVEREST_NAKED, NONE;
     public static double DEFAULT_CPR = 2240;
-    public double CPR(MotorModel motorModel) {
-        switch (motorModel){
+    public double CPR(Motor motor) {
+        switch (motor){
             case ORBITAL20:
                 return 537.6;
             case NEVEREST_3_7:
@@ -30,8 +30,8 @@ public enum  MotorModel {
         return CPR(this);
     }
     public static int DEFAULT_RPM = 150;
-    public static int RPM(MotorModel motorModel) {
-        switch (motorModel) {
+    public static int RPM(Motor motor) {
+        switch (motor) {
             case ORBITAL20:
                 return 340;
             case NEVEREST_3_7:

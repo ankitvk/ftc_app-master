@@ -1,19 +1,15 @@
 package ftc.library.MaelstromSensors;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import java.util.Arrays;
-import java.util.List;
-
 import ftc.library.MaelstromMotions.MaelstromMotors.MaelstromMotor;
-import ftc.library.MaelstromMotions.MaelstromMotors.MotorModel;
+import ftc.library.MaelstromMotions.MaelstromMotors.Motor;
 import ftc.library.MaelstromRobot;
 import ftc.library.MaelstromUtils.MaelstromUtils;
-import ftc.library.MaelstromUtils.TimeConstants;
+import ftc.library.MaelstromUtils.LibConstants;
 
 /*Class for odometry wheel tracking*/
-public class MaelstromOdometry implements TimeConstants {
+public class MaelstromOdometry implements LibConstants {
     MaelstromMotor motor;
     MaelstromRobot robot;
     MaelstromUtils.AutonomousOpMode auto;
@@ -27,7 +23,7 @@ public class MaelstromOdometry implements TimeConstants {
     private double power;
     private double target;
 
-    public MaelstromOdometry(String name, MotorModel model, MaelstromIMU imu, HardwareMap hwMap){
+    public MaelstromOdometry(String name, Motor model, MaelstromIMU imu, HardwareMap hwMap){
         this.motor = new MaelstromMotor(name,model,hwMap);
         this.imu = imu;
     }
@@ -58,6 +54,10 @@ public class MaelstromOdometry implements TimeConstants {
         motor.stopAndReset();
         motor.runWithoutEncoders();
     }
+
+    public double getAcceleration(){return motor.getAcceleration();}
+
+
 
     public double getVelocity(){
         return motor.getVelocity();

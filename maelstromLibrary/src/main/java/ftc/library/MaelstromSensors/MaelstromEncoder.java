@@ -1,17 +1,17 @@
 package ftc.library.MaelstromSensors;
 
 import ftc.library.MaelstromMotions.MaelstromMotors.MaelstromMotor;
-import ftc.library.MaelstromMotions.MaelstromMotors.MotorModel;
+import ftc.library.MaelstromMotions.MaelstromMotors.Motor;
 
 /*Custom class for motor encoder*/
 public class MaelstromEncoder {
-    private MotorModel model;
+    private Motor model;
     private MaelstromMotor motor;
     private double wheelDiameter = 0, gearRatio;
     private double currCounts, zeroPos;
     private double countsPerInch;
 
-    public MaelstromEncoder(MaelstromMotor motor, MotorModel model){
+    public MaelstromEncoder(MaelstromMotor motor, Motor model){
         this.model = model;
         this.motor = motor;
     }
@@ -49,7 +49,7 @@ public class MaelstromEncoder {
 
     public void setWheelDiameter(double wheelDiameter){this.wheelDiameter = wheelDiameter;}
     public void setGearRatio(double gearRatio){this.gearRatio = gearRatio;}
-    public void setType(MotorModel model){ this.model = model;}
+    public void setType(Motor model){ this.model = model;}
     public double getWheelDiameter(){return wheelDiameter;}
     public double getGearRatio(){return gearRatio;}
 

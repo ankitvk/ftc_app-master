@@ -13,10 +13,8 @@ public abstract class MaelstromOp extends OpMode {
     public Direction left = Direction.LEFT;
     public Direction right = Direction.RIGHT;
     public Direction def = Direction.DEFAULT;
-    public Direction in = Direction.IN;
-    public Direction out = Direction.OUT;
     public Direction unknown  = Direction.UNKNOWN;
-    public MaelstromTelemetry feed = new MaelstromTelemetry(super.telemetry);
+    public MaelstromTellemetry feed = new MaelstromTellemetry(super.telemetry);
     protected MaelstromController controller1 = new MaelstromController(super.gamepad1,"controller1");
     protected MaelstromController controller2 = new MaelstromController(super.gamepad2,"controller2");
 }

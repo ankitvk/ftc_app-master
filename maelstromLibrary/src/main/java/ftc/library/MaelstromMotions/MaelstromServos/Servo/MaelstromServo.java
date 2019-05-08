@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.Hardware;
 import ftc.library.MaelstromRobot;
 import ftc.library.MaelstromSensors.MaelstromTimer;
 import ftc.library.MaelstromUtils.MaelstromUtils;
+import ftc.library.MaelstromUtils.TimeUnits;
 
 /*custom class for set-position servos*/
 public class MaelstromServo {
@@ -50,7 +51,7 @@ public class MaelstromServo {
         boolean isStalled = false;
         double prePos = getPos();
         if (getPos() == prePos
-                && !timer.elapsedTime(time, MaelstromTimer.Time.SECS)) isStalled = true;
+                && !timer.elapsedTime(time, TimeUnits.SECS)) isStalled = true;
         return isStalled;
     }
 

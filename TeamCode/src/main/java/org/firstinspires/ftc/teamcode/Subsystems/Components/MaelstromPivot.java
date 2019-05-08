@@ -3,19 +3,18 @@ package org.firstinspires.ftc.teamcode.Subsystems.Components;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Control.Constants;
-import org.firstinspires.ftc.teamcode.Hardware.Leviathan;
 
 import ftc.library.MaelstromControl.MaelstromPID.PIDController;
 import ftc.library.MaelstromMotions.MaelstromMotors.MaelstromMotorSystem;
-import ftc.library.MaelstromMotions.MaelstromMotors.MotorModel;
+import ftc.library.MaelstromMotions.MaelstromMotors.Motor;
 import ftc.library.MaelstromSensors.MaelstromLimitSwitch;
 import ftc.library.MaelstromSensors.MaelstromTimer;
 import ftc.library.MaelstromUtils.MaelstromUtils;
-import ftc.library.MaelstromUtils.TimeConstants;
+import ftc.library.MaelstromUtils.LibConstants;
 import ftc.library.MaelstromWrappers.MaelstromController;
-import ftc.library.MaelstromWrappers.MaelstromTelemetry;
+import ftc.library.MaelstromWrappers.MaelstromTellemetry;
 
-public class MaelstromPivot implements TimeConstants, Constants {
+public class MaelstromPivot implements LibConstants, Constants {
 
     private double kp = .01, ki = 0, kd = 0;
     private double targetPosition;
@@ -31,13 +30,13 @@ public class MaelstromPivot implements TimeConstants, Constants {
     public PIDController pivotPid = new PIDController(kp,ki,kd,0);
     public MaelstromMotorSystem pivot;
     public MaelstromLimitSwitch limit;
-    public MaelstromTelemetry feed;
+    public MaelstromTellemetry feed;
     public MaelstromUtils.AutonomousOpMode auto;
 
     private double liftPosition = 0;
 
     public MaelstromPivot(/*Leviathan robot, */HardwareMap hwMap){
-        pivot = new MaelstromMotorSystem("pivot1","pivot2", MotorModel.NEVEREST_NAKED, hwMap);
+        pivot = new MaelstromMotorSystem("pivot1","pivot2", Motor.NEVEREST_NAKED, hwMap);
         pivot.stopAndReset();
         pivot.runWithoutEncoders();
         pivot.setBreakMode();
@@ -142,7 +141,7 @@ public class MaelstromPivot implements TimeConstants, Constants {
         this.auto = auto;
     }
 
-    public void setFeed(MaelstromTelemetry feed){
+    public void setFeed(MaelstromTellemetry feed){
         this.feed = feed;
     }
 

@@ -9,24 +9,24 @@ import ftc.library.MaelstromUtils.MaelstromUtils;
 import static java.lang.Thread.sleep;
 
 /*custom telemetry class*/
-public class MaelstromTelemetry {
+public class MaelstromTellemetry {
     private int length;
     private Telemetry telemetry;
     private MaelstromUtils.AutonomousOpMode auto;
     private boolean open;
-    private static MaelstromTelemetry instance;
+    private static MaelstromTellemetry instance;
 
-    public MaelstromTelemetry(Telemetry telemetry, MaelstromUtils.AutonomousOpMode auto){
+    public MaelstromTellemetry(Telemetry telemetry, MaelstromUtils.AutonomousOpMode auto){
         this.telemetry = telemetry;
         this.auto = auto;
         instance = this;
     }
-    public MaelstromTelemetry(Telemetry telemetry){
+    public MaelstromTellemetry(Telemetry telemetry){
         this.telemetry = telemetry;
         instance = this;
     }
 
-    public static MaelstromTelemetry getFeed(){
+    public static MaelstromTellemetry getFeed(){
         return instance;
     }
 

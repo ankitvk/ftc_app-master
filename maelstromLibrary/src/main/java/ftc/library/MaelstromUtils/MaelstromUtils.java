@@ -1,13 +1,11 @@
 package ftc.library.MaelstromUtils;
 
-import com.qualcomm.robotcore.util.Range;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import ftc.library.MaelstromWrappers.MaelstromLinearOp;
 
 /*utils class containing clipping and normalizing values*/
-public class MaelstromUtils {
+public class MaelstromUtils implements LibConstants {
 
     private static MaelstromLinearOp linearOpMode;
     public static double DEFAULT_SLEEP_TIME = 0;
@@ -19,6 +17,12 @@ public class MaelstromUtils {
     public static String LEFT_BACK_KEY = "leftBack";
     public static String RIGHT_FRONT_KEY = "rightFront";
     public static String RIGHT_BACK_KEY = "rightBack";
+
+    private static double deltaTime = 0;
+    private static double deltaPos = 0;
+    private static double currTime = 0;
+    private static long prevTime = 0;
+
 
     public static void sleep (int sleep) {
         try {Thread.sleep(sleep);}
@@ -42,6 +46,22 @@ public class MaelstromUtils {
             input[i] = Math.min(clipRange, Math.max(-clipRange, input[i]));
         }
 
+    }
+
+    public static long getNanoSeconds(){return System.nanoTime();}
+
+    public static double getDeltaTime(){
+        currTime = getNanoSeconds();
+        deltaTime = (currTime - prevTime) / NANOSECS_PER_SEC;
+        prevTime = getNanoSeconds();
+        return deltaTime;
+    }
+
+    public static double getDeltaTime(TimeUnits units){
+        currTime = getNanoSeconds();
+        deltaTime = (currTime - prevTime) / units.value;
+        prevTime = getNanoSeconds();
+        return deltaTime;
     }
 
     public static double clipValueToRange (double input, double lowerRange, double upperRange) {

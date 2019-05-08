@@ -5,27 +5,27 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import ftc.library.MaelstromControl.MaelstromPID.PIDController;
-import ftc.library.MaelstromControl.MaelstromPID.PIDPackage;
 import ftc.library.MaelstromSensors.MaelstromEncoder;
 import ftc.library.MaelstromSensors.MaelstromLimitSwitch;
 import ftc.library.MaelstromSensors.MaelstromTimer;
 import ftc.library.MaelstromUtils.MaelstromUtils;
-import ftc.library.MaelstromUtils.TimeConstants;
+import ftc.library.MaelstromUtils.LibConstants;
+import ftc.library.MaelstromUtils.TimeUnits;
 
 /*custom motor class that includes setting rpm and velocity*/
-public class MaelstromMotor implements TimeConstants {
-  private DcMotor motor;
+public class MaelstromMotor implements LibConstants {
+    private DcMotor motor;
   private MaelstromEncoder encoder;
-  private PIDPackage pidPackage;
   private MaelstromTimer timer = new MaelstromTimer();
   private int previousPos = 0;
   private double previousRate;
+  private double currVelocity = 0;
   private long previousTime = 0;
   private double rpm = 0;
-  private double power;
-  private double motorPower;
+  private double power = 0;
+  private double motorPower = 0;
   private double KP,KI,KD;
-  private double minPower;
+  private double minPower = 0;
   private double targetPower=0;
   private double minPosition=0, maxPosition=0;
   private double previousVelocity=0;
@@ -51,18 +51,18 @@ public class MaelstromMotor implements TimeConstants {
   private MaelstromLimitSwitch minLim, maxLim = null;
 
 
-    public MaelstromMotor(String name, MotorModel type,DcMotor.Direction direction, HardwareMap hwMap){
+    public MaelstromMotor(String name, Motor type, DcMotor.Direction direction, HardwareMap hwMap){
         motor = hwMap.get(DcMotor.class, name);
         setDirection(direction);
         encoder = new MaelstromEncoder(this,type);
     }
-    public MaelstromMotor(String name, MotorModel type,double Kp, double Ki, double Kd, DcMotor.Direction direction, HardwareMap hwMap){
+    public MaelstromMotor(String name, Motor type, double Kp, double Ki, double Kd, DcMotor.Direction direction, HardwareMap hwMap){
         motor = hwMap.get(DcMotor.class, name);
         setDirection(direction);
         encoder = new MaelstromEncoder(this,type);
         this.PID = new PIDController(Kp,Ki,Kd,1);
     }
-    public MaelstromMotor(String name, MotorModel model, HardwareMap hwMap){
+    public MaelstromMotor(String name, Motor model, HardwareMap hwMap){
         motor = hwMap.get(DcMotor.class, name);
         encoder = new MaelstromEncoder(this,model);
     }
@@ -107,20 +107,24 @@ public class MaelstromMotor implements TimeConstants {
 
     public double getVelocity(){
         int deltaPos = getCounts() - previousPos;
-        double deltaTime = (System.nanoTime() - previousTime)/NANOSECS_PER_MIN;
-        previousPos = getCounts();
-        double rate = deltaPos / deltaTime;
-        rate = (rate * SECONDS_PER_MIN) / getCPR();
-        if(rate != 0) return rate;
-        else{
-            previousRate = rate;
-            return previousRate;
+        //double deltaTime = (System.nanoTime() - previousTime)/NANOSECS_PER_SEC;
+        double deltaTime = MaelstromUtils.getDeltaTime();
+        if (deltaTime*6e4 > 10) {
+            currVelocity = (deltaPos/ getCPR())/(deltaTime);
+            previousPos = motor.getCurrentPosition();
+            previousTime = System.nanoTime();
         }
+        return currVelocity;
+    }
+
+    public double getTargetVelocity(double velocity){
+        double target = encoder.getCPR() * velocity;
+        return target;
     }
 
     public void setVelocity(double velocity){
         targetPower = velocity;
-        double targetVelocity = encoder.getCPR() * velocity;
+        double targetVelocity = getTargetVelocity(velocity);
         power = PID.power(targetVelocity, getVelocity());
 /* motor.setPower((power > 0 && getVelocity() < 0) || (power < 0 && getVelocity() > 0) ? 0: power);*/
         if(!closedLoop) motorPower = targetPower;
@@ -141,7 +145,7 @@ public class MaelstromMotor implements TimeConstants {
 
     public double getAcceleration(){
         double deltaPos = getVelocity() - previousVelocity;
-        double deltaTime = (System.nanoTime() - previousTime)/NANOSECS_PER_MIN;
+        double deltaTime = (System.nanoTime() - previousTime)/NANOSECS_PER_SEC;
         if (deltaTime*6e4 > 10) {
             acceleration = (deltaPos/deltaTime);
             previousVelocity = getVelocity();
@@ -168,7 +172,7 @@ public class MaelstromMotor implements TimeConstants {
         boolean isStalled = false;
         double prePos = getCounts();
         if ((getCounts() == prePos && getPower() < power )
-                && !timer.elapsedTime(time, MaelstromTimer.Time.SECS)) isStalled = true;
+                && !timer.elapsedTime(time, TimeUnits.SECS)) isStalled = true;
         return isStalled;
     }
 
@@ -198,7 +202,7 @@ public class MaelstromMotor implements TimeConstants {
         motor.setTargetPosition(counts);
         setRunToPos();
         setPower(speed);
-        while(isBusy() && timer.elapsedTime(5, MaelstromTimer.Time.SECS)){}
+        while(isBusy() && timer.elapsedTime(5, TimeUnits.SECS)){}
         setPower(0);
         runUsingEncoders();
     }
@@ -208,7 +212,7 @@ public class MaelstromMotor implements TimeConstants {
     public boolean isPowered(){return getPower() > 0;}
 
     public boolean isStalled(){
-        if(isPowered() && (!isRunning()) && timer.elapsedTime(100, MaelstromTimer.Time.MILLISECS)){
+        if(isPowered() && (!isRunning()) && timer.elapsedTime(100, TimeUnits.SECS)){
             return isStalled;
         }
         else return !isStalled;

@@ -6,19 +6,19 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import ftc.library.MaelstromControl.MaelstromPID.PIDController;
 import ftc.library.MaelstromMotions.MaelstromMotors.MaelstromMotor;
 import ftc.library.MaelstromMotions.MaelstromMotors.MaelstromMotorSystem;
-import ftc.library.MaelstromMotions.MaelstromMotors.MotorModel;
+import ftc.library.MaelstromMotions.MaelstromMotors.Motor;
 import ftc.library.MaelstromMotions.MaelstromServos.CRServo.MaelstromCRServo;
 import ftc.library.MaelstromMotions.MaelstromServos.CRServo.MaelstromCRServoSystem;
 import ftc.library.MaelstromUtils.SubsystemModels;
-import ftc.library.MaelstromUtils.TimeConstants;
+import ftc.library.MaelstromUtils.LibConstants;
 import ftc.library.MaelstromWrappers.MaelstromController;
 
-public class MaelstromElevator implements TimeConstants {
+public class MaelstromElevator implements LibConstants,Subsystem {
     public MaelstromMotor oneMotorLift;
     public MaelstromMotorSystem twoMotorLift;
     public MaelstromCRServo oneCrLift;
     public MaelstromCRServoSystem twoCrLift;
-    public MotorModel model;
+    public Motor model;
     public MaelstromController controller;
     public double numOfMotors = 0;
     public double numOfCr = 0;
@@ -31,8 +31,36 @@ public class MaelstromElevator implements TimeConstants {
     public double spoolCircumference = 0 ;
     public double gearboxRatio = 0;
     public PIDController liftPid = new PIDController(kp,ki,kd);
+    public State state = State.STOP;
+    public enum State{
+        EXTEND,
+        RETRACT,
+        STOP
+    }
 
-    public MaelstromElevator(String name1, MotorModel model, SubsystemModels subsystem, HardwareMap hwMap){
+    public State getState(){return state;}
+
+    public void setState(State state){
+        this.state = state;
+    }
+
+    @Override
+    public void update() throws InterruptedException {
+        switch(state){
+            case EXTEND:
+                extend();
+                break;
+            case RETRACT:
+                retract();
+                break;
+            case STOP:
+                stop();
+                break;
+        }
+    }
+
+
+    public MaelstromElevator(String name1, Motor model, SubsystemModels subsystem, HardwareMap hwMap){
         if(subsystem == SubsystemModels.MOTOR) {
             oneMotorLift = new MaelstromMotor(name1, model, hwMap);
             this.model = model;
@@ -48,7 +76,7 @@ public class MaelstromElevator implements TimeConstants {
         }
     }
 
-    public MaelstromElevator(String name1, String name2, MotorModel model, SubsystemModels subsystem,  HardwareMap hwMap){
+    public MaelstromElevator(String name1, String name2, Motor model, SubsystemModels subsystem, HardwareMap hwMap){
         if(subsystem == SubsystemModels.MOTOR){
             twoMotorLift = new MaelstromMotorSystem(name1,name2,model,hwMap);
             this.model = model;
@@ -171,4 +199,6 @@ public class MaelstromElevator implements TimeConstants {
         return distance;
 
     }
+
+
 }

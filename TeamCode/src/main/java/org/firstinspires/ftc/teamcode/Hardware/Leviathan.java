@@ -14,27 +14,26 @@ import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Control.GoldPos;
 import org.firstinspires.ftc.teamcode.Subsystems.Components.MaelstromPivot;
 
-import ftc.library.MaelstromControl.MaelstromPID.PIDPackage;
-import ftc.library.MaelstromMotions.MaelstromMotors.MotorModel;
+import ftc.library.MaelstromMotions.MaelstromMotors.Motor;
 import ftc.library.MaelstromMotions.MaelstromServos.CRServo.MaelstromCRServoSystem;
 import ftc.library.MaelstromMotions.MaelstromServos.Servo.MaelstromServo;
 import ftc.library.MaelstromRobot;
 import ftc.library.MaelstromSensors.MaelstromIMU;
 import ftc.library.MaelstromSensors.MaelstromLimitSwitch;
 import ftc.library.MaelstromSensors.MaelstromTimer;
-import ftc.library.MaelstromSubsystems.MaelstromCollector;
+import ftc.library.MaelstromSubsystems.MaelCollector;
 import ftc.library.MaelstromSubsystems.MaelstromDrivetrain.DrivetrainModels;
 import ftc.library.MaelstromSubsystems.MaelstromDrivetrain.MaelstromDrivetrain;
 import ftc.library.MaelstromSubsystems.MaelstromElevator;
 import ftc.library.MaelstromUtils.MaelstromUtils;
 import ftc.library.MaelstromUtils.SubsystemModels;
 import ftc.library.MaelstromWrappers.MaelstromController;
-import ftc.library.MaelstromWrappers.MaelstromTelemetry;
+import ftc.library.MaelstromWrappers.MaelstromTellemetry;
 
 //taruns stuff
 public class Leviathan extends MaelstromRobot implements Constants {
 
-    public MaelstromCollector intake;
+    public MaelCollector intake;
     public MaelstromElevator lift;
     public MaelstromPivot pivot;
     public MaelstromCRServoSystem hang;
@@ -48,13 +47,13 @@ public class Leviathan extends MaelstromRobot implements Constants {
 
     @Override
     public void initHardware(HardwareMap hwMap) {
-        dt = new MaelstromDrivetrain(DrivetrainModels.ARCADE,DT_GEAR_RATIO,dtKP,dtKI,dtKD,hwMap, MotorModel.NEVEREST_NAKED,this);
+        dt = new MaelstromDrivetrain(DrivetrainModels.ARCADE,DT_GEAR_RATIO,dtKP,dtKI,dtKD,hwMap, Motor.NEVEREST_NAKED,this);
         setSpeedMultiplier(.5);
         imu = new MaelstromIMU("imu",hwMap);
-        feed = MaelstromTelemetry.getFeed();
-        intake = new MaelstromCollector("winch",MotorModel.ORBITAL20, SubsystemModels.MOTOR,hwMap);
+        feed = MaelstromTellemetry.getFeed();
+        intake = new MaelCollector("winch", Motor.ORBITAL20, SubsystemModels.MOTOR,hwMap);
         intake.setCollectorPowers(INTAKE_POWER,OUTTAKE_POWER);
-        lift = new MaelstromElevator("extendo",MotorModel.NEVEREST_NAKED,SubsystemModels.MOTOR,hwMap);
+        lift = new MaelstromElevator("extendo", Motor.NEVEREST_NAKED,SubsystemModels.MOTOR,hwMap);
         lift.setLiftPowers(LIFT_EXTEND,LIFT_RETRACT);
         limit = new MaelstromLimitSwitch("limit",hwMap);
         pivot = new MaelstromPivot(hwMap);
@@ -70,22 +69,10 @@ public class Leviathan extends MaelstromRobot implements Constants {
         //hangRealease = new MaelstromServoSystem("hangLeftRelease","hangRightRelease",hwMap);
     }
 
-    @Override
-    public PIDPackage pidPackage() {
-        PIDPackage pidPackage = new PIDPackage();
-        pidPackage.setDistanceKp(distanceKP);
-        pidPackage.setDistanceKi(distanceKI);
-        pidPackage.setDistanceKd(distanceKD);
-
-        pidPackage.setTurnKp(turnKP);
-        pidPackage.setTurnKi(turnKI);
-        pidPackage.setTurnKd(turnKD);
-
-        pidPackage.setSideKp(sideKP);
-        pidPackage.setSideKi(sideKI);
-        pidPackage.setSideKd(sideKD);
-
-        return pidPackage;
+    public void setPidConstants(){
+        distancePid.setPID(distanceKP,distanceKI,distanceKD);
+        turnPid.setPID(turnKP,turnKI,turnKD);
+        sideTurnPid.setPID(sideKP,sideKI,sideKD);
     }
 
     public void hangRelease(){

@@ -1,11 +1,10 @@
 package ftc.library.MaelstromControl.MaelstromPID;
 
 import ftc.library.MaelstromSensors.MaelstromTimer;
-import ftc.library.MaelstromUtils.MaelstromUtils;
-import ftc.library.MaelstromUtils.TimeConstants;
+import ftc.library.MaelstromUtils.LibConstants;
 
 /*class for PID controller*/
-public class PIDController implements TimeConstants {
+public class PIDController implements LibConstants {
     private double i=0;
     private double d;
     private double error;

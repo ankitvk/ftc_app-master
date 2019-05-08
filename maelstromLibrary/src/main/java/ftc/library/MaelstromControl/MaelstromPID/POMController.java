@@ -1,9 +1,9 @@
 package ftc.library.MaelstromControl.MaelstromPID;
 
-import ftc.library.MaelstromUtils.TimeConstants;
+import ftc.library.MaelstromUtils.LibConstants;
 
 /*class for Proportional-On-Measurement control system*/
-public class POMController implements TimeConstants {
+public class POMController implements LibConstants {
     private double i=0;
     private double d;
     private double measurement;

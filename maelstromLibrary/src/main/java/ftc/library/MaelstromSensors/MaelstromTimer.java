@@ -2,10 +2,11 @@ package ftc.library.MaelstromSensors;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import ftc.library.MaelstromUtils.TimeConstants;
+import ftc.library.MaelstromUtils.LibConstants;
+import ftc.library.MaelstromUtils.TimeUnits;
 
 /*Custom class for Timer*/
-public class MaelstromTimer implements TimeConstants {
+public class MaelstromTimer implements LibConstants {
 
     private long startTime;
     private long stopState;
@@ -32,16 +33,9 @@ public class MaelstromTimer implements TimeConstants {
     public double milliSecs() {return nanoSecs() * NANOSECS_PER_MILISEC;}
     public double secs(){return milliSecs() / NANOSECS_PER_MILISEC;}
 
-    public enum Time{
-        NANOSECS(1),
-        MILLISECS(1E6),
-        SECS(1E9);
-        private final double multiplier;
-        Time (double multiplier){this.multiplier = multiplier;}
-    }
 
-    public boolean elapsedTime(double time, Time type){
-        return nanoSecs() > (long)(time*type.multiplier);
+    public boolean elapsedTime(double time, TimeUnits type){
+        return nanoSecs() > (long)(time*type.value);
     }
 
     public long startTime(){

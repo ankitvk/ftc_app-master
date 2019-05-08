@@ -7,14 +7,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import ftc.library.MaelstromMotions.MaelstromMotors.Direction;
 import ftc.library.MaelstromMotions.MaelstromMotors.MaelstromMotor;
 import ftc.library.MaelstromMotions.MaelstromMotors.MaelstromMotorSystem;
-import ftc.library.MaelstromMotions.MaelstromMotors.MotorModel;
+import ftc.library.MaelstromMotions.MaelstromMotors.Motor;
 import ftc.library.MaelstromMotions.MaelstromServos.CRServo.MaelstromCRServo;
 import ftc.library.MaelstromMotions.MaelstromServos.CRServo.MaelstromCRServoSystem;
 import ftc.library.MaelstromUtils.SubsystemModels;
-import ftc.library.MaelstromUtils.TimeConstants;
+import ftc.library.MaelstromUtils.LibConstants;
 import ftc.library.MaelstromWrappers.MaelstromController;
 
-public class MaelstromCollector  implements TimeConstants {
+public class MaelCollector implements LibConstants, Subsystem {
 
     //public MaelstromMotorSystem collector;
     public MaelstromMotor oneMotorCollector;
@@ -22,38 +22,65 @@ public class MaelstromCollector  implements TimeConstants {
     public MaelstromCRServo oneCrCollector;
     public MaelstromCRServoSystem twoCrCollector;
     public double intakePower, outtakePower;
-    public double numOfMotors, numOfCr;
-    public MotorModel motorModel;
+    public double numOfMotors = 0, numOfCr = 0;
+    public Motor motor;
     public SubsystemModels model;
+    public State state = State.STOP;
 
-    public MaelstromCollector(String name1, MotorModel motor, SubsystemModels model, HardwareMap hwMap){
+    public enum State{
+        INTAKE,
+        OUTTAKE,
+        STOP
+    }
+
+    public State getState(){return state;}
+
+    public void setState(State state){
+        this.state = state;
+    }
+
+    @Override
+    public void update() throws InterruptedException {
+        switch(state){
+            case INTAKE:
+                intake();
+                break;
+            case OUTTAKE:
+                outtake();
+                break;
+            case STOP:
+                stop();
+                break;
+        }
+    }
+
+    public MaelCollector(String name1, Motor motor, SubsystemModels model, HardwareMap hwMap){
         if(model == SubsystemModels.MOTOR){ oneMotorCollector = new MaelstromMotor(name1,motor,hwMap);
-            this.motorModel = motor;
+            this.motor = motor;
             this.model = model;
             numOfMotors = 1;}
 
         else if(model == SubsystemModels.CR){oneCrCollector = new MaelstromCRServo(name1,hwMap);
-            this.motorModel = motor;
+            this.motor = motor;
             this.model = model;
             numOfCr = 1;}
     }
 
-
-    public MaelstromCollector(String name1, String name2,
-                              Direction direction1, Direction direction2,
-                              SubsystemModels model, MotorModel motor, HardwareMap hwMap){
+    public MaelCollector(String name1, String name2,
+                         Direction direction1, Direction direction2,
+                         SubsystemModels model, Motor motor, HardwareMap hwMap){
 
         if(model == SubsystemModels.MOTOR){
             if(direction1 == Direction.REVERSE) twoMotorCollectors = new MaelstromMotorSystem(name1,name2, DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD,hwMap,motor);
             else if(direction2 == Direction.REVERSE) twoMotorCollectors = new MaelstromMotorSystem(name1, name2, DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.REVERSE, hwMap, motor);
-            this.motorModel = motor;
+            this.motor = motor;
             this.model = model;
             numOfMotors = 2;
         }
         else if(model == SubsystemModels.CR){
             if(direction1 == Direction.REVERSE){ twoCrCollector = new MaelstromCRServoSystem(name1,name2, DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD, hwMap);}
             else if(direction2 == Direction.REVERSE) twoCrCollector = new MaelstromCRServoSystem(name1,name2, DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.REVERSE,hwMap);
-            this.motorModel = motor;
+            this.motor = motor;
             this.model = model;
             numOfCr = 2;
         }
@@ -123,6 +150,8 @@ public class MaelstromCollector  implements TimeConstants {
         this.intakePower = intakePower;
         this.outtakePower = outtakePower;
     }
+
+
 }
 
 
