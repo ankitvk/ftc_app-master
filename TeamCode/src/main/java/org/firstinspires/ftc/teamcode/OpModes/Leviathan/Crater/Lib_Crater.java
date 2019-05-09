@@ -4,23 +4,21 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Control.Constants;
-import org.firstinspires.ftc.teamcode.Control.GoldPos;
 import org.firstinspires.ftc.teamcode.Hardware.Leviathan;
 
-import ftc.library.MaelstromControl.MaelstromPID.PIDController;
-import ftc.library.MaelstromMotions.MaelstromMotors.Direction;
-import ftc.library.MaelstromSensors.MaelstromTimer;
-import ftc.library.MaelstromUtils.MaelstromUtils;
-import ftc.library.MaelstromWrappers.MaelstromLinearOp;
+import ftc.library.MaelSensors.MaelTimer;
+import ftc.library.MaelUtils.MaelUtils;
+import ftc.library.MaelWrappers.MaelLinearOp;
 
 @Autonomous(name = "Tarun's CraterAuto", group = "Lib_Auto")
-public class Lib_Crater extends MaelstromLinearOp implements Constants, MaelstromUtils.AutonomousOpMode {
+public class Lib_Crater extends MaelLinearOp implements Constants, MaelUtils.AutonomousOpMode {
 
     public Leviathan robot = new Leviathan();
-    public MaelstromTimer timer = new MaelstromTimer();
+    public MaelTimer timer = new MaelTimer();
     String blockPos;
+
     @Override
-    public void runLinearOpMode() throws InterruptedException {
+    public void run() throws InterruptedException {
         robot.setAutoOpMode(this);
         //robot.initHardware(hardwareMap);
 
@@ -43,7 +41,7 @@ public class Lib_Crater extends MaelstromLinearOp implements Constants, Maelstro
         Runnable pivot = new Runnable() {
             @Override
             public void run() {
-                while(opModeIsActive() && !timer.elapsedTime(3, MaelstromTimer.Time.SECS)){
+                while(opModeIsActive() && !timer.elapsedTime(3, MaelTimer.Time.SECS)){
                     robot.pivot.scoringPosition();
                 }
             }
@@ -60,7 +58,7 @@ public class Lib_Crater extends MaelstromLinearOp implements Constants, Maelstro
         Runnable lower = new Runnable() {
             @Override
             public void run() {
-                while(opModeIsActive() && !timer.elapsedTime(2, MaelstromTimer.Time.SECS)){
+                while(opModeIsActive() && !timer.elapsedTime(2, MaelTimer.Time.SECS)){
                     robot.lift.setPower(.75);
                 }
             }
@@ -72,11 +70,11 @@ public class Lib_Crater extends MaelstromLinearOp implements Constants, Maelstro
                 robot.driveDistance(5);
             }
         };*/
-    while(!opModeIsActive()) {
-        timer.reset();
-        feed.add("Time:", timer.secs());
-        feed.update();
-    }
+        while(!opModeIsActive()) {
+            timer.reset();
+            feed.add("Time:", timer.secs());
+            feed.update();
+        }
 
         //PIDController yeah = new PIDController(1,1,1,1);
         //double y = yeah.power(20,10);
@@ -97,6 +95,7 @@ public class Lib_Crater extends MaelstromLinearOp implements Constants, Maelstro
         //feed.add("Error:",y);
         //feed.update();
         //sleep(10);
+
     }
 
     @Override
@@ -108,4 +107,6 @@ public class Lib_Crater extends MaelstromLinearOp implements Constants, Maelstro
     public Telemetry getTelemetry() {
         return telemetry;
     }
+
+
 }

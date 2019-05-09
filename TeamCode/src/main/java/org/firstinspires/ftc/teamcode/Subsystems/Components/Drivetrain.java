@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Control.SpeedControlledMotor;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Drivers.BNO055_IMU;
 
-import ftc.library.MaelstromUtils.MaelstromUtils;
+import ftc.library.MaelUtils.MaelUtils;
 
 public class Drivetrain implements Constants {
 
@@ -274,7 +274,7 @@ public class Drivetrain implements Constants {
 
         double speeds[] = {Math.sin(adjustedAngle), Math.cos(adjustedAngle), Math.cos(adjustedAngle), Math.sin(adjustedAngle)};
 
-        MaelstromUtils.normalizeValues(speeds);
+        MaelUtils.normalizeValues(speeds);
 
         speeds[0] = (speeds[0] * speedMagnitude) + rightX;
         speeds[1] = (speeds[1] * speedMagnitude) + rightX;

@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
-
 import com.disnodeteam.dogecv.CameraViewDisplay;
 import com.disnodeteam.dogecv.DogeCV;
 import com.disnodeteam.dogecv.Dogeforia;
@@ -12,61 +11,68 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Control.GoldPos;
-import org.firstinspires.ftc.teamcode.Subsystems.Components.MaelstromPivot;
+import org.firstinspires.ftc.teamcode.Subsystems.Components.MaelPivot;
 
-import ftc.library.MaelstromMotions.MaelstromMotors.Motor;
-import ftc.library.MaelstromMotions.MaelstromServos.CRServo.MaelstromCRServoSystem;
-import ftc.library.MaelstromMotions.MaelstromServos.Servo.MaelstromServo;
-import ftc.library.MaelstromRobot;
-import ftc.library.MaelstromSensors.MaelstromIMU;
-import ftc.library.MaelstromSensors.MaelstromLimitSwitch;
-import ftc.library.MaelstromSensors.MaelstromTimer;
-import ftc.library.MaelstromSubsystems.MaelCollector;
-import ftc.library.MaelstromSubsystems.MaelstromDrivetrain.DrivetrainModels;
-import ftc.library.MaelstromSubsystems.MaelstromDrivetrain.MaelstromDrivetrain;
-import ftc.library.MaelstromSubsystems.MaelstromElevator;
-import ftc.library.MaelstromUtils.MaelstromUtils;
-import ftc.library.MaelstromUtils.SubsystemModels;
-import ftc.library.MaelstromWrappers.MaelstromController;
-import ftc.library.MaelstromWrappers.MaelstromTellemetry;
+import java.util.ArrayList;
+
+import ftc.library.MaelMotions.MaelMotors.Motor;
+import ftc.library.MaelMotions.MaelServos.CRServo.MaelCRServoSystem;
+import ftc.library.MaelMotions.MaelServos.Servo.MaelServo;
+import ftc.library.MaelRobot;
+import ftc.library.MaelSensors.MaelIMU;
+import ftc.library.MaelSensors.MaelLimitSwitch;
+import ftc.library.MaelSensors.MaelTimer;
+import ftc.library.MaelSubsystems.MaelCollector;
+import ftc.library.MaelSubsystems.MaelstromDrivetrain.DrivetrainModels;
+import ftc.library.MaelSubsystems.MaelstromDrivetrain.MaelDrivetrain;
+import ftc.library.MaelSubsystems.MaelElevator;
+import ftc.library.MaelSubsystems.Subsystem;
+import ftc.library.MaelUtils.MaelUtils;
+import ftc.library.MaelUtils.SubsystemModels;
+import ftc.library.MaelWrappers.MaelController;
+import ftc.library.MaelWrappers.MaelTellemetry;
 
 //taruns stuff
-public class Leviathan extends MaelstromRobot implements Constants {
+public class Leviathan extends MaelRobot implements Constants {
 
     public MaelCollector intake;
-    public MaelstromElevator lift;
-    public MaelstromPivot pivot;
-    public MaelstromCRServoSystem hang;
-    public MaelstromServo index;
-    public MaelstromServo hangLeftRealease, hangRightRelease;
-    public MaelstromLimitSwitch limit;
+    public MaelElevator lift;
+    public MaelPivot pivot;
+    public MaelCRServoSystem hang;
+    public MaelServo index;
+    public MaelServo hangLeftRealease, hangRightRelease;
+    public MaelLimitSwitch limit;
     public Dogeforia dogeForia;
     public GoldAlignDetector detector;
     GoldPos position;
+    ArrayList<Subsystem> s;
     public boolean startOpenCV;
 
     @Override
     public void initHardware(HardwareMap hwMap) {
-        dt = new MaelstromDrivetrain(DrivetrainModels.ARCADE,DT_GEAR_RATIO,dtKP,dtKI,dtKD,hwMap, Motor.NEVEREST_NAKED,this);
-        setSpeedMultiplier(.5);
-        imu = new MaelstromIMU("imu",hwMap);
-        feed = MaelstromTellemetry.getFeed();
+        dt = new MaelDrivetrain(DrivetrainModels.ARCADE,DT_GEAR_RATIO,dtKP,dtKI,dtKD,hwMap, Motor.NEVEREST_NAKED,this);
+        setSpeedMultiplier(.85);
+        imu = new MaelIMU("imu",hwMap);
+        feed = MaelTellemetry.getFeed();
         intake = new MaelCollector("winch", Motor.ORBITAL20, SubsystemModels.MOTOR,hwMap);
         intake.setCollectorPowers(INTAKE_POWER,OUTTAKE_POWER);
-        lift = new MaelstromElevator("extendo", Motor.NEVEREST_NAKED,SubsystemModels.MOTOR,hwMap);
+        lift = new MaelElevator("extendo", Motor.NEVEREST_NAKED,SubsystemModels.MOTOR,hwMap);
         lift.setLiftPowers(LIFT_EXTEND,LIFT_RETRACT);
-        limit = new MaelstromLimitSwitch("limit",hwMap);
-        pivot = new MaelstromPivot(hwMap);
+        limit = new MaelLimitSwitch("limit",hwMap);
+        pivot = new MaelPivot(hwMap);
         pivot.setPivotPowers(PIVOT_UP,PIVOT_DOWN);
         pivot.setLimit(limit);
         pivot.setFeed(feed);
-        hang = new MaelstromCRServoSystem("hangLeftBottom","hangLeftTop","hangRightBottom","hangRightTop",hwMap);
+        hang = new MaelCRServoSystem("hangLeftBottom","hangLeftTop","hangRightBottom","hangRightTop",hwMap);
         hang.setDirection(DcMotorSimple.Direction.REVERSE, DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.FORWARD, DcMotorSimple.Direction.REVERSE);
-        index = new MaelstromServo("index",hwMap);
-        hangLeftRealease = new MaelstromServo("hangLeftRelease",hwMap);
-        hangRightRelease = new MaelstromServo("hangRightRelease",hwMap);
+        index = new MaelServo("index",hwMap);
+        hangLeftRealease = new MaelServo("hangLeftRelease",hwMap);
+        hangRightRelease = new MaelServo("hangRightRelease",hwMap);
         if(startOpenCV) startOpenCV(hwMap);
-        //hangRealease = new MaelstromServoSystem("hangLeftRelease","hangRightRelease",hwMap);
+        s.add(intake);
+        s.add(lift);
+        setSubsystemList(s);
+        //hangRealease = new MaelServoSystem("hangLeftRelease","hangRightRelease",hwMap);
     }
 
     public void setPidConstants(){
@@ -85,7 +91,7 @@ public class Leviathan extends MaelstromRobot implements Constants {
     }
 
     public void drop(){
-        MaelstromTimer hangTimer = new MaelstromTimer();
+        MaelTimer hangTimer = new MaelTimer();
         hang.setPower(.85);
         hangRelease();
         hangTimer.startTime();
@@ -142,7 +148,7 @@ public class Leviathan extends MaelstromRobot implements Constants {
         return position;
     }
 
-    public void index(MaelstromController controller){
+    public void index(MaelController controller){
         if(controller.a()) index.setPos(.15);
         else index.setPos(.95);
     }
@@ -155,5 +161,5 @@ public class Leviathan extends MaelstromRobot implements Constants {
         hang.setPower(.85);
     }
 
-    public void setAutoOpMode(MaelstromUtils.AutonomousOpMode auto){this.auto = auto;}
+    public void setAutoOpMode(MaelUtils.AutonomousOpMode auto){this.auto = auto;}
 }
