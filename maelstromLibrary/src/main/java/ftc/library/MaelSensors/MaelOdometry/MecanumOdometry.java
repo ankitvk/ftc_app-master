@@ -60,8 +60,6 @@ public class MecanumOdometry implements LibConstants {
 
     public double getAcceleration(){return motor.getAcceleration();}
 
-
-
     public double getVelocity(){
         return motor.getVelocity();
     }

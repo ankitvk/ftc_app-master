@@ -64,11 +64,11 @@ public class TankOdometry {
         return (getLeftCounts() + getRightCounts()) / 2;
     }
 
-    public double cosine(double c){
+    private double cosine(double c){
         return Math.cos(c);
     }
 
-    public double sine(double s){
+    private double sine(double s){
         return Math.sin(s);
     }
 
