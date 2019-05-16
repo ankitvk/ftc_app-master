@@ -21,6 +21,7 @@ import ftc.library.MaelMotions.MaelServos.Servo.MaelServo;
 import ftc.library.MaelRobot;
 import ftc.library.MaelSensors.MaelIMU;
 import ftc.library.MaelSensors.MaelLimitSwitch;
+import ftc.library.MaelSensors.MaelOdometry.TankOdometry;
 import ftc.library.MaelSensors.MaelTimer;
 import ftc.library.MaelSubsystems.MaelCollector;
 import ftc.library.MaelSubsystems.MaelstromDrivetrain.DrivetrainModels;
@@ -54,6 +55,7 @@ public class Leviathan extends MaelRobot implements Constants {
         setSpeedMultiplier(.85);
         imu = new MaelIMU("imu",hwMap);
         feed = MaelTellemetry.getFeed();
+        tracker = new TankOdometry(dt,imu);
         intake = new MaelCollector("winch", Motor.ORBITAL20, SubsystemModels.MOTOR,hwMap);
         intake.setCollectorPowers(INTAKE_POWER,OUTTAKE_POWER);
         lift = new MaelElevator("extendo", Motor.NEVEREST_NAKED,SubsystemModels.MOTOR,hwMap);

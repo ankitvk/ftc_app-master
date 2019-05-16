@@ -13,7 +13,8 @@ import ftc.library.MaelControl.PID.PIDController;
 import ftc.library.MaelControl.PurePursuit.WayPoint;
 import ftc.library.MaelMotions.MaelMotors.Direction;
 import ftc.library.MaelSensors.MaelIMU;
-import ftc.library.MaelSensors.MaelOdometry;
+import ftc.library.MaelSensors.MaelOdometry.MecanumOdometry;
+import ftc.library.MaelSensors.MaelOdometry.TankOdometry;
 import ftc.library.MaelSensors.MaelTimer;
 import ftc.library.MaelSubsystems.MaelstromDrivetrain.DrivetrainModels;
 import ftc.library.MaelSubsystems.MaelstromDrivetrain.MaelDrivetrain;
@@ -29,8 +30,9 @@ public abstract class MaelRobot implements LibConstants {
     public abstract void initHardware(HardwareMap hwMap);
     public MaelTellemetry feed;
     public MaelDrivetrain dt;
-    public MaelOdometry xPos;
-    public MaelOdometry yPos;
+    public MecanumOdometry xPos = null;
+    public MecanumOdometry yPos = null;
+    public TankOdometry tracker;
     public MaelIMU imu;
     public MaelUtils.AutonomousOpMode auto;
     public double gearRatio;
@@ -292,22 +294,23 @@ public abstract class MaelRobot implements LibConstants {
         //double initialHeading = imu.getRelativeYaw();
         double distance = Math.hypot(xTarget, yTarget);
 
-        while(opModeActive() && (stopState <= stopTime)){
-            angle = Math.atan2(xPos.getAngle(),yPos.getAngle());
-            double adjustedAngle = angle + Math.PI/4;
+    if(xPos != null && yPos != null) {
+        while (opModeActive() && (stopState <= stopTime)) {
+            angle = Math.atan2(xPos.getAngle(), yPos.getAngle());
+            double adjustedAngle = angle + Math.PI / 4;
 
             frontLeftPower = Math.sin(adjustedAngle);
             backLeftPower = Math.cos(adjustedAngle);
             frontRightPower = Math.cos(adjustedAngle);
             backRightPower = Math.sin(adjustedAngle);
 
-            double currDistance = Math.hypot(xPos.getPosition(),yPos.getPosition());
-            double pidPower = distancePid.power(distance,currDistance);
+            double currDistance = Math.hypot(xPos.getPosition(), yPos.getPosition());
+            double pidPower = distancePid.power(distance, currDistance);
 
-            speeds[0] = frontLeftPower*pidPower;
-            speeds[1] = backLeftPower*pidPower;
-            speeds[2] = frontRightPower*pidPower;
-            speeds[3] = backRightPower*pidPower;
+            speeds[0] = frontLeftPower * pidPower;
+            speeds[1] = backLeftPower * pidPower;
+            speeds[2] = frontRightPower * pidPower;
+            speeds[3] = backRightPower * pidPower;
 
             MaelUtils.normalizeSpeedsToMax(speeds, maxSpeed);
 
@@ -316,23 +319,24 @@ public abstract class MaelRobot implements LibConstants {
             dt.rightDrive.motor1.setVelocity(speeds[2]);
             dt.rightDrive.motor2.setVelocity(speeds[3]);
 
-            feed.add("X Position:",xPos.trackPosition());
-            feed.add("Y Position:",yPos.trackPosition());
-            feed.add("Distance:",distance);
-            feed.add("Stop state:",stopState);
-            feed.add("Kp*error:",distancePid.getP());
-            feed.add("Ki*i:",distancePid.getI());
-            feed.add("Kd*d:",distancePid.getD());
+            feed.add("X Position:", xPos.trackPosition());
+            feed.add("Y Position:", yPos.trackPosition());
+            feed.add("Distance:", distance);
+            feed.add("Stop state:", stopState);
+            feed.add("Kp*error:", distancePid.getP());
+            feed.add("Ki*i:", distancePid.getI());
+            feed.add("Kd*d:", distancePid.getD());
             feed.update();
 
             if (/*Math.abs(distance - currDistance) */ distancePid.getError() <= 0.5) {
                 stopState = (System.nanoTime() - startTime) / NANOSECS_PER_MILISEC;
-                if(stopState == stopTime - 10) {
+                if (stopState == stopTime - 10) {
                     prevX = xPos.trackPosition();
                     prevY = yPos.trackPosition();
                 }
             } else startTime = System.nanoTime();
         }
+    }
         stop();
     }
     public void driveToPoint(WayPoint point, double maxSpeed){
