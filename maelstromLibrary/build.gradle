@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 android {
 
     defaultConfig {
@@ -18,6 +20,7 @@ repositories {
     flatDir {
         dirs '../libs'
     }
+    mavenCentral()
 }
 task deleteJar(type: Delete) {
     delete 'libs/jars/maelstromLib.jar'
@@ -35,4 +38,5 @@ createJar.dependsOn(deleteJar, build)*/
 
 dependencies {
     implementation project(':FtcRobotController')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
