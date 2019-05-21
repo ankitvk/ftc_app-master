@@ -39,6 +39,12 @@ class Pivot(internal var hardware: Hardware) : Constants {
     val rawPower: Double
         get() = hardware.pivotMotors[0].power
 
+    var power: Double
+        get() =( hardware.pivotMotors[0].power + hardware.pivotMotors[1].power) / 2
+        set(power){
+            for(motor in hardware.pivotMotors) motor.power = power
+        }
+
     var angle: Double
         get() = Constants.PIVOT_LIMIT_ANGLE + hardware.pivot1.getAngle(Constants.PIVOT_TICKS_PER_ROTATION)
         set(angle) {
@@ -63,13 +69,16 @@ class Pivot(internal var hardware: Hardware) : Constants {
         rotatorPower = 0.0001 * -liftPosition + basePower
         downPower = 0.001 * Math.abs(position) + baseDownPower
         if (controller.left_bumper) {
-            setPower(-rotatorPower)
+            /*setPower(-rotatorPower)*/
+            power = -rotatorPower
         } else if (controller.right_bumper) {
-            setPower(downPower)
+            /*setPower(downPower)*/
+            power = downPower
         } else if (scoringPosition) {
             angle = 135.0
         } else {
-            setPower(0.0)
+            /*setPower(0.0)*/
+            power = 0.0
         }
 
         if (controller.right_bumper || controller.left_bumper) {
@@ -99,11 +108,14 @@ class Pivot(internal var hardware: Hardware) : Constants {
         rotatorPower = 0.0005 * -liftPosition + basePower
         downPower = 0.005 * Math.abs(position) + baseDownPower
         if (controller.dpad_right) {
-            setPower(-rotatorPower)
+            /*setPower(-rotatorPower)*/
+            power = -rotatorPower
         } else if (controller.dpad_left) {
-            setPower(downPower)
+            /*setPower(downPower)*/
+            power = downPower
         } else {
-            setPower(0.0)
+            /*setPower(0.0)*/
+            power = 0.0
         }
 
         if (controller.dpad_left || controller.dpad_right)
@@ -201,11 +213,11 @@ class Pivot(internal var hardware: Hardware) : Constants {
         this.liftPosition = liftPosition
     }
 
-    fun setPower(power: Double) {
+/*    fun setPower(power: Double) {
         for (motor in hardware.pivotMotors) {
             motor.power = power
         }
-    }
+    }*/
 
     fun opModeIsActive(): Boolean = auto.opModeIsActive
 
