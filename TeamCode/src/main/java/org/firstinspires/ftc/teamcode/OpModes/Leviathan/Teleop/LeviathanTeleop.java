@@ -35,7 +35,7 @@ public class LeviathanTeleop extends OpMode implements Constants{
 
         playing = true;
 
-        robot.drivetrain.resetDesiredPitch();
+        robot.getDrivetrain().resetDesiredPitch();
 
         //teleopLED = new TeleopLED(robot);
 
@@ -54,27 +54,27 @@ public class LeviathanTeleop extends OpMode implements Constants{
             playing = !playing;
         }*/
 
-        robot.drivetrain.drive(gamepad1);
-        robot.pivot.driverControl(gamepad2);
-        robot.extendo.driverControl(gamepad1);
-        robot.intake.intake(gamepad1);
-        robot.intake.index(gamepad2);
-        robot.hang.lift(gamepad2);
+        robot.getDrivetrain().drive(gamepad1);
+        robot.getPivot().driverControl(gamepad2);
+        robot.getExtendo().driverControl(gamepad1);
+        robot.getIntake().intake(gamepad1);
+        robot.getIntake().index(gamepad2);
+        robot.getHang().lift(gamepad2);
 
         if (x.toggle(gamepad2.x)) {
-            robot.hangLeftRelease.setPosition(.75);
-            robot.hangRightRelease.setPosition(.25);
+            robot.getHangLeftRelease().setPosition(.75);
+            robot.getHangRightRelease().setPosition(.25);
         } else {
-            robot.hangLeftRelease.setPosition(.3);
-            robot.hangRightRelease.setPosition(.85);
+            robot.getHangLeftRelease().setPosition(.3);
+            robot.getHangRightRelease().setPosition(.85);
         }
 
-        telemetry.addData("pivot1",robot.pivot1.getCurrentPosition());
-        telemetry.addData("pivot2",robot.pivot2.getCurrentPosition());
-        telemetry.addData("winch?",robot.winch.getCurrentPosition());
-        telemetry.addData("extend",robot.extend.getCurrentPosition());
-        telemetry.addData("pivot angle:", robot.pivot.getAngle());
-        telemetry.addData("pitch angle:", robot.imu.getPitch());
+        telemetry.addData("pivot1", robot.getPivot1().getCurrentPosition());
+        telemetry.addData("pivot2", robot.getPivot2().getCurrentPosition());
+        telemetry.addData("winch?", robot.getWinch().getCurrentPosition());
+        telemetry.addData("extend", robot.getExtend().getCurrentPosition());
+        telemetry.addData("pivot angle:", robot.getPivot().getAngle());
+        telemetry.addData("pitch angle:", robot.getImu().getPitch());
         telemetry.update();
 
         telemetry.update();

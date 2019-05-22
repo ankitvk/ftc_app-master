@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 @TeleOp(name = "Tune a bih")
 public class VelocityPIDTune extends OpMode implements Constants {
     private Hardware robot = new Hardware();
-    SpeedControlledMotor motor = robot.backLeft;
+    SpeedControlledMotor motor = robot.getBackLeft();
 
     double rightPower = .6;
     double leftPower = .6;
@@ -32,16 +32,16 @@ public class VelocityPIDTune extends OpMode implements Constants {
         }
 
         if(gamepad1.a){
-            robot.backRight.setPower(rightPower);
-            robot.frontRight.setPower(rightPower);
-            robot.backLeft.setPower(leftPower);
-            robot.frontLeft.setPower(leftPower);
+            robot.getBackRight().setPower(rightPower);
+            robot.getFrontRight().setPower(rightPower);
+            robot.getBackLeft().setPower(leftPower);
+            robot.getFrontLeft().setPower(leftPower);
         }
 
-        telemetry.addData("backRightRPM:",robot.backRight.getRPM());
-        telemetry.addData("frontRightRPM:",robot.frontRight.getRPM());
-        telemetry.addData("backLeftRPM:",robot.backLeft.getRPM());
-        telemetry.addData("frontLeftRPM:",robot.frontLeft.getRPM());
+        telemetry.addData("backRightRPM:", robot.getBackRight().getRPM());
+        telemetry.addData("frontRightRPM:", robot.getFrontRight().getRPM());
+        telemetry.addData("backLeftRPM:", robot.getBackLeft().getRPM());
+        telemetry.addData("frontLeftRPM:", robot.getFrontLeft().getRPM());
         telemetry.addData("RightPower:",rightPower);
         telemetry.addData("LeftPower:",leftPower);
 

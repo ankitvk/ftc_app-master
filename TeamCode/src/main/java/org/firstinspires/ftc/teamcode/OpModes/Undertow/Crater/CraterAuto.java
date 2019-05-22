@@ -31,7 +31,7 @@ public class CraterAuto extends LinearOpMode implements AutonomousOpMode,Constan
         robot.setAuto(this, telemetry);
 
         GoldFind goldfish = new GoldFind(this,robot);
-        goldfish.setAlignSettings(ALIGN_POSITION, 1000);
+        goldfish.setAlignSettings(Companion.getALIGN_POSITION(), 1000);
         Drivetrain drivetrain = new Drivetrain(robot);
         robot.init(hardwareMap);
 
@@ -44,16 +44,16 @@ public class CraterAuto extends LinearOpMode implements AutonomousOpMode,Constan
         /*robot.marker.setPosition(.9);
 
         robot.hook.setPosition(.5);*/
-        robot.extend.setPower(1);
+        robot.getExtend().setPower(1);
         sleep(1250);
-        robot.extend.setPower(0);
+        robot.getExtend().setPower(0);
 
         drivetrain.rotateForTime(-.5, 350);
         drivetrain.stop();
 
-        robot.extend.setPower(-1);
+        robot.getExtend().setPower(-1);
         sleep(1500);
-        robot.extend.setPower(0);
+        robot.getExtend().setPower(0);
 
 
 

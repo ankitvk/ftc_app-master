@@ -23,8 +23,8 @@ public class MineralTime {
 
     public MineralTime(Hardware hardware){
         this.robot = hardware;
-        this.telemetry = hardware.telemetry;
-        this.auto = hardware.auto;
+        this.telemetry = hardware.getTelemetry();
+        this.auto = hardware.getAuto();
     }
 
     public void mineralGang(){
@@ -32,10 +32,10 @@ public class MineralTime {
         down();
         telemetry.addLine("sleepTigor");
         telemetry.update();
-        robot.winch.setPower(1);
+        robot.getWinch().setPower(1);
         sleep(3000);
-        robot.winch.setPower(0);
-        robot.index.setPosition(.15);
+        robot.getWinch().setPower(0);
+        robot.getIndex().setPosition(.15);
         up();
         sleep(1000);
     }
@@ -49,19 +49,19 @@ public class MineralTime {
         pivotReset();
 
         while(opModeIsActive() && (stopState <= 125/4)){
-            double position = robot.extend.getCurrentPosition();
+            double position = robot.getExtend().getCurrentPosition();
             double power = controlExtend.power(-2950,position);
 
             telemetry.addLine("extend");
             telemetry.addData("power", power);
             telemetry.addData("stopstate: ", stopState);
-            telemetry.addData("extend: ", robot.extend.getCurrentPosition());
+            telemetry.addData("extend: ", robot.getExtend().getCurrentPosition());
             telemetry.addLine(" ");
             telemetry.addData("error: ",controlExtend.getError());
             telemetry.addData("KP*error: ",controlExtend.returnVal()[0]);
             telemetry.addData("KI*i: ",controlExtend.returnVal()[1]);
             telemetry.update();
-            robot.extend.setPower(power);
+            robot.getExtend().setPower(power);
 
             if (Math.abs(position+2950) <= 25) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
@@ -76,31 +76,31 @@ public class MineralTime {
         PIDController controlPivot = new PIDController(0.001 ,0,0,0); //increase Ki .00005
         PIDController extendControl = new PIDController(0.001,0,0,1);
 
-        double targetPosition = robot.extend.getCurrentPosition();
+        double targetPosition = robot.getExtend().getCurrentPosition();
 
 
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 125/4)){
-            double position = robot.pivot1.getCurrentPosition();
+            double position = robot.getPivot1().getCurrentPosition();
             double power = controlPivot.power(-1000,position);
 
             telemetry.addLine("down");
             telemetry.addData("power", power);
             telemetry.addData("stopstate: ", stopState);
-            telemetry.addData("pivot: ", robot.pivot1.getCurrentPosition());
+            telemetry.addData("pivot: ", robot.getPivot1().getCurrentPosition());
             telemetry.addLine(" ");
             telemetry.addData("error: ",controlPivot.getError());
             telemetry.addData("KP*error: ",controlPivot.returnVal()[0]);
             telemetry.addData("KI*i: ",controlPivot.returnVal()[1]);
             telemetry.update();
-            robot.pivot1.setPower(power);
-            robot.pivot2.setPower(power);
+            robot.getPivot1().setPower(power);
+            robot.getPivot2().setPower(power);
 
-            double currentPosition = robot.extend.getCurrentPosition();
+            double currentPosition = robot.getExtend().getCurrentPosition();
 
-            robot.extend.setPower(-extendControl.power(currentPosition, targetPosition));
+            robot.getExtend().setPower(-extendControl.power(currentPosition, targetPosition));
 
             if (Math.abs(position+1000) <= 25) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
@@ -125,20 +125,20 @@ public class MineralTime {
         long extendoStopState = 0;
         pivotReset();
         while(opModeIsActive() && (pivotStopState <= 125/4) && (extendoStopState <= 125/4)){
-            double pivotPosition = robot.pivot1.getCurrentPosition();
+            double pivotPosition = robot.getPivot1().getCurrentPosition();
             double pivotPower = controlPivot.power(2700,pivotPosition);
 
             telemetry.addLine("up");
             telemetry.addData("power", pivotPower);
             telemetry.addData("stopstate: ", pivotStopState);
-            telemetry.addData("pivot: ", robot.pivot1.getCurrentPosition());
+            telemetry.addData("pivot: ", robot.getPivot1().getCurrentPosition());
             telemetry.addLine(" ");
             telemetry.addData("error: ",controlPivot.getError());
             telemetry.addData("KP*error: ",controlPivot.returnVal()[0]);
             telemetry.addData("KI*i: ",controlPivot.returnVal()[1]);
             telemetry.update();
-            robot.pivot1.setPower(pivotPower);
-            robot.pivot2.setPower(pivotPower);
+            robot.getPivot1().setPower(pivotPower);
+            robot.getPivot2().setPower(pivotPower);
 
             if (Math.abs(pivotPosition-2700) <= 15) {
                 pivotStopState = (System.nanoTime() - startTime) / 1000000;
@@ -147,19 +147,19 @@ public class MineralTime {
                 startTime = System.nanoTime();
             }
 
-            double extendoPosition = robot.extend.getCurrentPosition();
+            double extendoPosition = robot.getExtend().getCurrentPosition();
             double extendoPower = controlExtend.power(-2450,extendoPosition);
 
             telemetry.addLine("extend");
             telemetry.addData("power", extendoPower);
             telemetry.addData("stopstate: ", extendoStopState);
-            telemetry.addData("extend: ", robot.extend.getCurrentPosition());
+            telemetry.addData("extend: ", robot.getExtend().getCurrentPosition());
             telemetry.addLine(" ");
             telemetry.addData("error: ",controlExtend.getError());
             telemetry.addData("KP*error: ",controlExtend.returnVal()[0]);
             telemetry.addData("KI*i: ",controlExtend.returnVal()[1]);
             telemetry.update();
-            robot.extend.setPower(extendoPower);
+            robot.getExtend().setPower(extendoPower);
 
             if (Math.abs(extendoPosition+2450) <= 25) {
                 extendoStopState = (System.nanoTime() - startTime) / 1000000;
@@ -171,16 +171,16 @@ public class MineralTime {
     }
 
     private void extendReset() {
-         robot.extend.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-         robot.extend.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+         robot.getExtend().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+         robot.getExtend().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
     }
 
     private void pivotReset(){
-        robot.pivot1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.pivot1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        robot.pivot2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.pivot2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.getPivot1().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.getPivot1().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.getPivot2().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.getPivot2().setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
     }

@@ -14,17 +14,17 @@ public class Mecanum extends OpMode {
     public void init() {
         r.opportunityInit(hardwareMap);
         r.setAuto(null,telemetry);
-        r.imu.resetYaw();
+        r.getImu().resetYaw();
 
         telemetry.addLine("OPPORTUNITY");
-        telemetry.addData("imu:",r.imu.getYaw());
+        telemetry.addData("imu:", r.getImu().getYaw());
         telemetry.update();
     }
 
     @Override
     public void loop() {
-        r.drivetrain.mecanum(gamepad1);
+        r.getDrivetrain().mecanum(gamepad1);
 
-        if(gamepad1.left_stick_button && gamepad1.right_stick_button) r.imu.resetYaw();
+        if(gamepad1.left_stick_button && gamepad1.right_stick_button) r.getImu().resetYaw();
     }
 }

@@ -24,7 +24,7 @@ public class UndertowTeleop extends OpMode implements Constants{
         //robot.hook.setPosition(0);
 
         goldfish = new GoldFind(robot);
-        goldfish.setAlignSettings(ALIGN_POSITION, 1000);
+        goldfish.setAlignSettings(Companion.getALIGN_POSITION(), 1000);
 
         goldfish.startOpenCV(); //start opencv
 
@@ -37,19 +37,19 @@ public class UndertowTeleop extends OpMode implements Constants{
         yDirection = gamepad1.left_stick_y;
         xDirection = gamepad1.right_stick_x;
 
-        robot.backLeft.setPower(-(yDirection+xDirection)*SPEED_MULTIPLIER);
-        robot.frontLeft.setPower(-(yDirection+xDirection)*(SPEED_MULTIPLIER));
-        robot.backRight.setPower(-(xDirection-yDirection)*(SPEED_MULTIPLIER));
-        robot.frontRight.setPower(-(xDirection-yDirection)*(SPEED_MULTIPLIER));
+        robot.getBackLeft().setPower(-(yDirection+xDirection)* Companion.getSPEED_MULTIPLIER());
+        robot.getFrontLeft().setPower(-(yDirection+xDirection)*(Companion.getSPEED_MULTIPLIER()));
+        robot.getBackRight().setPower(-(xDirection-yDirection)*(Companion.getSPEED_MULTIPLIER()));
+        robot.getFrontRight().setPower(-(xDirection-yDirection)*(Companion.getSPEED_MULTIPLIER()));
 
         if(gamepad1.right_bumper){
-            robot.extend.setPower(1);
+            robot.getExtend().setPower(1);
         }
         else if(gamepad1.left_bumper){
-            robot.extend.setPower(-1);
+            robot.getExtend().setPower(-1);
         }
         else{
-            robot.extend.setPower(0);
+            robot.getExtend().setPower(0);
         }
 
         /*if(gamepad2.a){
@@ -67,11 +67,11 @@ public class UndertowTeleop extends OpMode implements Constants{
         }*/
 
         //robot.marker.setPosition(1);
-        telemetry.addData("Absolute Angle:",robot.imu.getYaw());
-        telemetry.addData("BiggAngle", robot.imu.getRelativeYaw());
-        telemetry.addData("LeftSpeed:",robot.frontLeft.getPower());
-        telemetry.addData("RightSpeed:",robot.frontRight.getPower());
-        telemetry.addData("Extendo:",robot.extend.getCurrentPosition());
+        telemetry.addData("Absolute Angle:", robot.getImu().getYaw());
+        telemetry.addData("BiggAngle", robot.getImu().getRelativeYaw());
+        telemetry.addData("LeftSpeed:", robot.getFrontLeft().getPower());
+        telemetry.addData("RightSpeed:", robot.getFrontRight().getPower());
+        telemetry.addData("Extendo:", robot.getExtend().getCurrentPosition());
         telemetry.addData("Pos:",goldfish.getXPosition());
         telemetry.update();
 

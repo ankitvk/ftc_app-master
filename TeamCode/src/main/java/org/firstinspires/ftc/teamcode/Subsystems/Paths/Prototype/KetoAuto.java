@@ -28,8 +28,8 @@ public class KetoAuto implements Constants {
     public KetoAuto(Hardware hardware){
 
         this.robot = hardware;
-        this.telemetry = hardware.telemetry;
-        this.auto = hardware.auto;
+        this.telemetry = hardware.getTelemetry();
+        this.auto = hardware.getAuto();
 
     }
 
@@ -46,9 +46,9 @@ public class KetoAuto implements Constants {
     }
 
     private void marker(){
-        robot.winch.setPower(-1);
+        robot.getWinch().setPower(-1);
         sleep(2000);
-        robot.winch.setPower(0);
+        robot.getWinch().setPower(0);
     }
 
    /* @Override
@@ -73,22 +73,22 @@ public class KetoAuto implements Constants {
         long beginTime = startTime;
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 125/4)){
-            double position = robot.imu.getRelativeYaw();
+            double position = robot.getImu().getRelativeYaw();
             double power = controlRotate.power(87.5,position);
 
             telemetry.addLine("first Turn");
             telemetry.addData("power", power);
             telemetry.addData("stopstate: ", stopState);
-            telemetry.addData("Angle: ", robot.imu.getRelativeYaw());
+            telemetry.addData("Angle: ", robot.getImu().getRelativeYaw());
             telemetry.addLine(" ");
             telemetry.addData("error: ",controlRotate.getError());
             telemetry.addData("KP*error: ",controlRotate.returnVal()[0]);
             telemetry.addData("KI*i: ",controlRotate.returnVal()[1]);
             telemetry.update();
-            robot.frontLeft.setPower(power*.165);
-            robot.backLeft.setPower(power*.165);
-            robot.frontRight.setPower(power);
-            robot.backRight.setPower(power);
+            robot.getFrontLeft().setPower(power*.165);
+            robot.getBackLeft().setPower(power*.165);
+            robot.getFrontRight().setPower(power);
+            robot.getBackRight().setPower(power);
 
             if (Math.abs(position-87.5) <= 1) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
@@ -109,7 +109,7 @@ public class KetoAuto implements Constants {
         long beginTime = startTime;
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 125/4)){
-            double position = robot.frontLeft.getCurrentPosition();
+            double position = robot.getFrontLeft().getCurrentPosition();
             double power = controlDistance.power(distanceToTicks(20),position);
 
             if(ticksToDistance(position)>19){
@@ -123,10 +123,10 @@ public class KetoAuto implements Constants {
             telemetry.addData("KP*error: ",controlDistance.returnVal()[0]);
             telemetry.addData("KI*i: ", controlDistance.returnVal()[1]);
             telemetry.update();
-            robot.frontLeft.setPower(-power);
-            robot.backLeft.setPower(-power);
-            robot.frontRight.setPower(power);
-            robot.backRight.setPower(power);
+            robot.getFrontLeft().setPower(-power);
+            robot.getBackLeft().setPower(-power);
+            robot.getFrontRight().setPower(power);
+            robot.getBackRight().setPower(power);
 
             if (ticksToDistance(Math.abs(position-distanceToTicks(20))) <= 1) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
@@ -149,22 +149,22 @@ public class KetoAuto implements Constants {
         long beginTime = startTime;
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 125)){
-            double position = robot.imu.getRelativeYaw();
+            double position = robot.getImu().getRelativeYaw();
             double power = controlRotate.power(135,position);
 
             telemetry.addLine("secondTurn");
             telemetry.addData("power", power);
             telemetry.addData("stopstate: ", stopState);
-            telemetry.addData("Angle: ", robot.imu.getRelativeYaw());
+            telemetry.addData("Angle: ", robot.getImu().getRelativeYaw());
             telemetry.addLine(" ");
             telemetry.addData("error: ",controlRotate.getError());
             telemetry.addData("KP*error: ",controlRotate.returnVal()[0]);
             telemetry.addData("KI*i: ",controlRotate.returnVal()[1]);
             telemetry.update();
-            robot.frontLeft.setPower(power*.175);
-            robot.backLeft.setPower(power*.175);
-            robot.frontRight.setPower(power);
-            robot.backRight.setPower(power);
+            robot.getFrontLeft().setPower(power*.175);
+            robot.getBackLeft().setPower(power*.175);
+            robot.getFrontRight().setPower(power);
+            robot.getBackRight().setPower(power);
 
             if (Math.abs(position-135) <= 1) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
@@ -185,23 +185,23 @@ public class KetoAuto implements Constants {
         long beginTime = startTime;
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 125/4)){
-            double position = robot.frontLeft.getCurrentPosition();
+            double position = robot.getFrontLeft().getCurrentPosition();
             double power = controlDistance.power(distanceToTicks(25),position);
 
             telemetry.addLine("driveToDepot");
             telemetry.addData("power", power);
             telemetry.addData("stopstate: ", stopState);
-            telemetry.addData("Angle: ", robot.imu.getRelativeYaw());
+            telemetry.addData("Angle: ", robot.getImu().getRelativeYaw());
             telemetry.addData("error: ",controlDistance.getError());
             telemetry.addData("KP*error: ",controlDistance.returnVal()[0]);
             telemetry.addData("KI*i: ", controlDistance.returnVal()[1]);
             telemetry.update();
-            robot.frontLeft.setPower(-power);
-            robot.backLeft.setPower(-power);
-            robot.frontRight.setPower(power);
-            robot.backRight.setPower(power);
+            robot.getFrontLeft().setPower(-power);
+            robot.getBackLeft().setPower(-power);
+            robot.getFrontRight().setPower(power);
+            robot.getBackRight().setPower(power);
 
-            if (ticksToDistance(Math.abs(position-distanceToTicks(25))) <= DISTANCE_TOLERANCE) {
+            if (ticksToDistance(Math.abs(position-distanceToTicks(25))) <= Companion.getDISTANCE_TOLERANCE()) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
             }
             else {
@@ -222,23 +222,23 @@ public class KetoAuto implements Constants {
         long beginTime = startTime;
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 125/4)){
-            double position = robot.frontLeft.getCurrentPosition();
+            double position = robot.getFrontLeft().getCurrentPosition();
             double power = controlDistance.power(distanceToTicks(-50),position);
 
             telemetry.addLine("driveFromDepot");
             telemetry.addData("power", power);
             telemetry.addData("stopstate: ", stopState);
-            telemetry.addData("Angle: ", robot.imu.getRelativeYaw());
+            telemetry.addData("Angle: ", robot.getImu().getRelativeYaw());
             telemetry.addData("error: ",controlDistance.getError());
             telemetry.addData("KP*error: ",controlDistance.returnVal()[0]);
             telemetry.addData("KI*i: ", controlDistance.returnVal()[1]);
             telemetry.update();
-            robot.frontLeft.setPower(-power);
-            robot.backLeft.setPower(-power);
-            robot.frontRight.setPower(power);
-            robot.backRight.setPower(power);
+            robot.getFrontLeft().setPower(-power);
+            robot.getBackLeft().setPower(-power);
+            robot.getFrontRight().setPower(power);
+            robot.getBackRight().setPower(power);
 
-            if (ticksToDistance(Math.abs(position-distanceToTicks(-50))) <= DISTANCE_TOLERANCE) {
+            if (ticksToDistance(Math.abs(position-distanceToTicks(-50))) <= Companion.getDISTANCE_TOLERANCE()) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
             }
             else {
@@ -258,22 +258,22 @@ public class KetoAuto implements Constants {
         long beginTime = startTime;
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 125)){
-            double position = robot.imu.getRelativeYaw();
+            double position = robot.getImu().getRelativeYaw();
             double power = controlRotate.power(87,position);
 
             telemetry.addLine("third Turn");
             telemetry.addData("power", power);
             telemetry.addData("stopstate: ", stopState);
-            telemetry.addData("Angle: ", robot.imu.getRelativeYaw());
+            telemetry.addData("Angle: ", robot.getImu().getRelativeYaw());
             telemetry.addLine(" ");
             telemetry.addData("error: ",controlRotate.getError());
             telemetry.addData("KP*error: ",controlRotate.returnVal()[0]);
             telemetry.addData("KI*i: ",controlRotate.returnVal()[1]);
             telemetry.update();
-            robot.frontLeft.setPower(power*.175);
-            robot.backLeft.setPower(power*.175);
-            robot.frontRight.setPower(power);
-            robot.backRight.setPower(power);
+            robot.getFrontLeft().setPower(power*.175);
+            robot.getBackLeft().setPower(power*.175);
+            robot.getFrontRight().setPower(power);
+            robot.getBackRight().setPower(power);
 
             if (Math.abs(position-87) <= 1) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
@@ -294,7 +294,7 @@ public class KetoAuto implements Constants {
         long beginTime = startTime;
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 125/4)){
-            double position = robot.frontLeft.getCurrentPosition();
+            double position = robot.getFrontLeft().getCurrentPosition();
             double power = controlDistance.power(distanceToTicks(-27),position);
 
             telemetry.addLine("goBack");
@@ -304,10 +304,10 @@ public class KetoAuto implements Constants {
             telemetry.addData("KP*error: ",controlDistance.returnVal()[0]);
             telemetry.addData("KI*i: ", controlDistance.returnVal()[1]);
             telemetry.update();
-            robot.frontLeft.setPower(-power);
-            robot.backLeft.setPower(-power);
-            robot.frontRight.setPower(power);
-            robot.backRight.setPower(power);
+            robot.getFrontLeft().setPower(-power);
+            robot.getBackLeft().setPower(-power);
+            robot.getFrontRight().setPower(power);
+            robot.getBackRight().setPower(power);
 
             if (ticksToDistance(Math.abs(position-distanceToTicks(-27))) <= 1) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
@@ -329,22 +329,22 @@ public class KetoAuto implements Constants {
         long beginTime = startTime;
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 125/4)){
-            double position = robot.imu.getRelativeYaw();
+            double position = robot.getImu().getRelativeYaw();
             double power = controlRotate.power(0,position);
 
             telemetry.addLine("fourth Turn");
             telemetry.addData("power", power);
             telemetry.addData("stopstate: ", stopState);
-            telemetry.addData("Angle: ", robot.imu.getRelativeYaw());
+            telemetry.addData("Angle: ", robot.getImu().getRelativeYaw());
             telemetry.addLine(" ");
             telemetry.addData("error: ",controlRotate.getError());
             telemetry.addData("KP*error: ",controlRotate.returnVal()[0]);
             telemetry.addData("KI*i: ",controlRotate.returnVal()[1]);
             telemetry.update();
-            robot.frontLeft.setPower(power*.165);
-            robot.backLeft.setPower(power*.165);
-            robot.frontRight.setPower(power);
-            robot.backRight.setPower(power);
+            robot.getFrontLeft().setPower(power*.165);
+            robot.getBackLeft().setPower(power*.165);
+            robot.getFrontRight().setPower(power);
+            robot.getBackRight().setPower(power);
 
             if (Math.abs(position-0) <= 1.5) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
@@ -359,16 +359,16 @@ public class KetoAuto implements Constants {
     }
 
     private double distanceToTicks(double distance){
-        return (distance/(WHEEL_DIAMETER*Math.PI))*DT_GEARBOX_TICKS_PER_ROTATION;
+        return (distance/(Companion.getWHEEL_DIAMETER() *Math.PI))* Companion.getDT_GEARBOX_TICKS_PER_ROTATION();
     }
 
     private double ticksToDistance(double ticks){
-        return (ticks*(WHEEL_DIAMETER*Math.PI))/DT_GEARBOX_TICKS_PER_ROTATION;
+        return (ticks*(Companion.getWHEEL_DIAMETER() *Math.PI))/ Companion.getDT_GEARBOX_TICKS_PER_ROTATION();
     }
 
     private void eReset() {
 
-        for(SpeedControlledMotor motor: robot.drivetrainMotors) {
+        for(SpeedControlledMotor motor: robot.getDrivetrainMotors()) {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }

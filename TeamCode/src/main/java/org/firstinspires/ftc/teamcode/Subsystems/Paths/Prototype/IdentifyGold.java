@@ -14,7 +14,7 @@ public class IdentifyGold {
 
     public IdentifyGold(Hardware hardware,GoldFind goldfish){
         this.hardware = hardware;
-        this.telemetry = hardware.telemetry;
+        this.telemetry = hardware.getTelemetry();
         this.goldfish = goldfish;
     }
 

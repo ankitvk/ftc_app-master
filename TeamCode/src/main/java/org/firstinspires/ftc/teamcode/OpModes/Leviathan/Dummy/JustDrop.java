@@ -32,8 +32,8 @@ public class JustDrop extends LinearOpMode implements AutonomousOpMode,Constants
 
         waitForStart();
 
-        robot.endgame.lift();
+        robot.getEndgame().lift();
 
-        robot.drivetrain.driveForwardDistance(-5);
+        robot.getDrivetrain().driveForwardDistance(-5);
     }
 }

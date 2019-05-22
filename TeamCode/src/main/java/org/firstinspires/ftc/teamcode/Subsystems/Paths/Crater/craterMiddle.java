@@ -40,13 +40,13 @@ public class craterMiddle implements Constants {
 
     public craterMiddle(Hardware hardware){
         this.hardware = hardware;
-        frontLeft = hardware.frontLeft;
-        backLeft = hardware.backLeft;
-        frontRight = hardware.frontRight;
-        backRight = hardware.backRight;
-        imu = hardware.imu;
-        auto = hardware.auto;
-        telemetry = hardware.telemetry;
+        frontLeft = hardware.getFrontLeft();
+        backLeft = hardware.getBackLeft();
+        frontRight = hardware.getFrontRight();
+        backRight = hardware.getBackRight();
+        imu = hardware.getImu();
+        auto = hardware.getAuto();
+        telemetry = hardware.getTelemetry();
     }
 
     public void run(){
@@ -63,12 +63,12 @@ public class craterMiddle implements Constants {
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 250)){
 
-            double position = hardware.imu.getRelativeYaw();
+            double position = hardware.getImu().getRelativeYaw();
             double power = controlRotate.power(degrees,position);
 
             telemetry.addData("power", power);
             telemetry.addData("stopstate: ", stopState);
-            telemetry.addData("Angle: ", hardware.imu.getRelativeYaw());
+            telemetry.addData("Angle: ", hardware.getImu().getRelativeYaw());
             telemetry.addLine(" ");
             telemetry.addData("error: ",controlRotate.getError());
             telemetry.addData("KP*error: ",controlRotate.returnVal()[0]);
@@ -80,7 +80,7 @@ public class craterMiddle implements Constants {
             frontRight.setPower(power);
             backRight.setPower(power);
 
-            if (Math.abs(position-degrees) <= IMU_TOLERANCE) {
+            if (Math.abs(position-degrees) <= Companion.getIMU_TOLERANCE()) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
             }
             else {
@@ -96,28 +96,28 @@ public class craterMiddle implements Constants {
         double distance = DRIVE_TO_DEPOT_DISTANCE;
         eReset();
         PIDController control = new PIDController(DRIVE_TO_DEPOT_KP,DRIVE_TO_DEPOT_KI,DRIVE_TO_DEPOT_KD,1);
-        double ticks = (distance/(WHEEL_DIAMETER*Math.PI))*DT_GEARBOX_TICKS_PER_ROTATION;
+        double ticks = (distance/(Companion.getWHEEL_DIAMETER() *Math.PI))* Companion.getDT_GEARBOX_TICKS_PER_ROTATION();
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 125)){
-            double avg = hardware.frontLeft.getCurrentPosition();
+            double avg = hardware.getFrontLeft().getCurrentPosition();
             double power = control.power(ticks,avg);
             telemetry.addData("Power: ", power);
             telemetry.addData("Distance: ",ticksToDistance(avg));
-            telemetry.addData("Angle: ", hardware.imu.getYaw());
+            telemetry.addData("Angle: ", hardware.getImu().getYaw());
             telemetry.addData("error: ",control.getError());
             telemetry.addData("KP*error: ",control.returnVal()[0]);
             telemetry.addData("KI*i: ",control.returnVal()[1]);
             telemetry.addData("KD*d: ",control.returnVal()[2]);
             telemetry.update();
 
-            hardware.frontLeft.setPower(-power);
-            hardware.backLeft.setPower(-power);
-            hardware.frontRight.setPower(power);
-            hardware.backRight.setPower(power);
+            hardware.getFrontLeft().setPower(-power);
+            hardware.getBackLeft().setPower(-power);
+            hardware.getFrontRight().setPower(power);
+            hardware.getBackRight().setPower(power);
 
-            if (Math.abs(ticks-avg)<= distanceToTicks(DISTANCE_TOLERANCE)) {
+            if (Math.abs(ticks-avg)<= distanceToTicks(Companion.getDISTANCE_TOLERANCE())) {
                 telemetry.addData("Distance from Target: ", Math.abs(ticks-avg));
                 stopState = (System.nanoTime() - startTime) / 1000000;
             } else {
@@ -155,7 +155,7 @@ public class craterMiddle implements Constants {
             frontRight.setPower(power*.1);
             backRight.setPower(power*.1);
 
-            if (Math.abs(position-degrees) <= IMU_TOLERANCE) {
+            if (Math.abs(position-degrees) <= Companion.getIMU_TOLERANCE()) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
             }
             else {
@@ -171,16 +171,16 @@ public class craterMiddle implements Constants {
         double distance = DRIVE_TO_CRATER_DISTANCE;
         eReset();
         PIDController control = new PIDController(DRIVE_TO_CRATER_KP,DRIVE_TO_CRATER_KI,DRIVE_TO_CRATER_KD,1);
-        double ticks = (distance/(WHEEL_DIAMETER*Math.PI))*DT_GEARBOX_TICKS_PER_ROTATION;
+        double ticks = (distance/(Companion.getWHEEL_DIAMETER() *Math.PI))* Companion.getDT_GEARBOX_TICKS_PER_ROTATION();
         long startTime = System.nanoTime();
         long beginTime = startTime;
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 1000)){
-            double avg = hardware.frontLeft.getCurrentPosition();
+            double avg = hardware.getFrontLeft().getCurrentPosition();
             double power = control.power(ticks,avg);
             telemetry.addData("Power: ", power);
             telemetry.addData("Distance: ",ticksToDistance(avg));
-            telemetry.addData("Angle: ", hardware.imu.getYaw());
+            telemetry.addData("Angle: ", hardware.getImu().getYaw());
             telemetry.addLine(" ");
             telemetry.addData("error: ",control.getError());
             telemetry.addData("KP*error: ",control.returnVal()[0]);
@@ -188,12 +188,12 @@ public class craterMiddle implements Constants {
             telemetry.addData("KD*d: ",control.returnVal()[2]);
             telemetry.update();
 
-            hardware.frontLeft.setPower(-power);
-            hardware.backLeft.setPower(-power);
-            hardware.frontRight.setPower(power);
-            hardware.backRight.setPower(power);
+            hardware.getFrontLeft().setPower(-power);
+            hardware.getBackLeft().setPower(-power);
+            hardware.getFrontRight().setPower(power);
+            hardware.getBackRight().setPower(power);
 
-            if (Math.abs(ticks-avg)<= distanceToTicks(DISTANCE_TOLERANCE)) {
+            if (Math.abs(ticks-avg)<= distanceToTicks(Companion.getDISTANCE_TOLERANCE())) {
                 telemetry.addData("Distance from Target: ", Math.abs(ticks-avg));
                 stopState = (System.nanoTime() - startTime) / 1000000;
             } else {
@@ -208,24 +208,24 @@ public class craterMiddle implements Constants {
     }
 
     public void stop(){
-        for(SpeedControlledMotor motor: hardware.drivetrainMotors) {
+        for(SpeedControlledMotor motor: hardware.getDrivetrainMotors()) {
             motor.setPower(0);
         }
     }
 
     private void eReset() {
 
-        for(SpeedControlledMotor motor: hardware.drivetrainMotors) {
+        for(SpeedControlledMotor motor: hardware.getDrivetrainMotors()) {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         }
     }
 
     private double distanceToTicks(double distance){
-        return (distance/(WHEEL_DIAMETER*Math.PI))*DT_GEARBOX_TICKS_PER_ROTATION;
+        return (distance/(Companion.getWHEEL_DIAMETER() *Math.PI))* Companion.getDT_GEARBOX_TICKS_PER_ROTATION();
     }
     private double ticksToDistance(double ticks){
-        return (ticks*(WHEEL_DIAMETER*Math.PI))/DT_GEARBOX_TICKS_PER_ROTATION;
+        return (ticks*(Companion.getWHEEL_DIAMETER() *Math.PI))/ Companion.getDT_GEARBOX_TICKS_PER_ROTATION();
     }
     public boolean opModeIsActive() {
         return auto.getOpModeIsActive();

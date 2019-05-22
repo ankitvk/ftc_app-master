@@ -31,13 +31,13 @@ public class PivotTest extends LinearOpMode implements AutonomousOpMode {
         robot.setAuto(this, telemetry);
         robot.init(hardwareMap);
 
-        robot.index.setPosition(.95);
+        robot.getIndex().setPosition(.95);
 
         waitForStart();
 
-        robot.pivot.scoringPosition();
+        robot.getPivot().scoringPosition();
 
-        robot.index.setPosition(.15);
+        robot.getIndex().setPosition(.15);
 
         //robot.intake.setPower(-.75);
 
@@ -45,8 +45,8 @@ public class PivotTest extends LinearOpMode implements AutonomousOpMode {
 
         //robot.intake.setPower(0);
 
-        robot.index.setPosition(.95);
+        robot.getIndex().setPosition(.95);
 
-        robot.pivot.downPosition();
+        robot.getPivot().downPosition();
     }
 }

@@ -72,7 +72,7 @@ public class MaelPivot implements LibConstants, Constants, Subsystem {
     }
 
     public void DriverControl(MaelController controller){
-        kp = (pivotKP * -liftPosition) + 0.001;
+        kp = (Companion.getPivotKP() * -liftPosition) + 0.001;
         ki = 0.0;
         kd = 0.0;
         if(controller.leftBumper()) pivotUp();
@@ -192,7 +192,7 @@ public class MaelPivot implements LibConstants, Constants, Subsystem {
     }
 
     public double getAngle(){
-        return PIVOT_LIMIT_ANGLE + (pivot.getAngle()*PIVOT_GEAR_RATIO);
+        return Companion.getPIVOT_LIMIT_ANGLE() + (pivot.getAngle()* Companion.getPIVOT_GEAR_RATIO());
     }
 
     public void setLiftPosition(double position){

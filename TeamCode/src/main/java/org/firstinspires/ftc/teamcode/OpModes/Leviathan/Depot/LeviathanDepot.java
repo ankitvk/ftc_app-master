@@ -34,13 +34,13 @@ public class LeviathanDepot extends LinearOpMode implements AutonomousOpMode,Con
 
         robot.init(hardwareMap);
 
-        robot.index.setPosition(.15);
+        robot.getIndex().setPosition(.15);
 
-        robot.hangLeftRelease.setPosition(.3);
-        robot.hangRightRelease.setPosition(.85);
+        robot.getHangLeftRelease().setPosition(.3);
+        robot.getHangRightRelease().setPosition(.85);
 
         goldfish = new GoldFind(this, robot);
-        goldfish.setAlignSettings(ALIGN_POSITION, 100);
+        goldfish.setAlignSettings(Companion.getALIGN_POSITION(), 100);
 
         goldfish.startOpenCV();
 
@@ -53,7 +53,7 @@ public class LeviathanDepot extends LinearOpMode implements AutonomousOpMode,Con
 
         gold = inspect.identify();
 
-        robot.hang.drop();
+        robot.getHang().drop();
 
         //robot.depotLeft.run();
 
@@ -61,13 +61,13 @@ public class LeviathanDepot extends LinearOpMode implements AutonomousOpMode,Con
 
 
         if(gold == IdentifyGold.Positions.LEFT){
-            robot.depotLeft.run();
+            robot.getDepotLeft().run();
         }
         else if(gold ==  IdentifyGold.Positions.MIDDLE){
-            robot.depotMiddle.run();
+            robot.getDepotMiddle().run();
         }
         else if(gold ==  IdentifyGold.Positions.RIGHT){
-            robot.depotRight.run();
+            robot.getDepotRight().run();
         }
     }
 

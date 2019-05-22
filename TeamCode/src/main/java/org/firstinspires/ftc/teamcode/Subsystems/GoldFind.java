@@ -80,7 +80,7 @@ public class GoldFind extends DogeCVDetector implements Constants {
         this.auto = auto;
         this.hardware = hardware;
         this.hardwareMap = hardware.getHwMap();
-        telemetry = hardware.telemetry;
+        telemetry = hardware.getTelemetry();
         drivetrain = new Drivetrain(hardware);
     }
 
@@ -88,7 +88,7 @@ public class GoldFind extends DogeCVDetector implements Constants {
         super();
         detectorName = "GoldFinder"; // Set the detector name
         this.hardware = hardware;
-        telemetry = hardware.telemetry;
+        telemetry = hardware.getTelemetry();
         drivetrain = new Drivetrain(hardware);
     }
 
@@ -255,7 +255,7 @@ public class GoldFind extends DogeCVDetector implements Constants {
         detector.ratioScorer.weight = 5;
         detector.ratioScorer.perfectRatio = 1;
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-        parameters.vuforiaLicenseKey = LICENSE_KEY;
+        parameters.vuforiaLicenseKey = Companion.getLICENSE_KEY();
         parameters.fillCameraMonitorViewParent = true;
         parameters.cameraName = hardwareMap.get(WebcamName.class,"Webcam 1");
         dogeForia = new Dogeforia(parameters);
@@ -290,23 +290,23 @@ public class GoldFind extends DogeCVDetector implements Constants {
         long beginTime = startTime;
         long stopState = 0;
         while(opModeIsActive() && (stopState <= 1000)){
-            double power = getTheGold.power(TARGET_GOLD_X_POS,getXPosition());
+            double power = getTheGold.power(Companion.getTARGET_GOLD_X_POS(),getXPosition());
             telemetry.addLine("PIDAlign");
             telemetry.addData("Aligned:",getAligned());
             telemetry.addData("Found:",isFound());
             telemetry.addData("Pos:",getXPosition());
-            telemetry.addData("Heading:",hardware.imu.getYaw());
+            telemetry.addData("Heading:", hardware.getImu().getYaw());
             telemetry.addLine(" ");
             telemetry.addData("KP*error: ",getTheGold.returnVal()[0]);
             telemetry.addData("KI*i: ",getTheGold.returnVal()[1]);
             telemetry.addData("KD*d: ",getTheGold.returnVal()[2]);
             telemetry.update();
-            hardware.frontLeft.setPower(-power);
-            hardware.backLeft.setPower(-power);
-            hardware.frontRight.setPower(-power);
-            hardware.backRight.setPower(-power);
+            hardware.getFrontLeft().setPower(-power);
+            hardware.getBackLeft().setPower(-power);
+            hardware.getFrontRight().setPower(-power);
+            hardware.getBackRight().setPower(-power);
 
-            if (Math.abs(TARGET_GOLD_X_POS-getXPosition()) <= 25) {
+            if (Math.abs(Companion.getTARGET_GOLD_X_POS() -getXPosition()) <= 25) {
                 stopState = (System.nanoTime() - startTime) / 1000000;
             }
             else {

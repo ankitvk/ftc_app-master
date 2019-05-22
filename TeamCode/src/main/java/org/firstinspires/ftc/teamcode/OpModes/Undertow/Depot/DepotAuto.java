@@ -31,7 +31,7 @@ public class DepotAuto extends LinearOpMode implements AutonomousOpMode,Constant
         robot.setAuto(this, telemetry);
 
         GoldFind goldfish = new GoldFind(this,robot);
-        goldfish.setAlignSettings(ALIGN_POSITION, 1000);
+        goldfish.setAlignSettings(Companion.getALIGN_POSITION(), 1000);
         Drivetrain drivetrain = new Drivetrain(robot);
         robot.init(hardwareMap);
         //start opencv
@@ -56,7 +56,7 @@ public class DepotAuto extends LinearOpMode implements AutonomousOpMode,Constant
         drivetrain.driveForwardDistance(-25);
         drivetrain.stop();
 
-        double postSample = robot.imu.getYaw();
+        double postSample = robot.getImu().getYaw();
         drivetrain.rotateToAbsoluteAngle(-postSample);
 
         sleep(3000);

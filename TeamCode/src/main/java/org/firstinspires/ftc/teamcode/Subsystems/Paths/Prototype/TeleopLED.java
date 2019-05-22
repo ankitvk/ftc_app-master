@@ -10,7 +10,7 @@ public class TeleopLED {
 
     public TeleopLED(Hardware hardware){
         this.hardware = hardware;
-        this.ledRiver = hardware.ledRiver;
+        this.ledRiver = hardware.getLedRiver();
 
     }
 

@@ -51,18 +51,18 @@ public class Leviathan extends MaelRobot implements Constants {
 
     @Override
     public void initHardware(HardwareMap hwMap) {
-        dt = new MaelDrivetrain(DrivetrainModels.ARCADE,DT_GEAR_RATIO,dtKP,dtKI,dtKD,hwMap, Motor.NEVEREST_NAKED,this);
+        dt = new MaelDrivetrain(DrivetrainModels.ARCADE, Companion.getDT_GEAR_RATIO(), Companion.getDtKP(), Companion.getDtKI(), Companion.getDtKD(),hwMap, Motor.NEVEREST_NAKED,this);
         setSpeedMultiplier(.85);
         imu = new MaelIMU("imu",hwMap);
         feed = MaelTellemetry.getFeed();
         tracker = new TankOdometry(dt,imu);
         intake = new MaelCollector("winch", Motor.ORBITAL20, SubsystemModels.MOTOR,hwMap);
-        intake.setCollectorPowers(INTAKE_POWER,OUTTAKE_POWER);
+        intake.setCollectorPowers(Companion.getINTAKE_POWER(), Companion.getOUTTAKE_POWER());
         lift = new MaelElevator("extendo", Motor.NEVEREST_NAKED,SubsystemModels.MOTOR,hwMap);
-        lift.setLiftPowers(LIFT_EXTEND,LIFT_RETRACT);
+        lift.setLiftPowers(Companion.getLIFT_EXTEND(), Companion.getLIFT_RETRACT());
         limit = new MaelLimitSwitch("limit",hwMap);
         pivot = new MaelPivot(hwMap);
-        pivot.setPivotPowers(PIVOT_UP,PIVOT_DOWN);
+        pivot.setPivotPowers(Companion.getPIVOT_UP(), Companion.getPIVOT_DOWN());
         pivot.setLimit(limit);
         pivot.setFeed(feed);
         hang = new MaelCRServoSystem("hangLeftBottom","hangLeftTop","hangRightBottom","hangRightTop",hwMap);
@@ -78,9 +78,9 @@ public class Leviathan extends MaelRobot implements Constants {
     }
 
     public void setPidConstants(){
-        distancePid.setPID(distanceKP,distanceKI,distanceKD);
-        turnPid.setPID(turnKP,turnKI,turnKD);
-        sideTurnPid.setPID(sideKP,sideKI,sideKD);
+        distancePid.setPID(Companion.getDistanceKP(), Companion.getDistanceKI(), Companion.getDistanceKD());
+        turnPid.setPID(Companion.getTurnKP(), Companion.getTurnKI(), Companion.getTurnKD());
+        sideTurnPid.setPID(Companion.getSideKP(), Companion.getSideKI(), Companion.getSideKD());
     }
 
     public void hangRelease(){
@@ -116,7 +116,7 @@ public class Leviathan extends MaelRobot implements Constants {
         detector.ratioScorer.weight = 5;
         detector.ratioScorer.perfectRatio = 1;
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-        parameters.vuforiaLicenseKey = LICENSE_KEY;
+        parameters.vuforiaLicenseKey = Companion.getLICENSE_KEY();
         parameters.fillCameraMonitorViewParent = true;
         parameters.cameraName = hwMap.get(WebcamName.class,"Webcam 1");
         dogeForia = new Dogeforia(parameters);

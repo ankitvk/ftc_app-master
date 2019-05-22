@@ -14,7 +14,7 @@ public class Opportunity extends MaelRobot implements Constants {
 
     @Override
     public void initHardware(HardwareMap hwMap) {
-        dt = new MaelDrivetrain(DrivetrainModels.MECH_ROBOT,mecanum_ratio,dtKP,dtKI,dtKD,hwMap, Motor.ORBITAL20);
+        dt = new MaelDrivetrain(DrivetrainModels.MECH_ROBOT, Companion.getMecanum_ratio(), Companion.getDtKP(), Companion.getDtKI(), Companion.getDtKD(),hwMap, Motor.ORBITAL20);
         dt.setClosedLoop(false);
         setSpeedMultiplier(1);
         imu = new MaelIMU("imu", hwMap);

@@ -35,7 +35,7 @@ public class OpenCVTest extends LinearOpMode implements AutonomousOpMode,Constan
         robot.init(hardwareMap);
 
         GoldFind goldfish = new GoldFind(this, robot);
-        goldfish.setAlignSettings(ALIGN_POSITION, 1000);
+        goldfish.setAlignSettings(Companion.getALIGN_POSITION(), 1000);
         //start opencv
 
         waitForStart();

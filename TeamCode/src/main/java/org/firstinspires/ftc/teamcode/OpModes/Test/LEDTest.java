@@ -30,7 +30,7 @@ public class LEDTest extends LinearOpMode implements Constants {
         }
 
         LEDRiver ledRiver = hardwareMap.get(LEDRiver.IMPL, "ledriver");
-        ledRiver.setLEDCount(ledCount);
+        ledRiver.setLEDCount(Companion.getLedCount());
         ledRiver.setMode(LEDRiver.Mode.SOLID);
         ledRiver.setLEDMode(LEDRiver.LEDMode.RGB);
         ledRiver.setColorDepth(LEDRiver.ColorDepth.BIT_16);
@@ -155,10 +155,10 @@ public class LEDTest extends LinearOpMode implements Constants {
             double x = System.nanoTime() / 1e6;
             int time = (int) Math.round(x);
 
-            for (int i = 0; i < ledCount; i += 2) {
-                if (i <= ledCount - 6) {
-                    robot.ledRiver.setColor(i, new LEDRiver.Color(23, 76, 249, time));
-                    robot.ledRiver.setColor(i + 1, new LEDRiver.Color(23, 76, 249, time));
+            for (int i = 0; i < Companion.getLedCount(); i += 2) {
+                if (i <= Companion.getLedCount() - 6) {
+                    robot.getLedRiver().setColor(i, new LEDRiver.Color(23, 76, 249, time));
+                    robot.getLedRiver().setColor(i + 1, new LEDRiver.Color(23, 76, 249, time));
                 }
                 /*for (int j = i + 2; j <= i + 6; j++) {
                     if (j < ledCount) {
@@ -178,17 +178,17 @@ public class LEDTest extends LinearOpMode implements Constants {
 
     public void setMaelstromPattern() {
         while (opModeIsActive()) {
-            for (int i = 0; i < ledCount; i += 2) {
-                if (i <= ledCount - 6) {
-                    robot.ledRiver.setColor(i, new LEDRiver.Color(23, 76, 249, 0));
-                    robot.ledRiver.setColor(i + 1, new LEDRiver.Color(23, 76, 249, 0));
+            for (int i = 0; i < Companion.getLedCount(); i += 2) {
+                if (i <= Companion.getLedCount() - 6) {
+                    robot.getLedRiver().setColor(i, new LEDRiver.Color(23, 76, 249, 0));
+                    robot.getLedRiver().setColor(i + 1, new LEDRiver.Color(23, 76, 249, 0));
                 }
                 for (int j = i + 2; j <= i + 6; j++) {
-                    if (j < ledCount) {
-                        robot.ledRiver.setColor(j, Color.WHITE);
+                    if (j < Companion.getLedCount()) {
+                        robot.getLedRiver().setColor(j, Color.WHITE);
                     }
                 }
-                robot.ledRiver.apply();
+                robot.getLedRiver().apply();
                 try {
                     Thread.sleep(1);
                 } catch (InterruptedException e) {
@@ -196,17 +196,17 @@ public class LEDTest extends LinearOpMode implements Constants {
                 }
             }
 
-            for (int i = ledCount - 1; i >= 0; i -= 2) {
+            for (int i = Companion.getLedCount() - 1; i >= 0; i -= 2) {
                 if (i > 4) {
-                    robot.ledRiver.setColor(i, new LEDRiver.Color(23, 76, 249, 0));
-                    robot.ledRiver.setColor(i - 1, new LEDRiver.Color(23, 76, 249, 0));
+                    robot.getLedRiver().setColor(i, new LEDRiver.Color(23, 76, 249, 0));
+                    robot.getLedRiver().setColor(i - 1, new LEDRiver.Color(23, 76, 249, 0));
                 }
                 for (int j = i - 2; j >= i - 6; j--) {
                     if (j >= 0) {
-                        robot.ledRiver.setColor(j, Color.WHITE);
+                        robot.getLedRiver().setColor(j, Color.WHITE);
                     }
                 }
-                robot.ledRiver.apply();
+                robot.getLedRiver().apply();
                 try {
                     Thread.sleep(1);
                 } catch (InterruptedException e) {

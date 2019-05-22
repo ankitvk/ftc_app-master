@@ -42,7 +42,7 @@ public class OneManGangTeleop extends OpMode implements Constants {
         intake.index(gamepad1,true);
 
         //telemetry.addData("Angle: ",robot.imu.getRelativeYaw());
-        telemetry.addData("State: ",robot.limit.getState());
+        telemetry.addData("State: ", robot.getLimit().getState());
         telemetry.update();
 
     }
