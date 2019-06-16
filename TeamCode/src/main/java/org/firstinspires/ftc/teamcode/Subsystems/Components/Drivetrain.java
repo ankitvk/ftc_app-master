@@ -21,7 +21,8 @@ public class Drivetrain implements Constants {
     private Telemetry telemetry;
     private Hardware hardware;
     private double desiredPitch = 0;
-
+    public double speedMultipler = 0;
+    public double turnMultipler = 0;
 
     public Drivetrain(Hardware hardware){
         this.hardware = hardware;
@@ -278,10 +279,12 @@ public class Drivetrain implements Constants {
 
         double speeds[] = {Math.sin(adjustedAngle), Math.cos(adjustedAngle), Math.cos(adjustedAngle), Math.sin(adjustedAngle)};
 
-        speeds[0] = (speeds[0] * speedMagnitude) - rightX * speedMagnitude;
-        speeds[1] = (speeds[1] * speedMagnitude) - rightX * speedMagnitude;
-        speeds[2] = (speeds[2] * speedMagnitude) + rightX * speedMagnitude;
-        speeds[3] = (speeds[3] * speedMagnitude) + rightX * speedMagnitude;
+        MaelUtils.normalizeValues(speeds);
+
+        speeds[0] = (speeds[0] * speedMagnitude * speedMultipler) - rightX * turnMultipler;
+        speeds[1] = (speeds[1] * speedMagnitude * speedMultipler) - rightX * turnMultipler;
+        speeds[2] = (speeds[2] * speedMagnitude * speedMultipler) + rightX * turnMultipler;
+        speeds[3] = (speeds[3] * speedMagnitude * speedMultipler) + rightX * turnMultipler;
 
         frontLeft.setPower(speeds[0]);
         backLeft.setPower(speeds[1]);
@@ -307,10 +310,10 @@ public class Drivetrain implements Constants {
 
         MaelUtils.normalizeValues(speeds);
 
-        speeds[0] = (speeds[0] * speedMagnitude) - rightX;
-        speeds[1] = (speeds[1] * speedMagnitude) - rightX;
-        speeds[2] = (speeds[2] * speedMagnitude) + rightX;
-        speeds[3] = (speeds[3] * speedMagnitude) + rightX;
+        speeds[0] = (speeds[0] * speedMagnitude * speedMultipler) - rightX * turnMultipler;
+        speeds[1] = (speeds[1] * speedMagnitude * speedMultipler) - rightX * turnMultipler;
+        speeds[2] = (speeds[2] * speedMagnitude * speedMultipler) + rightX * turnMultipler;
+        speeds[3] = (speeds[3] * speedMagnitude * speedMultipler) + rightX * turnMultipler;
 
         frontLeft.setPower(speeds[0]);
         backLeft.setPower(speeds[1]);

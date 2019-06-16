@@ -22,6 +22,7 @@ public interface Constants {
     double E4T_COUNTS_PER_REV = 537.6;
     int PATH_FOLLOWING_INTERVAL = 50;
     double SPEED_MULTIPLIER = .85;
+    double TURN_MULTIPLIER = .65;
     double PATH_FOLLOW_SPEED_MULTIPLIER = .25;
 
     double LENGTH_BETWEEN_WHEELS = 15.789;
