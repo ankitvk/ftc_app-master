@@ -28,7 +28,8 @@ public class Mecanum extends OpMode implements Constants {
         telemetry.addData("BR:",r.backRight.getPower());
         telemetry.addData("imu:",r.imu.getYaw());
         telemetry.addData("turn speed:",r.drivetrain.turnMultipler);
-        telemetry.addData("drive speed:",r.drivetrain.speedMultipler);        telemetry.update();
+        telemetry.addData("drive speed:",r.drivetrain.speedMultipler);
+        telemetry.update();
     }
 
     @Override
