@@ -22,13 +22,13 @@ public abstract class MaelLinearOp extends LinearOpMode implements LibConstants 
     public Direction def = Direction.DEFAULT;
     public Direction unknown = Direction.UNKNOWN;
     ArrayList<Subsystem> subsystems = MaelUtils.subsystems;
-    HardwareThread hardwareThread = new HardwareThread(subsystems,this);
 
     final public void runOpMode() throws InterruptedException {
         try{
             feed = new MaelTellemetry(super.telemetry);
             feed.setNewFirst();
             MaelUtils.setLinearOpMode(this);
+            new HardwareThread(subsystems,this);
             controller1 = new MaelController(super.gamepad1,"controller1");
             controller2 = new MaelController(super.gamepad2,"controller2");
             run();
@@ -82,7 +82,7 @@ public abstract class MaelLinearOp extends LinearOpMode implements LibConstants 
     }
     public void sleep(float timeMilli) {
         try {
-            Thread.sleep((long) timeMilli * 1000);
+            Thread.sleep((long) timeMilli);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
         }

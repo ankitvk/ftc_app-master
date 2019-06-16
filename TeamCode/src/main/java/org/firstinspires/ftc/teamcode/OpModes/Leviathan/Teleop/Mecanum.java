@@ -52,14 +52,14 @@ public class Mecanum extends OpMode implements Constants {
         r.drivetrain.turnMultipler = MaelUtils.clipValueToRange(r.drivetrain.turnMultipler,0,1);
         r.drivetrain.speedMultipler = MaelUtils.clipValueToRange(r.drivetrain.speedMultipler,0,1);
 
-        telemetry.addData("Drive Type:",driveType);
-        telemetry.addData("FL:",r.frontLeft.getPower());
-        telemetry.addData("BL:",r.backLeft.getPower());
-        telemetry.addData("FR:",r.frontRight.getPower());
-        telemetry.addData("BR:",r.backRight.getPower());
-        telemetry.addData("imu:",r.imu.getYaw());
-        telemetry.addData("turn speed:",r.drivetrain.turnMultipler);
-        telemetry.addData("drive speed:",r.drivetrain.speedMultipler);
+        telemetry.addData("Drive Type: ",driveType);
+        telemetry.addData("FL: ",r.frontLeft.getPower());
+        telemetry.addData("BL: ",r.backLeft.getPower());
+        telemetry.addData("FR: ",r.frontRight.getPower());
+        telemetry.addData("BR: ",r.backRight.getPower());
+        telemetry.addData("imu: ",r.imu.getYaw());
+        telemetry.addData("turn speed: ",r.drivetrain.turnMultipler);
+        telemetry.addData("drive speed: ",r.drivetrain.speedMultipler);
         telemetry.update();
     }
 }

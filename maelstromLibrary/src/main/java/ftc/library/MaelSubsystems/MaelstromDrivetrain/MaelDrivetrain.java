@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import ftc.library.MaelControl.PID.PIDController;
+import ftc.library.MaelMotions.MaelMotors.MaelMotor;
 import ftc.library.MaelMotions.MaelMotors.MaelMotorSystem;
 import ftc.library.MaelMotions.MaelMotors.Motor;
 import ftc.library.MaelRobot;
@@ -18,12 +19,13 @@ public class MaelDrivetrain {
     public double drivenGearReduction;
     public DrivetrainModels model;
     public MaelstromEncoder encoderSensor;
+    public MaelMotor fl,bl,fr,br;
     public double distanceKp, distanceKi, distanceKd, distanceMaxI;
     public double turnKp, turnKi, turnKd, turnMaxI;
     public double rangeKp, rangeKi, rangeKd, rangeMaxI;
     public double sideKp, sideKi, sideKd, sideMaxI;
 
-    public MaelUtils.AutonomousOpMode auto;
+    // public MaelUtils.AutonomousOpMode auto;
     //public PIDController distanceDrive = new PIDController(pidPackage().getDistanceKp(),pidPackage().getDistanceKi(),pidPackage().getDistanceKd(),1);
     public PIDController distancePid = new PIDController(distanceKp,distanceKi,distanceKd,distanceMaxI);
     public PIDController turnPid = new PIDController(turnKp,turnKi,turnKd,turnMaxI);
@@ -44,6 +46,10 @@ public class MaelDrivetrain {
         rightDrive.setGearRatio(gearRatio);
         driveGearReduction = (1 / gearRatio);
         drivenGearReduction = gearRatio;
+        fl = leftDrive.motor1;
+        bl = leftDrive.motor2;
+        fr = rightDrive.motor1;
+        br = rightDrive.motor2;
         this.model = model;
     }
 
@@ -62,7 +68,6 @@ public class MaelDrivetrain {
         driveGearReduction = (1 / gearRatio);
         drivenGearReduction = gearRatio;
         this.model = model;
-        this.auto  = robot.auto;
     }
 
     public void eReset() {
@@ -148,10 +153,6 @@ public class MaelDrivetrain {
     public void setPID(double kp, double ki, double kd) {
         leftDrive.setPID(kp, ki, kd);
         rightDrive.setPID(kp, ki, kd);
-    }
-
-    public MaelUtils.AutonomousOpMode opModeActive(){
-        return auto;
     }
 
     public void setClosedLoop(boolean state){

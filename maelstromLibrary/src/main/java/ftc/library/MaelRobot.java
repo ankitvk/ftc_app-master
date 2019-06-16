@@ -10,7 +10,7 @@ import java.util.List;
 
 import ftc.library.MaelControl.PID.PIDController;
 
-import ftc.library.MaelControl.PurePursuit.WayPoint;
+import ftc.library.MaelControl.PurePursuit.MaelPose;
 import ftc.library.MaelMotions.MaelMotors.Direction;
 import ftc.library.MaelSensors.MaelIMU;
 import ftc.library.MaelSensors.MaelOdometry.MecanumOdometry;
@@ -34,22 +34,22 @@ public abstract class MaelRobot implements LibConstants {
     public MecanumOdometry yPos = null;
     public TankOdometry tracker; 
     public MaelIMU imu;
-    public MaelUtils.AutonomousOpMode auto;
     public double gearRatio;
     public MaelController controller;
     public boolean stabilization = false;
     private double yDirection;
     private double xDirection;
     private double speedMultiplier;
-    private double angle;
+    private double angle = 0;
     private double pitchTarget = 0;
     private double fieldCentric = 0;
     private double prevX = 0 , prevY = 0;
     private double desiredAngle = 0;
     private double pitchCorrection = 0;
     private double speeds[];
+    private double mechAngle;
     private double chosenMultiplier = 0;
-    public ArrayList<Subsystem> subsystems;
+    public ArrayList<Subsystem> subsystems = MaelUtils.subsystems;
 
     //public PIDController distanceDrive = new PIDController(pidPackage().getDistanceKp(),pidPackage().getDistanceKi(),pidPackage().getDistanceKd(),1);
     public PIDController distancePid = new PIDController(0.01,0,0,1);
@@ -62,9 +62,8 @@ public abstract class MaelRobot implements LibConstants {
         imu.remapAxes(imu,order,signs);
     }
 
-    public void setSubsystemList(ArrayList<Subsystem> subsystems){
-        this.subsystems = subsystems;
-        this.subsystems = MaelUtils.subsystems;
+    public void add(Subsystem... elements){
+        for(Subsystem s : elements) subsystems.add(s);
     }
 
     public List<Subsystem> getSubsystemList(){
@@ -81,7 +80,7 @@ public abstract class MaelRobot implements LibConstants {
         long stopState = 0;
         //double initialHeading = imu.getRelativeYaw();
 
-        while(opModeActive() && stopState <= stopTime /*!timer.elapsedTime(timeout, MaelTimer.Time.SECS)*/){
+        while(isStopRequested() && stopState <= stopTime /*!timer.elapsedTime(timeout, MaelTimer.Time.SECS)*/){
             //double position = dt.getCounts();
             double position = dt.getInches();
             //double power = (distanceDrive.power(counts,position))*speed;
@@ -147,7 +146,7 @@ public abstract class MaelRobot implements LibConstants {
             frontRightPower = Math.cos(adjustedAngle);
             backRightPower = Math.sin(adjustedAngle);
 
-            while (opModeActive() && (stopState <= stopTime)) {
+            while (isStopRequested() && (stopState <= stopTime)) {
                 double position = dt.getCounts();
                 double power = (distancePid.power(counts,position));
 
@@ -203,7 +202,7 @@ public abstract class MaelRobot implements LibConstants {
         degrees *= direction.value;
         //double target = imu.getRelativeYaw();
 
-        while (opModeActive() && (stopState <= stopTime)){
+        while (isStopRequested() && (stopState <= stopTime)){
             double position = imu.getRelativeYaw();
             double power = (turnPid.power(degrees,position))*speed;
 
@@ -244,7 +243,7 @@ public abstract class MaelRobot implements LibConstants {
         long startTime = System.nanoTime();
         long stopState = 0;
 
-        while(opModeActive() && (stopState <= 1000)){
+        while(isStopRequested() && (stopState <= 1000)){
 
             double position = imu.getRelativeYaw();
             degrees *= direction.value;
@@ -272,10 +271,10 @@ public abstract class MaelRobot implements LibConstants {
         stop();
     }
 
-    public void driveToPoint(WayPoint point, double maxSpeed, long stopTime){
+    public void driveToPoint(MaelPose point, double maxSpeed, long stopTime){
 
-        double xTarget = point.getX();
-        double yTarget = point.getY();
+        double xTarget = point.x;
+        double yTarget = point.y;
 
         xTarget = xPos.getTargetCounts(xTarget);
         yTarget = yPos.getTargetCounts(yTarget);
@@ -295,7 +294,7 @@ public abstract class MaelRobot implements LibConstants {
         double distance = Math.hypot(xTarget, yTarget);
 
     if(xPos != null && yPos != null) {
-        while (opModeActive() && (stopState <= stopTime)) {
+        while (isStopRequested() && (stopState <= stopTime)) {
             angle = Math.atan2(xPos.getAngle(), yPos.getAngle());
             double adjustedAngle = angle + Math.PI / 4;
 
@@ -339,10 +338,10 @@ public abstract class MaelRobot implements LibConstants {
     }
         stop();
     }
-    public void driveToPoint(WayPoint point, double maxSpeed){
+    public void driveToPoint(MaelPose point, double maxSpeed){
         driveToPoint(point, maxSpeed,0);
     }
-    public void driveToPoint(WayPoint point){
+    public void driveToPoint(MaelPose point){
         driveToPoint(point,1);
     }
 
@@ -366,7 +365,7 @@ public abstract class MaelRobot implements LibConstants {
             frontRight = speed * (Math.cos(adjustedAngle));
             backRight = speed * (Math.sin(adjustedAngle));
 
-            while(opModeActive() && stopState <= stopTime){
+            while(isStopRequested() && stopState <= stopTime){
                 stopState = (System.nanoTime() - startTime) / NANOSECS_PER_MILISEC;
                 dt.leftDrive.motor1.setVelocity(frontLeft);
                 dt.leftDrive.motor2.setVelocity(backLeft);
@@ -404,8 +403,8 @@ public abstract class MaelRobot implements LibConstants {
 
     public void driveTeleop(MaelController controller){
         DrivetrainModels model = dt.getModel();
+        this.controller = controller;
         if(model == DrivetrainModels.ARCADE){
-            this.controller = controller;
             yDirection = speedMultiplier * controller.leftStickY();
             xDirection = speedMultiplier * controller.rightStickX();
 
@@ -433,7 +432,7 @@ public abstract class MaelRobot implements LibConstants {
             double x = -leftY;
             double y = leftX;
 
-            double angle = /*Math.atan2(y,x)*/controller.getTan(x,y);
+            double angle = Math.atan2(y,x)/*controller.getTan(x,y)*/;
             double fieldCentric = angle - Math.toRadians(imu.getYaw());
             double adjustedAngle = fieldCentric + Math.PI / 4;
 
@@ -444,20 +443,21 @@ public abstract class MaelRobot implements LibConstants {
 
             if(Math.abs(rightX) > 0.00001) desiredAngle = imu.getRelativeYaw();
 
-            double speeds[] = {Math.sin(adjustedAngle), Math.cos(adjustedAngle), Math.cos(adjustedAngle), Math.sin(adjustedAngle)};
-
+            //double speeds[] = {Math.sin(adjustedAngle), Math.cos(adjustedAngle), Math.cos(adjustedAngle), Math.sin(adjustedAngle)};
+            double speeds[] = getSpeeds(adjustedAngle,speedMagnitude,rightX);
+/*
             MaelUtils.normalizeValues(speeds);
 
-            speeds[0] = (speeds[0] * speedMagnitude) + rightX;
-            speeds[1] = (speeds[1] * speedMagnitude) + rightX;
+            speeds[0] = (speeds[0] * speedMagnitude) - rightX;
+            speeds[1] = (speeds[1] * speedMagnitude) - rightX;
             speeds[2] = (speeds[2] * speedMagnitude) + rightX;
             speeds[3] = (speeds[3] * speedMagnitude) + rightX;
-            this.speeds = speeds;
+            this.speeds = speeds;*/
 
-            dt.leftDrive.motor1.setVelocity(speeds[0] + pitchCorrection);
-            dt.leftDrive.motor2.setVelocity(speeds[1] + pitchCorrection);
-            dt.rightDrive.motor1.setVelocity(speeds[2] + pitchCorrection);
-            dt.rightDrive.motor2.setVelocity(speeds[3] + pitchCorrection);
+            dt.fl.setVelocity(speeds[0] + pitchCorrection);
+            dt.bl.setVelocity(speeds[1] + pitchCorrection);
+            dt.fr.setVelocity(speeds[2] + pitchCorrection);
+            dt.br.setVelocity(speeds[3] + pitchCorrection);
         }
         else if(model == DrivetrainModels.MECH_ROBOT){
 
@@ -470,19 +470,18 @@ public abstract class MaelRobot implements LibConstants {
 
             double angle = Math.atan2(y,x)/*controller.getTan(x,y)*/;
             double adjustedAngle = angle + Math.PI / 4;
-
             this.angle = angle;
 
             double speedMagnitude = Math.hypot(x,y);
 
-            if(Math.abs(rightX) > 0.00001) desiredAngle = imu.getRelativeYaw();
+            //double speeds[] =  {Math.sin(adjustedAngle), Math.cos(adjustedAngle), Math.cos(adjustedAngle), Math.sin(adjustedAngle)};
+            double speeds[] = getSpeeds(adjustedAngle,speedMagnitude,rightX);
 
-            double speeds[] = {Math.sin(adjustedAngle), Math.cos(adjustedAngle), Math.cos(adjustedAngle), Math.sin(adjustedAngle)};
-
+            /*
             MaelUtils.normalizeValues(speeds);
 
-            speeds[0] = (speeds[0] * speedMagnitude) + rightX;
-            speeds[1] = (speeds[1] * speedMagnitude) + rightX;
+            speeds[0] = (speeds[0] * speedMagnitude) - rightX;
+            speeds[1] = (speeds[1] * speedMagnitude) - rightX;
             speeds[2] = (speeds[2] * speedMagnitude) + rightX;
             speeds[3] = (speeds[3] * speedMagnitude) + rightX;
             this.speeds = speeds;
@@ -490,16 +489,37 @@ public abstract class MaelRobot implements LibConstants {
             dt.leftDrive.motor1.setVelocity(speeds[0] + pitchCorrection);
             dt.leftDrive.motor2.setVelocity(speeds[1] + pitchCorrection);
             dt.rightDrive.motor1.setVelocity(speeds[2] + pitchCorrection);
-            dt.rightDrive.motor2.setVelocity(speeds[3] + pitchCorrection);
+            dt.rightDrive.motor2.setVelocity(speeds[3] + pitchCorrection);*/
+
+            dt.fl.setVelocity(speeds[0] + pitchCorrection);
+            dt.bl.setVelocity(speeds[1] + pitchCorrection);
+            dt.fr.setVelocity(speeds[2] + pitchCorrection);
+            dt.br.setVelocity(speeds[3] + pitchCorrection);
+
         }
         if(stabilization){
             pitchCorrection = pitchPid.power(pitchTarget,imu.getPitch());
         }
-        if(controller.leftJoystickButtonToggle() && controller.rightJoystickButtonToggle()) setSpeedMultiplier(.25);
+        if(controller.leftJoystickButtonToggle() && controller.rightJoystickButtonToggle()) setSpeedMultiplier(.5);
         else  setSpeedMultiplier(chosenMultiplier);
     }
 
-    public void enableStabalization(boolean bool){this.stabilization = bool;}
+    public double[] getSpeeds(double adjustedAngle, double speedMagnitude, double rightX){
+
+        double speeds[] = {Math.sin(adjustedAngle), Math.cos(adjustedAngle), Math.cos(adjustedAngle), Math.sin(adjustedAngle)};
+
+        MaelUtils.normalizeValues(speeds);
+
+        speeds[0] = (speeds[0] * speedMagnitude) - rightX;
+        speeds[1] = (speeds[1] * speedMagnitude) - rightX;
+        speeds[2] = (speeds[2] * speedMagnitude) + rightX;
+        speeds[3] = (speeds[3] * speedMagnitude) + rightX;
+        this.speeds = speeds;
+
+        return speeds;
+    }
+
+    public void setStabilization(boolean bool){this.stabilization = bool;}
 
     public void setPitchPid(double kp, double ki, double kd){
         pitchPid.setPID(kp,ki,kd);
@@ -519,7 +539,7 @@ public abstract class MaelRobot implements LibConstants {
         return (counts*dt.leftDrive.getWheelCircumference()*dt.getDrivenGearReduction())/dt.leftDrive.motor1.getEncoder().getCPR();
     }
 
-    public boolean opModeActive(){return auto.getOpModeIsActive();}
+    public boolean isStopRequested(){return !MaelUtils.linearOpMode.isStopRequested();}
 
 }
 

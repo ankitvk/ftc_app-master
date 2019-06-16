@@ -14,7 +14,6 @@ import ftc.library.MaelUtils.LibConstants;
 public class MecanumOdometry implements LibConstants {
     MaelMotor motor;
     MaelRobot robot;
-    MaelUtils.AutonomousOpMode auto;
     public MaelIMU imu;
     public double distanceFromCenter = 0;
     public double previousYaw;

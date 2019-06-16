@@ -12,15 +12,8 @@ import static java.lang.Thread.sleep;
 public class MaelTellemetry {
     private int length;
     private Telemetry telemetry;
-    private MaelUtils.AutonomousOpMode auto;
-    private boolean open;
     private static MaelTellemetry instance;
 
-    public MaelTellemetry(Telemetry telemetry, MaelUtils.AutonomousOpMode auto){
-        this.telemetry = telemetry;
-        this.auto = auto;
-        instance = this;
-    }
     public MaelTellemetry(Telemetry telemetry){
         this.telemetry = telemetry;
         instance = this;
@@ -45,7 +38,7 @@ public class MaelTellemetry {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                while(auto.getOpModeIsActive() && open){
+                while(!isStopRequested()){
                     update();
                     try {
                         sleep(100);
@@ -61,6 +54,8 @@ public class MaelTellemetry {
     public void setNewFirst() {
         telemetry.log().setDisplayOrder(Telemetry.Log.DisplayOrder.NEWEST_FIRST);
     }
+
+    public boolean isStopRequested(){return MaelUtils.linearOpMode.isStopRequested();}
 
     public void addBlankLine(){
         telemetry.addLine("");

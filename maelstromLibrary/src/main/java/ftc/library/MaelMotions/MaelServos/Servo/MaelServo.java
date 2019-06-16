@@ -14,7 +14,6 @@ public class MaelServo {
     MaelTimer timer = new MaelTimer();
     private double targetPos;
     private double max = 1, min = 0;
-    private MaelUtils.AutonomousOpMode auto;
 
     public MaelServo(String name, HardwareMap hwMap){
         this.nameServo = name;
@@ -37,7 +36,7 @@ public class MaelServo {
 
     public void setPos(double position, int time){
         for (double i = servo.getPosition(); i < position; i += 0.01){
-            if (!opModeActive())break;
+            if (isStopRequested())break;
 
             else setPos(i);
             try {Thread.sleep(time);}
@@ -55,8 +54,7 @@ public class MaelServo {
 
     public void sleep(int time) throws InterruptedException{servo.wait(time);}
 
-    public boolean opModeActive(){
-        return auto.getOpModeIsActive();
-    }
+    public boolean isStopRequested(){ return !MaelUtils.linearOpMode.isStopRequested(); }
 
 }
+

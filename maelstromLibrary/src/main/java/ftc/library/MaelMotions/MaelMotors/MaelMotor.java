@@ -26,7 +26,6 @@ public class MaelMotor implements LibConstants {
   private double motorPower = 0;
   private double KP,KI,KD;
   private double minPower = 0;
-  private double targetPower=0;
   private double minPosition=0, maxPosition=0;
   private double previousVelocity=0;
   private double acceleration=0;
@@ -123,11 +122,9 @@ public class MaelMotor implements LibConstants {
     }
 
     public void setVelocity(double velocity){
-        targetPower = velocity;
         double targetVelocity = getTargetVelocity(velocity);
         power = PID.power(targetVelocity, getVelocity());
-/* motor.setPower((power > 0 && getVelocity() < 0) || (power < 0 && getVelocity() > 0) ? 0: power);*/
-        if(!closedLoop) motorPower = targetPower;
+        if(!closedLoop) motorPower = velocity;
         else motorPower = power;
         if(limitDetection){
             if (minLim != null && minLim.pressed() && power < 0 ||

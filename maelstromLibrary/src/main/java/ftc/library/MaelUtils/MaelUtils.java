@@ -10,7 +10,7 @@ import ftc.library.MaelWrappers.MaelLinearOp;
 /*utils class containing clipping and normalizing values*/
 public class MaelUtils implements LibConstants {
 
-    private static MaelLinearOp linearOpMode;
+    public static MaelLinearOp linearOpMode;
     public static double DEFAULT_SLEEP_TIME = 0;
     public static double DEFAULT_TIMEOUT = 10;
     public static double DEFAULT_STOPSTATE = 10;
@@ -22,7 +22,6 @@ public class MaelUtils implements LibConstants {
     public static String RIGHT_BACK_KEY = "rightBack";
 
     private static double deltaTime = 0;
-    private static double deltaPos = 0;
     private static double currTime = 0;
     private static long prevTime = 0;
     public static ArrayList<Subsystem> subsystems;
@@ -118,9 +117,6 @@ public class MaelUtils implements LibConstants {
         linearOpMode = pLinearOpMode;
     }
 
-    public static boolean opModeActive(){
-        return linearOpMode.opModeIsActive();
-    }
 
     public class KP {
         public static final double DT = +0.001;
@@ -151,9 +147,4 @@ public class MaelUtils implements LibConstants {
         RED, BLUE
     }
 
-    public interface AutonomousOpMode {
-        boolean getOpModeIsActive();
-
-        Telemetry getTelemetry();
-    }
 }

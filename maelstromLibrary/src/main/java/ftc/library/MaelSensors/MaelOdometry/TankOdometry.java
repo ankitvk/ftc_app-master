@@ -1,23 +1,21 @@
 package ftc.library.MaelSensors.MaelOdometry;
 
+import ftc.library.MaelControl.PurePursuit.MaelPose;
 import ftc.library.MaelMotions.MaelMotors.MaelMotor;
 import ftc.library.MaelSensors.MaelIMU;
 import ftc.library.MaelSubsystems.MaelstromDrivetrain.MaelDrivetrain;
+import ftc.library.MaelUtils.LibConstants;
 
-public class TankOdometry {
+public class TankOdometry implements LibConstants {
     private MaelDrivetrain dt;
     private MaelMotor left, right;
     public MaelIMU imu;
-
-    private int previousPos = 0;
-    private long previousTime = 0;
-    private double rpm = 0;
-    private double power;
-    private double target;
+    private double previousPos = 0;
     private double wheelDiamater = 4;
-    private double gearRatio = 1;
+    public double gearRatio;
     private double x = 0;
     private double y = 0;
+    private double distance = 0;
 
     public TankOdometry(MaelDrivetrain dt, MaelIMU imu){
         this.dt = dt;
@@ -27,24 +25,44 @@ public class TankOdometry {
         gearRatio = dt.getDrivenGearReduction();
     }
 
+    public MaelPose toPose(){
+        return new MaelPose(trackX(),trackY(),trackAngle());
+    }
+
     public double trackDistance(){
-        double currCounts = getCurrCounts();
-        double distance = (currCounts*(wheelDiamater*Math.PI))/gearRatio;
-        return distance;
+        distance = (trackLeft() + trackRight()) / 2;
+        return getDistance(distance);
     }
 
     public double trackX(){
-        x += trackDistance()*cosine(trackAngle());
+        double theta = radians(trackAngle());
+        x += trackDistance()*cosine(theta);
         return x;
     }
 
     public double trackY(){
-        y += trackDistance()*sine(trackAngle());
+        double theta = radians(trackAngle());
+        y += trackDistance()*sine(theta);
         return y;
     }
 
     public double trackAngle(){
-        return imu.getYaw();
+        double theta = radians(imu.getYaw());
+        return theta;
+    }
+
+    private double trackLeft(){
+        double currPos = left.getCounts();
+        double deltaPos = currPos - previousPos;
+        previousPos = currPos;
+        return deltaPos;
+    }
+
+    private double trackRight(){
+        double currPos = right.getCounts();
+        double deltaPos = currPos - previousPos;
+        previousPos = currPos;
+        return deltaPos;
     }
 
     public void reset(){
@@ -52,24 +70,17 @@ public class TankOdometry {
         imu.resetAngle();
     }
 
-    public double getLeftCounts(){
-        return left.getCounts();
-    }
-
-    public double getRightCounts(){
-        return right.getCounts();
-    }
-
-    public double getCurrCounts(){
-        return (getLeftCounts() + getRightCounts()) / 2;
+    private double getDistance(double d){
+        distance = (d*(wheelDiamater*Math.PI))/gearRatio;
+        return d;
     }
 
     private double cosine(double c){
         return Math.cos(c);
     }
-
     private double sine(double s){
         return Math.sin(s);
     }
+    private double radians(double r){return Math.toRadians(r);}
 
 }

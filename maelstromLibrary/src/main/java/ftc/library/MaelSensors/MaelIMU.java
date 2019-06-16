@@ -6,20 +6,21 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 
+import ftc.library.MaelSubsystems.Subsystem;
 import ftc.library.MaelUtils.AxesSigns;
-import ftc.library.MaelUtils.MaelUtils;
 import ftc.library.MaelUtils.LibConstants;
 
-
 /*Custon class for gyro imu*/
-public class MaelIMU implements LibConstants/*Runnable*/ {
+public class MaelIMU implements LibConstants, Subsystem/*Runnable*/ {
 
     private double relativeYaw = 0;
     private double lastAngle = 0;
     private double previousPos = 0, previousTime = 0;
     private double yawVelocity = 0;
+    private double yaw = 0;
+    private double pitch = 0;
+    private double roll = 0;
     private final BNO055IMU imu;
-    private MaelUtils.AutonomousOpMode auto;
 
     public MaelIMU(String name, HardwareMap hwMap){
         imu = hwMap.get(BNO055IMU.class,name);
@@ -27,6 +28,12 @@ public class MaelIMU implements LibConstants/*Runnable*/ {
         // auto = hardware.auto;
         /*Thread updateYaw = new Thread(this);
         updateYaw.start();*/
+    }
+
+    @Override
+    public void update() throws InterruptedException {
+        updateAngles();
+        updateRelativeYaw();
     }
 
 
@@ -42,27 +49,24 @@ public class MaelIMU implements LibConstants/*Runnable*/ {
     }
 
     public void updateRelativeYaw(){
-        if (lastAngle > 90 && getAngles()[0] < 0) {
-            relativeYaw = 180 * Math.round(relativeYaw/180) + (180 + getAngles()[0] );
+        if (lastAngle > 90 && getYaw() < 0) {
+            relativeYaw = 180 * Math.round(relativeYaw/180) + (180 + getYaw() );
         }
-        else if (lastAngle < -90 && getAngles()[0]  > 0) {
-            relativeYaw = 180 * Math.round(relativeYaw/180) - (180 - getAngles()[0] );
+        else if (lastAngle < -90 && getYaw()  > 0) {
+            relativeYaw = 180 * Math.round(relativeYaw/180) - (180 - getYaw() );
         }
         else if (Math.abs(relativeYaw) <= 180) {
-            relativeYaw = getAngles()[0];
+            relativeYaw = getYaw();
         }
         else {
-            relativeYaw += getAngles()[0]  - lastAngle;
+            relativeYaw += getYaw()  - lastAngle;
         }
-        lastAngle = getAngles()[0];
+        lastAngle = getYaw();
     }
 
-    public double getRelativeYaw()
-    {
-        return relativeYaw;
-    }
+    public double getRelativeYaw(){ return relativeYaw;}
 
-    public double[] getAngles(){
+    public void updateAngles(){
         Quaternion quatAngles = imu.getQuaternionOrientation();
 
         double w = quatAngles.w;
@@ -70,14 +74,13 @@ public class MaelIMU implements LibConstants/*Runnable*/ {
         double y = quatAngles.y;
         double z = quatAngles.z;
 
-        double roll = Math.atan2( 2*(w*x + y*z) , 1 - (2*(x*x + y*y)) ) * 180.0 / Math.PI;
-        double pitch = Math.asin( 2*(w*y - x*z) ) * 180.0 / Math.PI;
-        double yaw = Math.atan2( 2*(w*z + x*y), 1 - (2*(y*y + z*z)) ) * 180.0 / Math.PI;
-
-        return new double[]{yaw,pitch,roll};
+        roll = Math.atan2( 2*(w*x + y*z) , 1 - (2*(x*x + y*y)) ) * 180.0 / Math.PI;
+        pitch = Math.asin( 2*(w*y - x*z) ) * 180.0 / Math.PI;
+        yaw = Math.atan2( 2*(w*z + x*y), 1 - (2*(y*y + z*z)) ) * 180.0 / Math.PI;
     }
 
     public void resetAngle(){
+        yaw = 0;
         relativeYaw = 0;
     }
 
@@ -87,20 +90,16 @@ public class MaelIMU implements LibConstants/*Runnable*/ {
         return angle;
     }
 
-    //imu.
+    public double getYaw() {return yaw;}
+    public double getRoll(){return roll;}
+    public double getPitch(){return pitch;}
 
-    public double getYaw() {return getAngles()[0];}
-
-    public double getRoll(){return getAngles()[1];}
-
-    public double getPitch(){return getAngles()[2];}
-
-    public double getYawVelocity(){
-        double deltaPos = getYaw() - previousPos;
+    public double getVelocity(double angle){
+        double deltaPos = angle - previousPos;
         double deltaTime = (System.nanoTime() - previousTime)/NANOSECS_PER_MIN;
         if (deltaTime*6e4 > 10) {
             yawVelocity = deltaPos/deltaTime;
-            previousPos = getYaw();
+            previousPos = angle;
             previousTime = System.nanoTime();
         }
         return yawVelocity;
@@ -172,7 +171,8 @@ public class MaelIMU implements LibConstants/*Runnable*/ {
     }
 
     public String dataOutput() {
-        return String.format("Yaw: %.3f  Pitch: %.3f  Roll: %.3f", getAngles()[0], getAngles()[1], getAngles()[2]);
+        return String.format("Yaw: %.3f  Pitch: %.3f  Roll: %.3f", getYaw(), getPitch(), getRoll());
     }
+
 
 }
