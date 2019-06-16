@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.OpModes.Leviathan.Teleop;
-
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
+import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Leviathan;
 
+import ftc.library.MaelControl.PurePursuit.MaelPose;
 import ftc.library.MaelWrappers.MaelLinearOp;
 
 @TeleOp(name = "TankOdometryTest")
-public class TankOdometryTest extends MaelLinearOp {
+public class TankOdometryTest extends MaelLinearOp implements Constants {
 
     private Leviathan leviathan = new Leviathan();
     
@@ -15,14 +15,16 @@ public class TankOdometryTest extends MaelLinearOp {
     public void run() throws InterruptedException {
 
         leviathan.initHardware(hardwareMap);
+        leviathan.tracker.gearRatio = DT_GEAR_RATIO;
+        MaelPose currPoint = leviathan.tracker.toPose();
 
         while(!opModeIsActive()){
             feed.add("Tank Odometry Test");
             feed.add("Op Mode State Active? : ", opModeIsActive());
-            feed.add("Tracker X: ",leviathan.tracker.trackX());
-            feed.add("Tracker Y: ", leviathan.tracker.trackY());
+            feed.add("Tracker X: ",currPoint.x);
+            feed.add("Tracker Y: ", currPoint.y);
             feed.add("Distance: ", leviathan.tracker.trackDistance());
-            feed.add("Angle: ", leviathan.tracker.trackAngle());
+            feed.add("Angle: ", currPoint.angle);
             feed.update();
         }
 
@@ -30,12 +32,11 @@ public class TankOdometryTest extends MaelLinearOp {
 
         while(opModeIsActive()){
             leviathan.driveTeleop(controller1);
-
             feed.add("Op Mode State Active? : ", opModeIsActive());
-            feed.add("Tracker X: ",leviathan.tracker.trackX());
-            feed.add("Tracker Y: ", leviathan.tracker.trackY());
+            feed.add("Tracker X: ",currPoint.x);
+            feed.add("Tracker Y: ", currPoint.y);
             feed.add("Distance: ", leviathan.tracker.trackDistance());
-            feed.add("Angle: ", leviathan.tracker.trackAngle());
+            feed.add("Angle: ", currPoint.angle);
             feed.update();
         }
     }

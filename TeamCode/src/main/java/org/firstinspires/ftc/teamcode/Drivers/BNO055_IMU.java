@@ -15,6 +15,9 @@ public class BNO055_IMU /*implements Runnable*/ {
     private final BNO055IMU imu;
     private AutonomousOpMode auto;
     private double zeroPos = 0;
+    double roll = 0;
+    double yaw = 0;
+    double pitch = 0;
 
 
 
@@ -94,9 +97,9 @@ public class BNO055_IMU /*implements Runnable*/ {
         double z = quatAngles.z;
 
         // for the Adafruit IMU, yaw and roll are switched
-        double roll = Math.atan2( 2*(w*x + y*z) , 1 - (2*(x*x + y*y)) ) * 180.0 / Math.PI;
-        double pitch = Math.asin( 2*(w*y - x*z) ) * 180.0 / Math.PI;
-        double yaw = Math.atan2( 2*(w*z + x*y), 1 - (2*(y*y + z*z)) ) * 180.0 / Math.PI;
+        roll = Math.atan2( 2*(w*x + y*z) , 1 - (2*(x*x + y*y)) ) * 180.0 / Math.PI;
+        pitch = Math.asin( 2*(w*y - x*z) ) * 180.0 / Math.PI;
+        yaw = Math.atan2( 2*(w*z + x*y), 1 - (2*(y*y + z*z)) ) * 180.0 / Math.PI;
 
         return new double[]{yaw, pitch, roll};
     }
@@ -118,6 +121,7 @@ public class BNO055_IMU /*implements Runnable*/ {
 
     public void resetYaw(){
         relativeYaw = 0;
+        yaw = 0;
     }
 
 

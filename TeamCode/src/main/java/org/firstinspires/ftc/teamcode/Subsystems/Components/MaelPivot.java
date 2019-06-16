@@ -32,7 +32,6 @@ public class MaelPivot implements LibConstants, Constants, Subsystem {
     public MaelMotorSystem pivot;
     public MaelLimitSwitch limit;
     public MaelTellemetry feed;
-    public MaelUtils.AutonomousOpMode auto;
 
     private double liftPosition = 0;
     public State state = State.STOP;
@@ -98,7 +97,7 @@ public class MaelPivot implements LibConstants, Constants, Subsystem {
 
         double desiredAngle = 120;
 
-        while(opModeActive() &&(stopState <= 250)){
+        while(isStopRequested() &&(stopState <= 250)){
             double position = getCounts();
             double power = scoringPosition.power(desiredAngle,getAngle());
             double pidPower = power + (SCORE_KP*Math.sin(getAngle()));
@@ -126,7 +125,7 @@ public class MaelPivot implements LibConstants, Constants, Subsystem {
 
         double desiredAngle = 0;
 
-        while(opModeActive() &&(stopState <= 250)){
+        while(isStopRequested() &&(stopState <= 250)){
             double position = getCounts();
             double power = downPosition.power(desiredAngle,getAngle());
             double pidPower = power + (SCORE_KP*Math.sin(getAngle()));
@@ -166,10 +165,6 @@ public class MaelPivot implements LibConstants, Constants, Subsystem {
         this.limit = limit;
     }
 
-    public void setAuto(MaelUtils.AutonomousOpMode auto){
-        this.auto = auto;
-    }
-
     public void setFeed(MaelTellemetry feed){
         this.feed = feed;
     }
@@ -199,10 +194,7 @@ public class MaelPivot implements LibConstants, Constants, Subsystem {
         this.liftPosition = position;
     }
 
-    public boolean opModeActive(){
-        return auto.getOpModeIsActive();
-    }
-
+    public boolean isStopRequested(){return !MaelUtils.linearOpMode.isStopRequested();}
 
 }
 

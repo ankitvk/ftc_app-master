@@ -261,6 +261,37 @@ public class Drivetrain implements Constants {
         hardware.frontRight.setPower(rightPower*speedReducer - antiTipPower);
     }
 
+    public void fieldCentric(Gamepad controller){
+
+        double leftY = controller.left_stick_y;
+        double leftX = controller.left_stick_x;
+        double rightX = controller.right_stick_x;
+
+        double x = -leftY;
+        double y = leftX;
+
+        double angle = Math.atan2(y,x);
+        double fieldCentric = angle - Math.toRadians(imu.getYaw());
+        double adjustedAngle = fieldCentric + Math.PI / 4;
+
+        double speedMagnitude = Math.hypot(x,y);
+
+        double speeds[] = {Math.sin(adjustedAngle), Math.cos(adjustedAngle), Math.cos(adjustedAngle), Math.sin(adjustedAngle)};
+
+        speeds[0] = (speeds[0] * speedMagnitude) - rightX * speedMagnitude;
+        speeds[1] = (speeds[1] * speedMagnitude) - rightX * speedMagnitude;
+        speeds[2] = (speeds[2] * speedMagnitude) + rightX * speedMagnitude;
+        speeds[3] = (speeds[3] * speedMagnitude) + rightX * speedMagnitude;
+
+        frontLeft.setPower(speeds[0]);
+        backLeft.setPower(speeds[1]);
+        frontRight.setPower(speeds[2]);
+        backRight.setPower(speeds[3]);
+
+        if(controller.left_stick_button && controller.right_stick_button) imu.resetYaw();
+    }
+
+
     public void mecanum(Gamepad gamepad){
 
         double leftY = gamepad.left_stick_y;
@@ -276,10 +307,10 @@ public class Drivetrain implements Constants {
 
         MaelUtils.normalizeValues(speeds);
 
-        speeds[0] = (speeds[0] * speedMagnitude) + rightX;
-        speeds[1] = (speeds[1] * speedMagnitude) + rightX;
-        speeds[2] = (-speeds[2] * speedMagnitude) + rightX;
-        speeds[3] = (-speeds[3] * speedMagnitude) + rightX;
+        speeds[0] = (speeds[0] * speedMagnitude) - rightX;
+        speeds[1] = (speeds[1] * speedMagnitude) - rightX;
+        speeds[2] = (speeds[2] * speedMagnitude) + rightX;
+        speeds[3] = (speeds[3] * speedMagnitude) + rightX;
 
         frontLeft.setPower(speeds[0]);
         backLeft.setPower(speeds[1]);

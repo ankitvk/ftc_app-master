@@ -165,6 +165,9 @@ public class Hardware implements Constants {
         imu = new BNO055_IMU("imu", this);
 
         drivetrain = new Drivetrain(this);
+
+        frontLeft.setReverseMode();
+        backLeft.setReverseMode();
     }
 
     public void setAuto(AutonomousOpMode auto, Telemetry telemetry) {

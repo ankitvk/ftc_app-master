@@ -11,7 +11,7 @@ import ftc.library.MaelUtils.MaelUtils;
 import ftc.library.MaelWrappers.MaelLinearOp;
 
 @Autonomous(name = "Tarun's CraterAuto", group = "Lib_Auto")
-public class Lib_Crater extends MaelLinearOp implements Constants, MaelUtils.AutonomousOpMode {
+public class Lib_Crater extends MaelLinearOp implements Constants {
 
     public Leviathan robot = new Leviathan();
     public MaelTimer timer = new MaelTimer();
@@ -19,7 +19,7 @@ public class Lib_Crater extends MaelLinearOp implements Constants, MaelUtils.Aut
 
     @Override
     public void run() throws InterruptedException {
-        robot.setAutoOpMode(this);
+        //robot.setAutoOpMode(this);
         //robot.initHardware(hardwareMap);
 
         //robot.index.setPos(.15);
@@ -97,16 +97,5 @@ public class Lib_Crater extends MaelLinearOp implements Constants, MaelUtils.Aut
         //sleep(10);
 
     }
-
-    @Override
-    public boolean getOpModeIsActive() {
-        return opModeIsActive();
-    }
-
-    @Override
-    public Telemetry getTelemetry() {
-        return telemetry;
-    }
-
 
 }

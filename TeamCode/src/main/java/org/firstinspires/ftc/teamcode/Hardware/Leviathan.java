@@ -13,8 +13,6 @@ import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Control.GoldPos;
 import org.firstinspires.ftc.teamcode.Subsystems.Components.MaelPivot;
 
-import java.util.ArrayList;
-
 import ftc.library.MaelMotions.MaelMotors.Motor;
 import ftc.library.MaelMotions.MaelServos.CRServo.MaelCRServoSystem;
 import ftc.library.MaelMotions.MaelServos.Servo.MaelServo;
@@ -27,8 +25,6 @@ import ftc.library.MaelSubsystems.MaelCollector;
 import ftc.library.MaelSubsystems.MaelstromDrivetrain.DrivetrainModels;
 import ftc.library.MaelSubsystems.MaelstromDrivetrain.MaelDrivetrain;
 import ftc.library.MaelSubsystems.MaelElevator;
-import ftc.library.MaelSubsystems.Subsystem;
-import ftc.library.MaelUtils.MaelUtils;
 import ftc.library.MaelUtils.SubsystemModels;
 import ftc.library.MaelWrappers.MaelController;
 import ftc.library.MaelWrappers.MaelTellemetry;
@@ -46,7 +42,6 @@ public class Leviathan extends MaelRobot implements Constants {
     public Dogeforia dogeForia;
     public GoldAlignDetector detector;
     GoldPos position;
-    ArrayList<Subsystem> s;
     public boolean startOpenCV;
 
     @Override
@@ -71,10 +66,7 @@ public class Leviathan extends MaelRobot implements Constants {
         hangLeftRealease = new MaelServo("hangLeftRelease",hwMap);
         hangRightRelease = new MaelServo("hangRightRelease",hwMap);
         if(startOpenCV) startOpenCV(hwMap);
-        s.add(intake);
-        s.add(lift);
-        setSubsystemList(s);
-        //hangRealease = new MaelServoSystem("hangLeftRelease","hangRightRelease",hwMap);
+        add(intake,lift,pivot,imu);
     }
 
     public void setPidConstants(){
@@ -97,7 +89,7 @@ public class Leviathan extends MaelRobot implements Constants {
         hang.setPower(.85);
         hangRelease();
         hangTimer.startTime();
-        while(opModeActive() && (hangTimer.stopState() <= 2500)){
+        while(isStopRequested() && (hangTimer.stopState() <= 2500)){
             hang.setPower(-.85);
         }
         hang.setPower(0);
@@ -163,5 +155,4 @@ public class Leviathan extends MaelRobot implements Constants {
         hang.setPower(.85);
     }
 
-    public void setAutoOpMode(MaelUtils.AutonomousOpMode auto){this.auto = auto;}
 }
