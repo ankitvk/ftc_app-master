@@ -123,6 +123,10 @@ public interface Constants {
     double bigSideKD = 0;
     double bigSideMaxI = 1;
 
+    double velocityKp = .0031;
+    double velocityKi = 0;
+    double velocityKd = 0;
+
     String LICENSE_KEY = "AbxcZxf/////AAABmYehhkt9/k+lgWzWDZFG64eH2XR0TK1U2WbaJWSXrI" +
             "BuB4xBU9FpE1oHH3WHomRfTKwInQH9f18rQNXlH0LoYQmYHUR30N4" +
             "7eierR8KeOCKWOz/ew5qYXDq5W4hy20SDt6/GrORnhVttBPrp1lu+RllaRA" +

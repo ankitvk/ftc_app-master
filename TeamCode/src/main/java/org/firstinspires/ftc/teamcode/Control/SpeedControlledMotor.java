@@ -4,14 +4,17 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import ftc.library.MaelUtils.MaelUtils;
+
 public class SpeedControlledMotor implements Constants {
     private DcMotor motor;
     private int previousPos = 0;
     private long previousTime = 0;
     private double rpm = 0;
+    private double currVelocity = 0;
 
 
-    PIDController PIDController;
+    public PIDController PIDController;
 
     public SpeedControlledMotor(double KP, double KI, double KD, double maxI) {
         this.PIDController = new PIDController(KP, KI, KD, maxI);
@@ -34,11 +37,34 @@ public class SpeedControlledMotor implements Constants {
         int deltaPos = motor.getCurrentPosition() - previousPos;
         double deltaTime = (System.nanoTime() - previousTime)/NANOSECONDS_PER_MINUTE;
         if (deltaTime*6e4 > 10) {
-            rpm = (deltaPos/ DT_GEARBOX_TICKS_PER_ROTATION)/(deltaTime);
+            rpm = (deltaPos/ NEVEREST20_COUNTS_PER_REV)/(deltaTime);
             previousPos = motor.getCurrentPosition();
             previousTime = System.nanoTime();
         }
         return rpm;
+    }
+
+    public double getVelocity(){
+        int deltaPos = getCurrentPosition() - previousPos;
+        //double deltaTime = (System.nanoTime() - previousTime)/NANOSECS_PER_SEC;
+        double deltaTime = MaelUtils.getDeltaTime();
+        if (deltaTime*6e4 > 10) {
+            currVelocity = (deltaPos/ NEVEREST20_COUNTS_PER_REV)/(deltaTime);
+            previousPos = motor.getCurrentPosition();
+            previousTime = System.nanoTime();
+        }
+        return currVelocity;
+    }
+
+    public void setVelocity(double velocity){
+        double targetVelocity = getTargetVelocity(velocity);
+        double power = PIDController.power(targetVelocity, getVelocity());
+        setPower(power);
+    }
+
+    public double getTargetVelocity(double velocity){
+        double target = NEVEREST20_COUNTS_PER_REV * velocity;
+        return target;
     }
 
     double rpmTemp = 0;

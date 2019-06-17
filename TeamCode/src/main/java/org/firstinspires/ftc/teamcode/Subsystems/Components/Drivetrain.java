@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Subsystems.Components;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
@@ -18,7 +19,7 @@ public class Drivetrain implements Constants {
     private SpeedControlledMotor frontLeft,backLeft,frontRight,backRight;
     private BNO055_IMU imu;
     private AutonomousOpMode auto;
-    private Telemetry telemetry;
+    public Telemetry telemetry;
     private Hardware hardware;
     private double desiredPitch = 0;
     public double speedMultipler = 0;
@@ -262,11 +263,11 @@ public class Drivetrain implements Constants {
         hardware.frontRight.setPower(rightPower*speedReducer - antiTipPower);
     }
 
-    public void fieldCentric(Gamepad controller){
+    public void fieldCentric(double leftStickY, double leftStickX, double rightStickX){
 
-        double leftY = controller.left_stick_y;
-        double leftX = controller.left_stick_x;
-        double rightX = controller.right_stick_x;
+        double leftY = leftStickY;
+        double leftX = leftStickX;
+        double rightX = rightStickX;
 
         double x = -leftY;
         double y = leftX;
@@ -291,15 +292,38 @@ public class Drivetrain implements Constants {
         frontRight.setPower(speeds[2]);
         backRight.setPower(speeds[3]);
 
-        if(controller.left_stick_button && controller.right_stick_button) imu.resetYaw();
+        telemetry.addData("FL:",frontLeft.getPower());
+        telemetry.addData("BL:",backLeft.getPower());
+        telemetry.addData("FR:",frontRight.getPower());
+        telemetry.addData("BR:",backRight.getPower());
+        telemetry.addData("BR Counts:",backRight.getCurrentPosition());
+        telemetry.addData("imu:",imu.getYaw());
+        telemetry.update();
+    }
+
+    public void ok() {
+        ElapsedTime e = new ElapsedTime();
+        while (e.milliseconds() <= 2500){
+            frontLeft.setPower(.5);
+        backLeft.setPower(.5);
+        frontRight.setPower(.5);
+        backRight.setPower(.5);
+
+        telemetry.addData("FL:", frontLeft.getPower());
+        telemetry.addData("BL:", backLeft.getPower());
+        telemetry.addData("FR:", frontRight.getPower());
+        telemetry.addData("BR:", backRight.getPower());
+        telemetry.addData("imu:", imu.getYaw());
+        telemetry.update();}
+        stop();
     }
 
 
-    public void mecanum(Gamepad gamepad){
+    public void mecanum(double leftStickY, double leftStickX, double rightStickX){
 
-        double leftY = gamepad.left_stick_y;
-        double leftX = gamepad.left_stick_x;
-        double rightX = gamepad.right_stick_x;
+        double leftY = leftStickY;
+        double leftX = leftStickX;
+        double rightX = rightStickX;
         double x = -leftY;
         double y = leftX;
         double angle = Math.atan2(y,x);
@@ -324,6 +348,7 @@ public class Drivetrain implements Constants {
         telemetry.addData("BL:",backLeft.getPower());
         telemetry.addData("FR:",frontRight.getPower());
         telemetry.addData("BR:",backRight.getPower());
+        telemetry.addData("BR Counts:",backRight.getCurrentPosition());
         telemetry.addData("imu:",imu.getYaw());
         telemetry.update();
 

@@ -10,42 +10,71 @@ import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 @TeleOp(name = "Tune a bih")
 public class VelocityPIDTune extends OpMode implements Constants {
     private Hardware robot = new Hardware();
-    SpeedControlledMotor motor = robot.backLeft;
 
     double rightPower = .6;
     double leftPower = .6;
+    double kp = 0, ki = 0, kd = 0;
+    boolean setKp = false;
 
     public void init(){
-        robot.init(hardwareMap);
+        robot.opportunityInit(hardwareMap);
+        kp = .0031;
+        ki = robot.frontLeft.PIDController.getKi();
+        kd = robot.frontLeft.PIDController.getKd();
+        telemetry.addData("KP:",kp);
+        telemetry.addData("KI:",ki);
+        telemetry.addData("KD:",kd);
+        telemetry.update();
     }
 
     public void loop(){
 
         if(gamepad1.dpad_right){
-            leftPower+=.0005;
-            rightPower = leftPower+.1;
+            leftPower+=.005;
+            rightPower += .005;
         }
         else if(gamepad1.dpad_left){
-            leftPower-=.0005;
-            rightPower = leftPower+.1;
+            leftPower-=.005;
+            rightPower -= .005;
 
         }
 
-        if(gamepad1.a){
-            robot.backRight.setPower(rightPower);
+        if(gamepad1.a && setKp){
+/*            robot.backRight.setPower(rightPower);
             robot.frontRight.setPower(rightPower);
-            robot.backLeft.setPower(leftPower);
-            robot.frontLeft.setPower(leftPower);
+            robot.backLeft.setPower(leftPower);*/
+            setKp = false;
+            robot.frontLeft.setVelocity(leftPower);
+        }
+        if(gamepad1.b){
+/*            robot.backRight.setPower(0);
+            robot.frontRight.setPower(0);
+            robot.backLeft.setPower(0);
+            robot.frontLeft.setPower(0);*/
+            robot.frontLeft.setVelocity(0);
+        }
+        if(gamepad1.dpad_up){
+            kp += .001;
+        }
+        if(gamepad1.dpad_down) kp -= .001;
+
+        if(gamepad1.y){
+            robot.frontLeft.PIDController.setKp(kp);
+            setKp = true;
         }
 
-        telemetry.addData("backRightRPM:",robot.backRight.getRPM());
-        telemetry.addData("frontRightRPM:",robot.frontRight.getRPM());
-        telemetry.addData("backLeftRPM:",robot.backLeft.getRPM());
-        telemetry.addData("frontLeftRPM:",robot.frontLeft.getRPM());
-        telemetry.addData("RightPower:",rightPower);
+/*        telemetry.addData("backRightRPM:",robot.backRight.getVelocity());
+        telemetry.addData("frontRightRPM:",robot.frontRight.getVelocity());
+        telemetry.addData("backLeftRPM:",robot.backLeft.getVelocity());*/
+        telemetry.addData("Motor Velocity:",robot.frontLeft.getVelocity());
+        telemetry.addData("Motor RPM:",robot.frontLeft.getRPM());
+        telemetry.addData("Target Velocity: ", robot.frontLeft.getTargetVelocity(leftPower));
+        //telemetry.addData("RightPower:",rightPower);
         telemetry.addData("LeftPower:",leftPower);
-
-
+        telemetry.addData("KP:",kp);
+/*        telemetry.addData("KI:",ki);
+        telemetry.addData("KD:",kd);*/
+        telemetry.addData("Set?:",setKp);
         telemetry.update();
     }
 
