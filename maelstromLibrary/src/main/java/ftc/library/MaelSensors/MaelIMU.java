@@ -64,7 +64,14 @@ public class MaelIMU implements LibConstants, Subsystem/*Runnable*/ {
         lastAngle = getYaw();
     }
 
-    public double getRelativeYaw(){ return relativeYaw;}
+/*    public double getYaw(){
+        updateAngles();
+        return yaw;
+    }*/
+
+    public double getRelativeYaw(){
+        updateRelativeYaw();
+        return relativeYaw;}
 
     public void updateAngles(){
         Quaternion quatAngles = imu.getQuaternionOrientation();
@@ -90,7 +97,9 @@ public class MaelIMU implements LibConstants, Subsystem/*Runnable*/ {
         return angle;
     }
 
-    public double getYaw() {return yaw;}
+    public double getYaw() {
+        updateAngles();
+        return yaw;}
     public double getRoll(){return roll;}
     public double getPitch(){return pitch;}
 

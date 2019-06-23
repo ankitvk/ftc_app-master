@@ -6,28 +6,54 @@ import ftc.library.MaelSensors.MaelIMU;
 import ftc.library.MaelSubsystems.MaelstromDrivetrain.MaelDrivetrain;
 import ftc.library.MaelUtils.LibConstants;
 
-public class TankOdometry implements LibConstants {
+public class TankOdometry extends Odometry implements LibConstants {
     private MaelDrivetrain dt;
     private MaelMotor left, right;
     public MaelIMU imu;
     private double previousPos = 0;
     private double wheelDiamater = 4;
-    public double gearRatio;
+    public double gearRatio = 1;
     private double x = 0;
     private double y = 0;
     private double distance = 0;
 
     public TankOdometry(MaelDrivetrain dt, MaelIMU imu){
-        this.dt = dt;
-        this.imu = imu;
-        left = dt.leftDrive.motor1;
-        right = dt.rightDrive.motor1;
+        super(dt.fl,dt.fr,imu,dt.getDrivenGearReduction());
+        left = dt.fl;
+        right = dt.fr;
         gearRatio = dt.getDrivenGearReduction();
     }
 
-    public MaelPose toPose(){
-        return new MaelPose(trackX(),trackY(),trackAngle());
+    @Override
+    void updateTracker() {
+        double leftDelta = (getXCounts() - prevX);
+        double rightDelta = (getYCounts() - prevY);
+        double distance = (leftDelta + rightDelta)/2;
+        double theta = Math.toRadians(imu.getYaw());
+        double x = distance * Math.cos(theta);
+        double y = distance * Math.sin(theta);
+        globalX += x;
+        globalY += y;
+        globalHeading = theta;
+        prevX = getXCounts();
+        prevY = getYCounts();
     }
+
+    @Override
+    double getX() {
+        return (globalX * calculateCircumference(left.getCPR()));
+    }
+
+    @Override
+    double getY() {
+        return (globalY * calculateCircumference(right.getCPR()));
+    }
+
+    @Override
+    double getHeading() {
+        return globalHeading;
+    }
+/*
 
     public double trackDistance(){
         distance = (trackLeft() + trackRight()) / 2;
@@ -82,5 +108,6 @@ public class TankOdometry implements LibConstants {
         return Math.sin(s);
     }
     private double radians(double r){return Math.toRadians(r);}
+*/
 
 }

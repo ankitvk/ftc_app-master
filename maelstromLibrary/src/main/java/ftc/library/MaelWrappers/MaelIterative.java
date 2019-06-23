@@ -14,4 +14,6 @@ public abstract class MaelIterative extends MaelLinearOp {
     public abstract void initLoop();
 
     public abstract void teleop();
+
+    public abstract void displayData();
 }

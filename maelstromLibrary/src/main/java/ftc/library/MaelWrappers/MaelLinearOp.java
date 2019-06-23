@@ -27,6 +27,7 @@ public abstract class MaelLinearOp extends LinearOpMode implements LibConstants 
         try{
             feed = new MaelTellemetry(super.telemetry);
             feed.setNewFirst();
+            MaelUtils.feed = feed;
             MaelUtils.setLinearOpMode(this);
             new HardwareThread(subsystems,this);
             controller1 = new MaelController(super.gamepad1,"controller1");

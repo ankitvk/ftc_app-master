@@ -1,21 +1,15 @@
 package ftc.library.MaelSensors.MaelOdometry;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import ftc.library.MaelMotions.MaelMotors.MaelMotor;
-import ftc.library.MaelMotions.MaelMotors.Motor;
-import ftc.library.MaelRobot;
 import ftc.library.MaelSensors.MaelIMU;
-import ftc.library.MaelSubsystems.MaelstromDrivetrain.MaelDrivetrain;
-import ftc.library.MaelUtils.MaelUtils;
 import ftc.library.MaelUtils.LibConstants;
 
-/*Class for odometry wheel tracking*/
-public class MecanumOdometry extends Odometry implements LibConstants {
+public class MechOdometry_v2 extends Odometry implements LibConstants {
 
-
-    public MecanumOdometry(MaelMotor x, MaelMotor y, MaelIMU imu, double gearRatio) {
-        super(x, y, imu, gearRatio);
+    private double globalX = 0, globalY = 0, prevX = 0, prevY = 0;
+    private double globalHeading = 0;
+    public MechOdometry_v2(MaelMotor x, MaelMotor y, MaelIMU imu) {
+        super(x, y, imu);
     }
 
     @Override

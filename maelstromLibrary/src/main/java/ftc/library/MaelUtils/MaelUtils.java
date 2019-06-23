@@ -1,11 +1,14 @@
 package ftc.library.MaelUtils;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.ArrayList;
 
 import ftc.library.MaelSubsystems.Subsystem;
 import ftc.library.MaelWrappers.MaelLinearOp;
+import ftc.library.MaelWrappers.MaelTellemetry;
 
 /*utils class containing clipping and normalizing values*/
 public class MaelUtils implements LibConstants {
@@ -16,15 +19,18 @@ public class MaelUtils implements LibConstants {
     public static double DEFAULT_STOPSTATE = 10;
     public static double DEFAULT_SPEED = 1;
 
-    public static String LEFT_FRONT_KEY = "leftFront";
-    public static String LEFT_BACK_KEY = "leftBack";
-    public static String RIGHT_FRONT_KEY = "rightFront";
-    public static String RIGHT_BACK_KEY = "rightBack";
+    public static String LEFT_FRONT_KEY = "frontLeft";
+    public static String LEFT_BACK_KEY = "backLeft";
+    public static String RIGHT_FRONT_KEY = "frontRight";
+    public static String RIGHT_BACK_KEY = "backRight";
 
     private static double deltaTime = 0;
     private static double currTime = 0;
     private static long prevTime = 0;
     public static ArrayList<Subsystem> subsystems;
+    public static MaelTellemetry feed;
+    public static FtcDashboard dashboard = FtcDashboard.getInstance();
+    public static Telemetry dashTelemetry = dashboard.getTelemetry();
 
     public static void sleep (int sleep) {
         try {Thread.sleep(sleep);}

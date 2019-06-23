@@ -32,14 +32,14 @@ public abstract class MaelRobot implements LibConstants {
     public MaelDrivetrain dt;
     public MecanumOdometry xPos = null;
     public MecanumOdometry yPos = null;
-    public TankOdometry tracker; 
+    public TankOdometry tankTracker;
     public MaelIMU imu;
-    public double gearRatio;
+    public double gearRatio = 0;
     public MaelController controller;
     public boolean stabilization = false;
-    private double yDirection;
-    private double xDirection;
-    private double speedMultiplier;
+    private double yDirection = 0;
+    private double xDirection = 0;
+    private double speedMultiplier = 1;
     private double angle = 0;
     private double pitchTarget = 0;
     private double fieldCentric = 0;
@@ -47,7 +47,7 @@ public abstract class MaelRobot implements LibConstants {
     private double desiredAngle = 0;
     private double pitchCorrection = 0;
     private double speeds[];
-    private double mechAngle;
+    private double mechAngle = 0;
     private double chosenMultiplier = 0;
     public ArrayList<Subsystem> subsystems = MaelUtils.subsystems;
 
@@ -271,7 +271,7 @@ public abstract class MaelRobot implements LibConstants {
         stop();
     }
 
-    public void driveToPoint(MaelPose point, double maxSpeed, long stopTime){
+/*    public void driveToPoint(MaelPose point, double maxSpeed, long stopTime){
 
         double xTarget = point.x;
         double yTarget = point.y;
@@ -327,7 +327,7 @@ public abstract class MaelRobot implements LibConstants {
             feed.add("Kd*d:", distancePid.getD());
             feed.update();
 
-            if (/*Math.abs(distance - currDistance) */ distancePid.getError() <= 0.5) {
+            if (*//*Math.abs(distance - currDistance) *//* distancePid.getError() <= 0.5) {
                 stopState = (System.nanoTime() - startTime) / NANOSECS_PER_MILISEC;
                 if (stopState == stopTime - 10) {
                     prevX = xPos.trackPosition();
@@ -343,7 +343,7 @@ public abstract class MaelRobot implements LibConstants {
     }
     public void driveToPoint(MaelPose point){
         driveToPoint(point,1);
-    }
+    }*/
 
     public void strafe(double speed, double angle, Direction strafe, long stopTime){
         DrivetrainModels model = dt.getModel();
@@ -461,12 +461,12 @@ public abstract class MaelRobot implements LibConstants {
         }
         else if(model == DrivetrainModels.MECH_ROBOT){
 
-            double leftY = controller.leftStickY();
+            double leftY = -controller.leftStickY();
             double leftX = controller.leftStickX();
             double rightX = controller.rightStickX();
 
             double x = -leftY;
-            double y = leftX;
+            double y = -leftX;
 
             double angle = Math.atan2(y,x)/*controller.getTan(x,y)*/;
             double adjustedAngle = angle + Math.PI / 4;
@@ -474,10 +474,10 @@ public abstract class MaelRobot implements LibConstants {
 
             double speedMagnitude = Math.hypot(x,y);
 
-            //double speeds[] =  {Math.sin(adjustedAngle), Math.cos(adjustedAngle), Math.cos(adjustedAngle), Math.sin(adjustedAngle)};
-            double speeds[] = getSpeeds(adjustedAngle,speedMagnitude,rightX);
+            double speeds[] =  {Math.sin(adjustedAngle), Math.cos(adjustedAngle), Math.cos(adjustedAngle), Math.sin(adjustedAngle)};
+            //double speeds[] = getSpeeds(adjustedAngle,speedMagnitude,rightX);
 
-            /*
+
             MaelUtils.normalizeValues(speeds);
 
             speeds[0] = (speeds[0] * speedMagnitude) - rightX;
@@ -486,7 +486,7 @@ public abstract class MaelRobot implements LibConstants {
             speeds[3] = (speeds[3] * speedMagnitude) + rightX;
             this.speeds = speeds;
 
-            dt.leftDrive.motor1.setVelocity(speeds[0] + pitchCorrection);
+/*            dt.leftDrive.motor1.setVelocity(speeds[0] + pitchCorrection);
             dt.leftDrive.motor2.setVelocity(speeds[1] + pitchCorrection);
             dt.rightDrive.motor1.setVelocity(speeds[2] + pitchCorrection);
             dt.rightDrive.motor2.setVelocity(speeds[3] + pitchCorrection);*/
@@ -497,9 +497,10 @@ public abstract class MaelRobot implements LibConstants {
             dt.br.setVelocity(speeds[3] + pitchCorrection);
 
         }
-        if(stabilization){
+/*        if(stabilization){
             pitchCorrection = pitchPid.power(pitchTarget,imu.getPitch());
         }
+        else pitchCorrection = 0;*/
         if(controller.leftJoystickButtonToggle() && controller.rightJoystickButtonToggle()) setSpeedMultiplier(.5);
         else  setSpeedMultiplier(chosenMultiplier);
     }

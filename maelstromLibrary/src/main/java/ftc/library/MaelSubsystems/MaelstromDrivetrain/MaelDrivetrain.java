@@ -150,6 +150,8 @@ public class MaelDrivetrain {
         return model;
     }
 
+    public void setModel(DrivetrainModels model){this.model = model;}
+
     public void setPID(double kp, double ki, double kd) {
         leftDrive.setPID(kp, ki, kd);
         rightDrive.setPID(kp, ki, kd);
