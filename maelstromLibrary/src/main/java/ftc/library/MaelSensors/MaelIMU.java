@@ -103,12 +103,12 @@ public class MaelIMU implements LibConstants, Subsystem/*Runnable*/ {
     public double getRoll(){return roll;}
     public double getPitch(){return pitch;}
 
-    public double getVelocity(double angle){
-        double deltaPos = angle - previousPos;
+    public double getYawVelocity(){
+        double deltaPos = getYaw() - previousPos;
         double deltaTime = (System.nanoTime() - previousTime)/NANOSECS_PER_MIN;
         if (deltaTime*6e4 > 10) {
             yawVelocity = deltaPos/deltaTime;
-            previousPos = angle;
+            previousPos = getYaw();
             previousTime = System.nanoTime();
         }
         return yawVelocity;

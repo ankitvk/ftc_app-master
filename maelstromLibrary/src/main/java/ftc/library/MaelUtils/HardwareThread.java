@@ -12,7 +12,7 @@ public class HardwareThread extends Thread {
     public HardwareThread(ArrayList<Subsystem> subsystems, MaelLinearOp opMode){
         this.subsystems = subsystems;
         this.opMode = opMode;
-        run();
+        //run();
     }
 
     @Override

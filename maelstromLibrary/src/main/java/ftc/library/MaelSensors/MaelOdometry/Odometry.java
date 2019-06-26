@@ -1,9 +1,11 @@
 package ftc.library.MaelSensors.MaelOdometry;
 
 import ftc.library.MaelControl.PurePursuit.MaelPose;
+import ftc.library.MaelControl.PurePursuit.MaelVector;
 import ftc.library.MaelMotions.MaelMotors.MaelMotor;
 import ftc.library.MaelSensors.MaelIMU;
 import ftc.library.MaelSubsystems.Subsystem;
+import ftc.library.MaelUtils.MaelMath;
 
 public abstract class Odometry implements Subsystem {
     MaelMotor x, y;
@@ -50,12 +52,15 @@ public abstract class Odometry implements Subsystem {
     }
 
     public double getDistance(){
-        return Math.hypot(getX(),getY());
+        //return Math.hypot(getX(),getY());
+        return MaelMath.calculateDistance(new MaelPose(0,0),toPose());
     }
 
     public MaelPose toPose(){
         return new MaelPose(getX(),getY(),getHeading());
     }
+
+    public MaelVector toVector(){return new MaelVector(getX(),getY());}
 
     public MaelPose toVehiclePose(MaelPose goal){
         double goalPointX = (goal.x - toPose().x)*Math.cos(getHeading()) + (goal.y - toPose().y)*Math.sin(getHeading());

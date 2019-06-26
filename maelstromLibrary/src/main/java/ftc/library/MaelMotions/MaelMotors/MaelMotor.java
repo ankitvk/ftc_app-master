@@ -46,7 +46,7 @@ public class MaelMotor implements LibConstants {
         }
     };
 
-  private PIDController PID;
+  private PIDController PID = new PIDController(KP,KI,KD);
   private MaelLimitSwitch minLim, maxLim = null;
 
 
@@ -59,7 +59,9 @@ public class MaelMotor implements LibConstants {
         motor = hwMap.get(DcMotor.class, name);
         setDirection(direction);
         encoder = new MaelstromEncoder(this,type);
-        this.PID = new PIDController(Kp,Ki,Kd,1);
+        this.KP = Kp;
+        this.KI = Ki;
+        this.KD = Kd;
     }
     public MaelMotor(String name, Motor model, HardwareMap hwMap){
         motor = hwMap.get(DcMotor.class, name);
@@ -105,6 +107,15 @@ public class MaelMotor implements LibConstants {
     }
 
     public double getVelocity(){
+/*        int deltaPos = getCounts() - previousPos;
+        //double deltaTime = (System.nanoTime() - previousTime)/NANOSECS_PER_SEC;
+        double deltaTime = MaelUtils.getDeltaTime();
+        if (deltaTime*6e4 > 10) {
+            currVelocity = (deltaPos/ getCPR())/(deltaTime);
+            previousPos = motor.getCurrentPosition();
+            previousTime = System.nanoTime();
+        }
+        return currVelocity;*/
         int deltaPos = getCounts() - previousPos;
         //double deltaTime = (System.nanoTime() - previousTime)/NANOSECS_PER_SEC;
         double deltaTime = MaelUtils.getDeltaTime();
@@ -117,15 +128,14 @@ public class MaelMotor implements LibConstants {
     }
 
     public double getTargetVelocity(double velocity){
-        double target = encoder.getCPR() * velocity;
+        double target = encoder.getRPM() * velocity;
         return target;
     }
 
     public void setVelocity(double velocity){
         double targetVelocity = getTargetVelocity(velocity);
-        power = PID.power(targetVelocity, getVelocity());
-        if(!closedLoop) motorPower = velocity;
-        else motorPower = power;
+        if(!closedLoop) power = velocity;
+        else power = PID.power(targetVelocity,getVelocity());
         if(limitDetection){
             if (minLim != null && minLim.pressed() && power < 0 ||
                     maxLim != null && maxLim.pressed() && power > 0)
@@ -135,7 +145,7 @@ public class MaelMotor implements LibConstants {
                 motorPower = 0;
         }
         if(Math.abs(motorPower) < minPower && minPosition != 0) motorPower = 0;
-        setPower(motorPower);
+        setPower(power);
     }
 
     public void setClosedLoop(boolean state){this.closedLoop = state;}

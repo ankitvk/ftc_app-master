@@ -49,7 +49,6 @@ public abstract class MaelRobot implements LibConstants {
     private double speeds[];
     private double mechAngle = 0;
     private double chosenMultiplier = 0;
-    public ArrayList<Subsystem> subsystems = MaelUtils.subsystems;
 
     //public PIDController distanceDrive = new PIDController(pidPackage().getDistanceKp(),pidPackage().getDistanceKi(),pidPackage().getDistanceKd(),1);
     public PIDController distancePid = new PIDController(0.01,0,0,1);
@@ -63,12 +62,12 @@ public abstract class MaelRobot implements LibConstants {
     }
 
     public void add(Subsystem... elements){
-        for(Subsystem s : elements) subsystems.add(s);
+        for(Subsystem s : elements) MaelUtils.subsystems.add(s);
     }
 
-    public List<Subsystem> getSubsystemList(){
+/*    public List<Subsystem> getSubsystemList(){
         return subsystems;
-    }
+    }*/
 
     public void driveDistance(double distance, double speed, Direction direction, double stopTime, double sleep, double timeout){
         dt.eReset();

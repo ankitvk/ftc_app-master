@@ -72,12 +72,9 @@ public class MaelMotorSystem {
     }
 
     public MaelMotorSystem(String name1, String name2, double Kp, double Ki, double Kd, DcMotorSimple.Direction direction, HardwareMap hwMap, Motor encoder){
-        motor1 = new MaelMotor(name1,encoder, direction,hwMap);
-        motor2 = new MaelMotor(name2,encoder, direction,hwMap);
+        motor1 = new MaelMotor(name1,encoder,Kp,Ki,Kd, direction,hwMap);
+        motor2 = new MaelMotor(name2,encoder,Kp,Ki,Kd, direction,hwMap);
         motors = Arrays.asList(motor1,motor2);
-        for(MaelMotor motor : motors) {
-            motor.setPID(Kp,Ki,Kd);
-        }
         numMotors = 2;
         model = encoder;
     }

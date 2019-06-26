@@ -9,6 +9,24 @@ import ftc.library.MaelControl.PurePursuit.MaelPose;
 
 public class MaelMath {
 
+    public static double calculateDistance(MaelPose point1, MaelPose point2){
+        return Math.hypot(point2.x - point1.x,point2.y - point1.y);
+    }
+
+    public static double calculateDistance(double x1, double y1, double x2, double y2){
+        return Math.hypot(x2 - x1,y2- y1);
+    }
+
+    public static double anglewrap(double angle){
+        while(angle < -Math.PI){
+            angle += 2 * Math.PI;
+        }
+        while(angle > Math.PI){
+            angle -= 2 * Math.PI;
+        }
+        return angle;
+    }
+
    public static ArrayList<MaelPose> lineCircleIntersection(MaelPose circleCenter, double radius,
                                                          MaelPose linePoint1, MaelPose linePoint2){
 

@@ -15,5 +15,5 @@ public class MaelPose {
         this(x,y,0);
     }
 
-
+    public MaelVector toVector(){return new MaelVector(x,y);}
 }

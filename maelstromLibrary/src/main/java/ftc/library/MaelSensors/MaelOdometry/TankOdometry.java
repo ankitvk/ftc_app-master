@@ -21,6 +21,7 @@ public class TankOdometry extends Odometry implements LibConstants {
         super(dt.fl,dt.fr,imu,dt.getDrivenGearReduction());
         left = dt.fl;
         right = dt.fr;
+        this.imu = imu;
         gearRatio = dt.getDrivenGearReduction();
     }
 
@@ -40,17 +41,17 @@ public class TankOdometry extends Odometry implements LibConstants {
     }
 
     @Override
-    double getX() {
+    public double getX() {
         return (globalX * calculateCircumference(left.getCPR()));
     }
 
     @Override
-    double getY() {
+    public double getY() {
         return (globalY * calculateCircumference(right.getCPR()));
     }
 
     @Override
-    double getHeading() {
+    public double getHeading() {
         return globalHeading;
     }
 /*
