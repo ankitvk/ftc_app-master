@@ -76,6 +76,11 @@ public class LibTeleop_Leviathan extends MaelLinearOp implements Constants {
         }
     }
 
+    @Override
+    public void initHardware() {
+
+    }
+
     public void intakeTeleop(MaelController c){
         if(c.leftBumper()){
             robot.intake.setState(MaelCollector.State.INTAKE);

@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Components.Endgame;
 import org.firstinspires.ftc.teamcode.Subsystems.Components.Extendo;
 import org.firstinspires.ftc.teamcode.Subsystems.Components.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Components.Pivot;
-
+@Disabled
 @TeleOp(name = "servo boi")
 public class ServoTest extends LinearOpMode {
 

@@ -7,9 +7,8 @@ import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 
 import ftc.library.MaelUtils.MaelUtils;
-import ftc.library.MaelWrappers.MaelLinearOp;
 
-@TeleOp(name="Opportunity Testing")
+@TeleOp(name="Opportunity Normal")
 public class MecanumFIeld extends LinearOpMode implements Constants {
 
     public Hardware r = new Hardware();
@@ -73,7 +72,7 @@ public class MecanumFIeld extends LinearOpMode implements Constants {
             double leftX = gamepad1.left_stick_x;
             double rightX = gamepad1.right_stick_x;
             double x = leftY;
-            double y = leftX;
+            double y = -leftX;
             double angle = Math.atan2(y,x);
             double adjustedAngle = angle + Math.PI / 4;
             double speedMagnitude = Math.hypot(x,y);
@@ -92,11 +91,11 @@ public class MecanumFIeld extends LinearOpMode implements Constants {
             r.frontRight.setPower(speeds[2]);
             r.backRight.setPower(speeds[3]);
 
-            telemetry.addData("FL Vel: ", r.frontLeft.getVelocity());
-            telemetry.addData("BL Vel: ", r.backLeft.getVelocity());
-            telemetry.addData("FR Vel: ", r.frontRight.getVelocity());
-            telemetry.addData("BR Vel: ", r.backRight.getVelocity());
-            telemetry.addData("imu Vel: ", r.imu.getYaw());
+            telemetry.addData("FL: ", r.frontLeft.getPower());
+            telemetry.addData("BL: ", r.backLeft.getPower());
+            telemetry.addData("FR: ", r.frontRight.getPower());
+            telemetry.addData("BR: ", r.backRight.getPower());
+            telemetry.addData("imu: ", r.imu.getYaw());
             telemetry.update();
 
 

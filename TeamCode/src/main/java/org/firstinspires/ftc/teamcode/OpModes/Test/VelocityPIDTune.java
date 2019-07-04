@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Control.SpeedControlledMotor;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 
-@TeleOp(name = "Tune a bih")
+@TeleOp(name = "Velocity Tuning")
 public class VelocityPIDTune extends OpMode implements Constants {
     private Hardware robot = new Hardware();
 
@@ -19,8 +19,8 @@ public class VelocityPIDTune extends OpMode implements Constants {
     public void init(){
         robot.opportunityInit(hardwareMap);
         kp = .0031;
-        ki = robot.frontLeft.PIDController.getKi();
-        kd = robot.frontLeft.PIDController.getKd();
+        ki = robot.backRight.PIDController.getKi();
+        kd = robot.backRight.PIDController.getKd();
         telemetry.addData("KP:",kp);
         telemetry.addData("KI:",ki);
         telemetry.addData("KD:",kd);
@@ -44,14 +44,14 @@ public class VelocityPIDTune extends OpMode implements Constants {
             robot.frontRight.setPower(rightPower);
             robot.backLeft.setPower(leftPower);*/
             setKp = false;
-            robot.frontLeft.setVelocity(leftPower);
+            robot.backRight.setSpeed(leftPower);
         }
         if(gamepad1.b){
 /*            robot.backRight.setPower(0);
             robot.frontRight.setPower(0);
             robot.backLeft.setPower(0);
             robot.frontLeft.setPower(0);*/
-            robot.frontLeft.setVelocity(0);
+            robot.backRight.setPower(0);
         }
         if(gamepad1.dpad_up){
             kp += .001;
@@ -59,16 +59,17 @@ public class VelocityPIDTune extends OpMode implements Constants {
         if(gamepad1.dpad_down) kp -= .001;
 
         if(gamepad1.y){
-            robot.frontLeft.PIDController.setKp(kp);
+            robot.backRight.PIDController.setKp(kp);
             setKp = true;
         }
 
 /*        telemetry.addData("backRightRPM:",robot.backRight.getVelocity());
         telemetry.addData("frontRightRPM:",robot.frontRight.getVelocity());
         telemetry.addData("backLeftRPM:",robot.backLeft.getVelocity());*/
-        telemetry.addData("Motor Velocity:",robot.frontLeft.getVelocity());
-        telemetry.addData("Motor RPM:",robot.frontLeft.getRPM());
-        telemetry.addData("Target Velocity: ", robot.frontLeft.getTargetVelocity(leftPower));
+        telemetry.addData("Motor Velocity:",robot.backRight.getVelocity());
+        telemetry.addData("Motor Power:",robot.backRight.getPower());
+        telemetry.addData("Motor RPM:",robot.backRight.getRPM());
+        telemetry.addData("Target RPM: ", robot.backRight.getTargetVelocity(leftPower));
         //telemetry.addData("RightPower:",rightPower);
         telemetry.addData("LeftPower:",leftPower);
         telemetry.addData("KP:",kp);

@@ -64,7 +64,8 @@ public class PathFollower implements Constants {
         double theta = Math.toRadians(imu.getRelativeYaw());
         double newEncoderTicks = (robot.frontLeft.getCurrentPosition()-robot.frontRight.getCurrentPosition())/2;
         double encoderTicks = newEncoderTicks-oldEncoderTicks;
-        double magnitude = -encoderTicks*WHEEL_DIAMETER*Math.PI/DT_GEARBOX_TICKS_PER_ROTATION;
+        //double magnitude = -encoderTicks*WHEEL_DIAMETER*Math.PI/DT_GEARBOX_TICKS_PER_ROTATION;
+        double magnitude = -encoderTicks*WHEEL_DIAMETER*Math.PI/NEVEREST20_COUNTS_PER_REV;
         float deltaX = (float)(magnitude*Math.cos(theta));
         float deltaY = (float)(magnitude*Math.sin(theta));
         coordinate.set(coordinate.x +deltaX,coordinate.y + deltaY);

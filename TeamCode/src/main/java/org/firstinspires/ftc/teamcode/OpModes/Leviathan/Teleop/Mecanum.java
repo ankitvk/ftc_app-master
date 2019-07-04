@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 
 import ftc.library.MaelUtils.MaelUtils;
 
-@TeleOp(name="Opportunity")
+@TeleOp(name="Opportunity Field Centric")
 public class Mecanum extends LinearOpMode implements Constants {
 
     public Hardware r = new Hardware();
@@ -40,9 +40,8 @@ public class Mecanum extends LinearOpMode implements Constants {
             double leftY = gamepad1.left_stick_y;
             double leftX = gamepad1.left_stick_x;
             double rightX = gamepad1.right_stick_x;
-
             double x = leftY;
-            double y = leftX;
+            double y = -leftX;
 
             double angle = Math.atan2(y, x);
             double fieldCentric = angle - Math.toRadians(r.imu.getYaw());
@@ -64,11 +63,11 @@ public class Mecanum extends LinearOpMode implements Constants {
             r.frontRight.setPower(speeds[2]);
             r.backRight.setPower(speeds[3]);
 
-            telemetry.addData("FL Vel: ", r.frontLeft.getVelocity());
-            telemetry.addData("BL Vel: ", r.backLeft.getVelocity());
-            telemetry.addData("FR Vel: ", r.frontRight.getVelocity());
-            telemetry.addData("BR Vel: ", r.backRight.getVelocity());
-            telemetry.addData("imu Vel: ", r.imu.getYaw());
+            telemetry.addData("FL: ", r.frontLeft.getPower());
+            telemetry.addData("BL: ", r.backLeft.getPower());
+            telemetry.addData("FR: ", r.frontRight.getPower());
+            telemetry.addData("BR: ", r.backRight.getPower());
+            telemetry.addData("imu: ", r.imu.getYaw());
             telemetry.update();
 
             if (gamepad1.left_stick_button && gamepad1.right_stick_button) r.imu.resetYaw();

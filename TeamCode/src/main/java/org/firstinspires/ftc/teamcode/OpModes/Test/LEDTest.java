@@ -5,6 +5,7 @@ import android.graphics.Color;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.lynx.LynxNackException;
 import com.qualcomm.hardware.lynx.commands.core.LynxI2cConfigureChannelCommand;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -14,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Control.PIDController;
 import org.firstinspires.ftc.teamcode.Drivers.LEDRiver;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
-
+@Disabled
 @TeleOp(name = "LEDRiver Demo")
 public class LEDTest extends LinearOpMode implements Constants {
 

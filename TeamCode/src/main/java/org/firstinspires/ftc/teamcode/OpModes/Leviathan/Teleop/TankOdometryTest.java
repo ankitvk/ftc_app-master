@@ -14,16 +14,16 @@ public class TankOdometryTest extends MaelLinearOp implements Constants {
     @Override
     public void run() throws InterruptedException {
 
-        leviathan.initHardware(hardwareMap);
-        leviathan.tracker.gearRatio = DT_GEAR_RATIO;
-        MaelPose currPoint = leviathan.tracker.toPose();
+/*        leviathan.initHardware(hardwareMap);
+        leviathan.tankTracker.gearRatio = DT_GEAR_RATIO;
+        MaelPose currPoint = leviathan.tankTracker.toPose();
 
         while(!opModeIsActive()){
             feed.add("Tank Odometry Test");
             feed.add("Op Mode State Active? : ", opModeIsActive());
             feed.add("Tracker X: ",currPoint.x);
             feed.add("Tracker Y: ", currPoint.y);
-            feed.add("Distance: ", leviathan.tracker.trackDistance());
+            feed.add("Distance: ", leviathan.tankTracker.trackDistance());
             feed.add("Angle: ", currPoint.angle);
             feed.update();
         }
@@ -35,9 +35,14 @@ public class TankOdometryTest extends MaelLinearOp implements Constants {
             feed.add("Op Mode State Active? : ", opModeIsActive());
             feed.add("Tracker X: ",currPoint.x);
             feed.add("Tracker Y: ", currPoint.y);
-            feed.add("Distance: ", leviathan.tracker.trackDistance());
+            feed.add("Distance: ", leviathan.tankTracker.trackDistance());
             feed.add("Angle: ", currPoint.angle);
             feed.update();
-        }
+        }*/
+    }
+
+    @Override
+    public void initHardware() {
+
     }
 }

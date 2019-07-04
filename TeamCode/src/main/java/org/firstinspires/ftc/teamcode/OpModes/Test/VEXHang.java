@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Subsystems.Components.Drivetrain;
-
+@Disabled
 @TeleOp(name = "VEX Hang",group = "Test")
 public class VEXHang extends LinearOpMode{
 

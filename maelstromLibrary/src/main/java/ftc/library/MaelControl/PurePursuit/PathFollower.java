@@ -13,21 +13,23 @@ public class PathFollower implements LibConstants {
     TankOdometry tracker;
     MaelRobot robot;
     MaelTellemetry feed;
-    private MaelPose initial = new MaelPose(0,0);
+    private MaelPose current;
     private MaelPose goal = new MaelPose(0,0);
     private double lookAhead = 1;
-    private double distanceBetweenWheels = 18;
+    public double distanceBetweenWheels = 18;
     double leftVelocity = 0;
     double rightVelocity = 0;
     private double r = 0;
-    private ArrayList<MaelPose> wayPoints;
+    private double t = 0;
+    public ArrayList<MaelPose> wayPoints;
 
     public PathFollower(MaelRobot robot){
         this.robot = robot;
         tracker = robot.tankTracker;
+        current = tracker.toPose();
         feed = MaelUtils.feed;
     }
-
+    //ignore, useless
     public MaelPose trackPosition(){
         return tracker.toVehiclePose(goal);
     }
@@ -40,7 +42,7 @@ public class PathFollower implements LibConstants {
 
         return MaelMath.calculateDistance(goal,tracker.toPose());
     }
-
+    //ignore
     public double[] getWheelVelocities(){
         double omega = Math.toRadians(robot.imu.getYawVelocity()) * getRadius();
         double targetVelocity = omega/getCurvature();
@@ -53,22 +55,45 @@ public class PathFollower implements LibConstants {
         return wheelVelocities;
     }
 
+    private double getLookAheadSide(){
+        MaelPose lookAheadPoint = getLookAheadPoint();
+        double xSide = Math.sin(tracker.getHeading())*(lookAheadPoint.x - current.x);
+        double ySide = Math.cos(tracker.getHeading()) * (lookAheadPoint.y - current.y);
+        double side = Math.signum(xSide - ySide);
+        return side;
+    }
+
     public double getCurvature(){
         //double distanceError = (Math.exp(goal.x - initial.x) + Math.exp(goal.y));
-        double curvature = (2*(goal.x - initial.x))/Math.exp(getDistance());
-        return curvature;
+        double curvature = (2*(getRobotLine()))/Math.exp(lookAhead);
+        return getLookAheadSide()*curvature;
+    }
+
+    private double getRobotLine(){
+        double a = -Math.tan(tracker.getHeading());
+        double b = 1;
+        double c = -a * tracker.getX() - tracker.getY();
+        MaelPose lookAhead = getLookAheadPoint();
+        double x = Math.abs(a*lookAhead.x + b*lookAhead.y + c)/(Math.sqrt((a*a) + (b*b)));
+        return x;
     }
 
     public double getVelocity(){
         return robot.imu.getYawVelocity() * getCurvature();
     }
 
-    public double[] deriveSpeeds(){
+    public double[] deriveSpeeds(double targetVelocity){
         double r = getRadius();
         double d = distanceBetweenWheels;
         double constantVelocity = (r - (d / 2))/(r + (d / 2));
+        if(getCurvature() < 0){
+            leftVelocity = targetVelocity;
+            rightVelocity = leftVelocity * constantVelocity;
+        }
+        else if(getCurvature() > 0){
+        rightVelocity = targetVelocity;
         leftVelocity = rightVelocity * constantVelocity;
-        double rightVelocity = leftVelocity * constantVelocity;
+        }
         double speeds[] = {leftVelocity,rightVelocity};
         return speeds;
     }
@@ -102,19 +127,26 @@ public class PathFollower implements LibConstants {
         CurvePoint followMe = getFollowPoint(allPoints,tracker.toPose(),
                 allPoints.get(0).followDistance);
 
-        goToPostition(followMe.x,followMe.y,followMe.moveSpeed);
+        goToPosition(followMe.x,followMe.y,followMe.moveSpeed);
 
     }
 
+    public void followPath(double velocity){
+        double left = deriveSpeeds(velocity)[0];
+        double right = deriveSpeeds(velocity)[1];
+        double maxRpm = robot.dt.leftDrive.motor1.getRPM();
+        robot.dt.leftDrive.setVelocity(left*maxRpm);
+        robot.dt.rightDrive.setVelocity(right*maxRpm);
+    }
 
 
-
-
-    public void goToPostition(double x, double y, double speed){
+    //ignore, gf stuff
+    public void goToPosition(double x, double y, double speed){
 
         double robotX = tracker.getX();
         double robotY = tracker.getY();
         double robotAngle = tracker.getHeading();
+        tracker.update();
 
         double distanceToTarget = Math.hypot(x - robotX,y - robotX);
 
@@ -139,7 +171,7 @@ public class PathFollower implements LibConstants {
         feed.update();
 
     }
-
+    //ignore, gf stuff
     public void drive(double xMovement, double yMovement, double turnMovement){
         double tl = yMovement + xMovement - turnMovement*1.5;
         double bl = yMovement - xMovement + turnMovement*1.5;
@@ -174,20 +206,20 @@ public class PathFollower implements LibConstants {
         return r;
     }
 
- /*   public MaelPose getLookAheadPoint(){
-        MaelVector start = wayPoints.get(0).toVector();
-        MaelVector center = tracker.toVector();
-        MaelVector end = wayPoints.get(wayPoints.size() - 1).toVector();
+    public MaelPose getLookAheadPoint(){
+        MaelPose start = wayPoints.get(0);
+        MaelPose center = tracker.toPose();
+        MaelPose end = wayPoints.get(wayPoints.size() - 1);
 
-        MaelVector d = end.displacement(start);
-        MaelVector f = start.displacement(center);
+        MaelVector d = new MaelVector(end.x - start.x,end.y - start.y);
+        MaelVector f = new MaelVector(start.x - center.x,start.y - center.y);
 
         double a = d.dotProdcut(d);
         double b = 2 * f.dotProdcut(d);
         double c = f.dotProdcut(f) - (lookAhead * lookAhead);
         double discriminant = (b*b) - 4*(a*c);
 
-        if(discriminant < 0){
+            if(discriminant < 0){
             //no intersection
         }
         else{
@@ -196,13 +228,19 @@ public class PathFollower implements LibConstants {
             double t2 = (-b + discriminant) / (2*a);
 
             if (t1 >= 0 && t1 <= 1) {
-                return t1;
+                //return t1;
+                t = t1;
             }
+            if(t2>= 0 && t2 <= 1){
+                t = t2;
             }
         }
 
-    }*/
-
+        MaelPose lookAheadPoint = new MaelPose(start.x + t*d.x,start.y + t*d.y);
+        goal = lookAheadPoint;
+        return lookAheadPoint;
+    }
+    //ignore
     public static double[][] doubleArrayCopy(double[][] arr)
     {
 
@@ -222,7 +260,35 @@ public class PathFollower implements LibConstants {
         return temp;
 
     }
+    //ignore
+    public static ArrayList<MaelPose> doubleArrayCopy(ArrayList<MaelPose> arr){
 
+        ArrayList<MaelPose> temp = new ArrayList<>();
+
+        for(int i = 0; i<arr.size(); i++){
+            temp.add(arr.get(i));
+        }
+
+        return temp;
+    }
+    //ignore
+    public static ArrayList<MaelPose> smoothPath(ArrayList<MaelPose> path, double weightData, double weightSmooth, double tolerance){
+        ArrayList<MaelPose> newPath = doubleArrayCopy(path);
+
+        double change = tolerance;
+        while(change >= tolerance){
+            change = 0.0;
+            for(int i=1; i<path.size() - 1; i++){
+/*                for(int j = 0; j<path.get(i).x; j++){
+
+                }*/
+
+
+            }
+        }
+        return newPath;
+    }
+    //ignore
     public double[][] smoother(double[][] path, double weight_data, double weight_smooth, double tolerance)
     {
 

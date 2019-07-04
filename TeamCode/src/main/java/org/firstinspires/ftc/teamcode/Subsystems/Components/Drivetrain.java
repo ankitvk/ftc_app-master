@@ -16,14 +16,17 @@ import ftc.library.MaelUtils.MaelUtils;
 
 public class Drivetrain implements Constants {
 
-    private SpeedControlledMotor frontLeft,backLeft,frontRight,backRight;
+    public SpeedControlledMotor frontLeft,backLeft,frontRight,backRight;
     private BNO055_IMU imu;
     private AutonomousOpMode auto;
+    public boolean active = false;
     public Telemetry telemetry;
     private Hardware hardware;
     private double desiredPitch = 0;
     public double speedMultipler = 0;
     public double turnMultipler = 0;
+    public PIDController turnPid = new PIDController(turnKp,turnKi,turnKd,1);
+    public PIDController distancePid = new PIDController(distanceKp,distanceKi,distanceKd,1);
 
     public Drivetrain(Hardware hardware){
         this.hardware = hardware;
@@ -42,7 +45,7 @@ public class Drivetrain implements Constants {
         }
     }
 
-    private void eReset() {
+    public void eReset() {
 
         for(SpeedControlledMotor motor: hardware.drivetrainMotors) {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -55,6 +58,100 @@ public class Drivetrain implements Constants {
         hardware.backLeft.setPower(-speed);
         hardware.frontRight.setPower(speed);
         hardware.backRight.setPower(speed);
+    }
+
+    public void turn(double angle, Gamepad gamepad){
+        eReset();
+        long startTime = System.nanoTime();
+        long stopState = 0;
+        while(opModeIsActive() && (stopState <= 1000)){
+            double currentAngle = imu.getRelativeYaw();
+            double power = turnPid.power(angle, currentAngle);
+
+            frontLeft.setPower(power);
+            backLeft.setPower(power);
+            frontRight.setPower(-power);
+            backRight.setPower(-power);
+            telemetry.addData("Current Angle: ",currentAngle);
+            telemetry.addData("Target: ",angle);
+            telemetry.addData("Error: ", angle - currentAngle);
+            telemetry.addData("Power: ", power);
+            telemetry.addData("P:",turnPid.returnVal()[0]);
+            telemetry.addData("I:",turnPid.returnVal()[1]);
+            telemetry.addData("D:",turnPid.returnVal()[2]);
+            telemetry.addData("Stop State:",stopState);
+            telemetry.addData("imu:",imu.getYaw());
+            telemetry.update();
+
+            if(Math.abs(angle - currentAngle) <= 0.5){
+                stopState = (System.nanoTime() - startTime) / 1000000;
+            }
+            else{
+                startTime = System.nanoTime();
+            }
+            if(gamepad.b) break;
+
+        }
+        stop();
+
+    }
+
+    public void driveDistance(double distance, double angle, double maxSpeed, Gamepad gamepad){
+        long startTime = System.nanoTime();
+        long stopState = 0;
+        angle = Math.toRadians(angle);
+        double inititalHeading = imu.getYaw();
+        double adjustedAngle = angle + Math.PI/4;
+        double speeds[] = {Math.sin(adjustedAngle), Math.cos(adjustedAngle), Math.cos(adjustedAngle), Math.sin(adjustedAngle)};
+
+        eReset();
+        double fl = AUTO_SPEED_MULTIPLIER * speeds[0];
+        double bl = AUTO_SPEED_MULTIPLIER * speeds[1];
+        double fr = AUTO_SPEED_MULTIPLIER * speeds[2];
+        double br = AUTO_SPEED_MULTIPLIER * speeds[3];
+
+        while(opModeIsActive() && (stopState <= 1000)){
+            double currDistance = ok(frontRight.getCurrentPosition());
+            double pidPower = distancePid.power(distance,currDistance);
+            double angleCorrection = /*turnPid.power(inititalHeading,imu.getYaw())*/0;
+
+            speeds[0] = fl*pidPower;
+            speeds[1] = bl*pidPower;
+            speeds[2] = fr*pidPower;
+            speeds[3] = br*pidPower;
+
+            MaelUtils.normalizeSpeedsToMax(speeds,maxSpeed);
+
+            frontLeft.setPower(speeds[0] - angleCorrection);
+            backLeft.setPower(speeds[1] - angleCorrection);
+            frontRight.setPower(speeds[2] + angleCorrection);
+            backRight.setPower(speeds[3] + angleCorrection);
+
+            telemetry.addData("Current Distance: ",currDistance);
+            telemetry.addData("Target: ",distance);
+            telemetry.addData("Error: ", distance - currDistance);
+            telemetry.addData("Distance power: ", pidPower);
+            telemetry.addData("Angle Correction: ", angleCorrection);
+            telemetry.addData("P:",distancePid.returnVal()[0]);
+            telemetry.addData("I:",distancePid.returnVal()[1]);
+            telemetry.addData("D:",distancePid.returnVal()[2]);
+            telemetry.addData("Stop State:",stopState);
+            telemetry.addData("imu:",imu.getYaw());
+            telemetry.update();
+
+            if(Math.abs(distance - currDistance) <= 0.5){
+                stopState = (System.nanoTime() - startTime) / 1000000;
+            }
+            else{
+                startTime = System.nanoTime();
+            }
+            if(gamepad.b) break;
+
+        }
+        stop();
+
+        //double speeds[] = {(),(),(),()};
+
     }
 
     public void driveForwardDistance(double distance){
@@ -235,6 +332,9 @@ public class Drivetrain implements Constants {
     }
     private double ticksToDistance(double ticks){
         return (ticks*(WHEEL_DIAMETER*Math.PI))/DT_GEARBOX_TICKS_PER_ROTATION;
+    }
+    private double ok(double ticks){
+        return (ticks*(WHEEL_DIAMETER*Math.PI))/NEVEREST20_COUNTS_PER_REV;
     }
 
     public void rotateToRelativeAngle(double degrees){

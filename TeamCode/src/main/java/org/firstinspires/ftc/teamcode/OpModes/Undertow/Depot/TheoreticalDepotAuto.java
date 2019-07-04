@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Subsystems.Components.Drivetrain;
 import org.firstinspires.ftc.teamcode.Subsystems.PathFollower;
 
-@Disabled
+//@Disabled
 @Autonomous(name = "Wacky",group = "Depot")
 public class TheoreticalDepotAuto extends LinearOpMode implements AutonomousOpMode,Constants {
     private Hardware robot = new Hardware();
@@ -28,17 +28,16 @@ public class TheoreticalDepotAuto extends LinearOpMode implements AutonomousOpMo
     public void runOpMode() {
 
         robot.setAuto(this, telemetry);
-
-        Drivetrain drivetrain = new Drivetrain(robot);
+        robot.opportunityInit(hardwareMap);
         PathFollower track = new PathFollower(this,robot,telemetry);
-        robot.init(hardwareMap);
         //start opencv
 
         waitForStart();
 
-        track.trackPoint(0,10);
-        track.trackPoint(10,20);
+        track.trackPoint(0,5);
 
-    drivetrain.stop();
+        //track.trackPoint(10,20);
+
+        robot.drivetrain.stop();
     }//end opMode
 }
