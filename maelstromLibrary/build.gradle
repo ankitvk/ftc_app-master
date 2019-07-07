@@ -26,7 +26,7 @@ task createJar(type: Copy) {
     from('build/intermediates/bundles/release/')
     into('libs/jars/')
     include('classes.jar')
-    rename('classes.jar', 'maelstromLib.jar')
+    rename('classes.jar', 'MaelstromRC.jar')
 }
 createJar.dependsOn(deleteJar, build)
 apply from: 'build.release.gradle'
@@ -35,4 +35,5 @@ createJar.dependsOn(deleteJar, build)*/
 
 dependencies {
     implementation project(':FtcRobotController')
+    implementation 'junit:junit:4.12'
 }

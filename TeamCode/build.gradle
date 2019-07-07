@@ -16,4 +16,5 @@ dependencies {
     implementation project(':DogeCV')
     implementation project(':maelstromLibrary')
     implementation 'com.android.support:multidex:1.0.3'
+    implementation 'junit:junit:4.12'
 }

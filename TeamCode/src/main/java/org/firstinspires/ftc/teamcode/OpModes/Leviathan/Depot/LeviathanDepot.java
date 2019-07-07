@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.OpModes.Leviathan.Depot;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -9,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
 import org.firstinspires.ftc.teamcode.Subsystems.GoldFind;
 import org.firstinspires.ftc.teamcode.Subsystems.Paths.Prototype.IdentifyGold;
-
+@Disabled
 @Autonomous(name = "LeviathanDepot",group = "Depot")
 public class LeviathanDepot extends LinearOpMode implements AutonomousOpMode,Constants {
     Hardware robot = new Hardware();

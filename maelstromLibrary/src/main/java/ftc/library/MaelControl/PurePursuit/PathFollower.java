@@ -2,6 +2,7 @@ package ftc.library.MaelControl.PurePursuit;
 
 import java.util.ArrayList;
 
+import ftc.library.MaelControl.PurePursuit.warriorlib.Path;
 import ftc.library.MaelRobot;
 import ftc.library.MaelSensors.MaelOdometry.TankOdometry;
 import ftc.library.MaelUtils.LibConstants;
@@ -14,14 +15,16 @@ public class PathFollower implements LibConstants {
     MaelRobot robot;
     MaelTellemetry feed;
     private MaelPose current;
-    private MaelPose goal = new MaelPose(0,0);
+    private MaelPose goal;
     private double lookAhead = 1;
     public double distanceBetweenWheels = 18;
     double leftVelocity = 0;
     double rightVelocity = 0;
     private double r = 0;
+    public double distanceError = 0;
     private double t = 0;
-    public ArrayList<MaelPose> wayPoints;
+    private double endKp = 0.04;
+    private Path path = new Path();
 
     public PathFollower(MaelRobot robot){
         this.robot = robot;
@@ -39,6 +42,7 @@ public class PathFollower implements LibConstants {
         double goalDistance = Math.hypot(goal.x,goal.y);
         double error = goalDistance - current;
         return error;*/
+        tracker.update();
 
         return MaelMath.calculateDistance(goal,tracker.toPose());
     }
@@ -56,6 +60,7 @@ public class PathFollower implements LibConstants {
     }
 
     private double getLookAheadSide(){
+        tracker.update();
         MaelPose lookAheadPoint = getLookAheadPoint();
         double xSide = Math.sin(tracker.getHeading())*(lookAheadPoint.x - current.x);
         double ySide = Math.cos(tracker.getHeading()) * (lookAheadPoint.y - current.y);
@@ -64,12 +69,14 @@ public class PathFollower implements LibConstants {
     }
 
     public double getCurvature(){
+        tracker.update();
         //double distanceError = (Math.exp(goal.x - initial.x) + Math.exp(goal.y));
         double curvature = (2*(getRobotLine()))/Math.exp(lookAhead);
         return getLookAheadSide()*curvature;
     }
 
     private double getRobotLine(){
+        tracker.update();
         double a = -Math.tan(tracker.getHeading());
         double b = 1;
         double c = -a * tracker.getX() - tracker.getY();
@@ -83,6 +90,7 @@ public class PathFollower implements LibConstants {
     }
 
     public double[] deriveSpeeds(double targetVelocity){
+        tracker.update();
         double r = getRadius();
         double d = distanceBetweenWheels;
         double constantVelocity = (r - (d / 2))/(r + (d / 2));
@@ -90,14 +98,17 @@ public class PathFollower implements LibConstants {
             leftVelocity = targetVelocity;
             rightVelocity = leftVelocity * constantVelocity;
         }
-        else if(getCurvature() > 0){
+        if(getCurvature() > 0){
         rightVelocity = targetVelocity;
         leftVelocity = rightVelocity * constantVelocity;
         }
+        /*rightVelocity = targetVelocity;
+        leftVelocity = rightVelocity * constantVelocity;*/
         double speeds[] = {leftVelocity,rightVelocity};
+        //MaelUtils.normalizeValues(speeds);
         return speeds;
     }
-
+    //ignore, gf stuff
     public CurvePoint getFollowPoint(ArrayList<CurvePoint> pathPoints, MaelPose robot, double followradius){
         CurvePoint followMe = new CurvePoint(pathPoints.get(0));
 
@@ -122,7 +133,7 @@ public class PathFollower implements LibConstants {
         }
         return followMe;
     }
-
+    //ignore, gf stuff
     public void followCurve(ArrayList<CurvePoint> allPoints, double followAngle){
         CurvePoint followMe = getFollowPoint(allPoints,tracker.toPose(),
                 allPoints.get(0).followDistance);
@@ -131,12 +142,58 @@ public class PathFollower implements LibConstants {
 
     }
 
+    public void write(String m, Object v){
+        System.out.println(m + v);
+    }
+
     public void followPath(double velocity){
-        double left = deriveSpeeds(velocity)[0];
-        double right = deriveSpeeds(velocity)[1];
-        double maxRpm = robot.dt.leftDrive.motor1.getRPM();
-        robot.dt.leftDrive.setVelocity(left*maxRpm);
-        robot.dt.rightDrive.setVelocity(right*maxRpm);
+        while(!MaelUtils.linearOpMode.isStopRequested()){
+            tracker.update();
+            double maxRpm = robot.dt.fl.getRPM();
+            double left = deriveSpeeds(velocity)[0]/* / maxRpm*/;
+            double right = deriveSpeeds(velocity)[1]/* / maxRpm*/;
+            robot.dt.leftDrive.setVelocity(left);
+            robot.dt.rightDrive.setVelocity(-right);
+            MaelPose endPoint = path.getEndPoint();
+            distanceError = MaelMath.calculateDistance(current,endPoint);
+            double initialVelocity = velocity;
+
+            //System.out.println("");
+
+           feed.add("X: ",robot.tankTracker.getX());
+            feed.add("Y: ",robot.tankTracker.getY());
+            feed.add("Heading: ",robot.tankTracker.getHeading());
+            feed.add("LookAhead X: ",getLookAheadPoint().x);
+            feed.add("LookAhead Y: ",getLookAheadPoint().y);
+            feed.add("Left Power ",left);
+            feed.add("Right Power ",right);
+            feed.update();
+
+/*            write("X: ",robot.tankTracker.getX());
+            write("Y: ",robot.tankTracker.getY());
+            write("Heading: ",robot.tankTracker.getHeading());
+            write("LookAhead X: ",getLookAheadPoint().x);
+            write("LookAhead Y: ",getLookAheadPoint().y);
+            write("Left Power ",left);
+            write("Right Power ",right);*/
+            //feed.update();
+
+            if(distanceError <= 5) break;
+
+            try{
+                Thread.sleep(1);
+            }
+            catch (InterruptedException e){
+                e.printStackTrace();
+            }
+
+            if(MaelUtils.linearOpMode.isStopRequested()) break;
+        }
+/*        if(distanceError <= lookAhead){
+           double targetVelocity  = initialVelocity*(distanceError / lookAhead) * endKp;
+            robot.dt.leftDrive.setVelocity(targetVelocity);
+            robot.dt.rightDrive.setVelocity(targetVelocity);
+        }*/
     }
 
 
@@ -202,14 +259,16 @@ public class PathFollower implements LibConstants {
 
 
     public double getRadius(){
+        tracker.update();
         double r = 1 / getCurvature();
         return r;
     }
 
     public MaelPose getLookAheadPoint(){
-        MaelPose start = wayPoints.get(0);
+        tracker.update();
+        MaelPose start = path.getStartPoint();
         MaelPose center = tracker.toPose();
-        MaelPose end = wayPoints.get(wayPoints.size() - 1);
+        MaelPose end = path.getEndPoint();
 
         MaelVector d = new MaelVector(end.x - start.x,end.y - start.y);
         MaelVector f = new MaelVector(start.x - center.x,start.y - center.y);
@@ -282,8 +341,6 @@ public class PathFollower implements LibConstants {
 /*                for(int j = 0; j<path.get(i).x; j++){
 
                 }*/
-
-
             }
         }
         return newPath;
@@ -319,4 +376,8 @@ public class PathFollower implements LibConstants {
     public double getLookAhead(){return lookAhead;}
 
     public void setLookAhead(double lookAhead){this.lookAhead = lookAhead;}
+
+    public Path getPath(){return path;}
+
+    public void setPath(Path path){this.path = path;}
 }

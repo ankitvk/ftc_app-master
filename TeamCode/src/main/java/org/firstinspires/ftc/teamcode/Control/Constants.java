@@ -127,6 +127,20 @@ public interface Constants {
     double velocityKi = 0;
     double velocityKd = 0;
 
+    double distanceKp = .03;
+    double distanceKi = 0;
+    double distanceKd = .00001;
+    //private double kp = .029, ki = 0, kd = 0.00003;
+
+    double turnKp = .03;
+    double turnKi = 0;
+    double turnKd = 0.000011;
+
+    double dtMaxRpm = 340;
+
+    double AUTO_SPEED_MULTIPLIER = 1;
+
+
     String LICENSE_KEY = "AbxcZxf/////AAABmYehhkt9/k+lgWzWDZFG64eH2XR0TK1U2WbaJWSXrI" +
             "BuB4xBU9FpE1oHH3WHomRfTKwInQH9f18rQNXlH0LoYQmYHUR30N4" +
             "7eierR8KeOCKWOz/ew5qYXDq5W4hy20SDt6/GrORnhVttBPrp1lu+RllaRA" +

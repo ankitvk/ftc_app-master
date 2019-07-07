@@ -29,10 +29,11 @@ public class MaelMotor implements LibConstants {
   private double minPosition=0, maxPosition=0;
   private double previousVelocity=0;
   private double acceleration=0;
+  private double pidPower = 0;
   private double previousAcceleration = 0;
   //private double motorCounts = NEVEREST_40_COUNTS_PER_REV;
   private boolean isStalled = false, stallDetection = false,stalled = false;
-  private boolean closedLoop, limitDetection = false;
+  private boolean closedLoop = false, limitDetection = false;
   private Runnable stallAction = new Runnable() {
       @Override
       public void run() {
@@ -117,8 +118,8 @@ public class MaelMotor implements LibConstants {
         }
         return currVelocity;*/
         int deltaPos = getCounts() - previousPos;
-        //double deltaTime = (System.nanoTime() - previousTime)/NANOSECS_PER_SEC;
-        double deltaTime = MaelUtils.getDeltaTime();
+        double deltaTime = (System.nanoTime() - previousTime)/NANOSECS_PER_SEC;
+        //double deltaTime = MaelUtils.getDeltaTime();
         if (deltaTime*6e4 > 10) {
             currVelocity = (deltaPos/ getCPR())/(deltaTime);
             previousPos = motor.getCurrentPosition();
@@ -134,19 +135,20 @@ public class MaelMotor implements LibConstants {
 
     public void setVelocity(double velocity){
         double targetVelocity = getTargetVelocity(velocity);
-        if(!closedLoop) power = velocity;
-        else power = PID.power(targetVelocity,getVelocity());
-        if(limitDetection){
+        if(closedLoop){ pidPower = PID.power(targetVelocity,getVelocity());}
+        else {pidPower = velocity;}
+        /*if(limitDetection){
             if (minLim != null && minLim.pressed() && power < 0 ||
                     maxLim != null && maxLim.pressed() && power > 0)
                 motorPower = 0;
             else if (minLim != null && minLim.pressed()
                     && power < 0 && maxLim == null)
                 motorPower = 0;
-        }
-        if(Math.abs(motorPower) < minPower && minPosition != 0) motorPower = 0;
-        setPower(power);
+        }*/
+        setPower(pidPower);
     }
+
+    public double getPidPower(){return pidPower;}
 
     public void setClosedLoop(boolean state){this.closedLoop = state;}
 
@@ -170,7 +172,7 @@ public class MaelMotor implements LibConstants {
     }
 
     public void setSpeed(double speed){
-        double rpm = getCPR() * speed;
+        double rpm = getRPM() * speed;
         power = PID.power(rpm, getRPM());
         motor.setPower((power > 0 && getRPM() < 0) || (power < 0 && getRPM() > 0) ? 0: power);
     }

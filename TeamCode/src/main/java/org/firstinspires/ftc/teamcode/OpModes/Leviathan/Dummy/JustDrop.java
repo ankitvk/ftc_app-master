@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.OpModes.Leviathan.Dummy;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Control.AutonomousOpMode;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Hardware.Hardware;
-
+@Disabled
 @Autonomous(name = "JustDrop",group = "Dummy")
 public class JustDrop extends LinearOpMode implements AutonomousOpMode,Constants{
     Hardware robot = new Hardware();

@@ -17,8 +17,8 @@ public class TankOdometryTesting extends MaelLinearOp implements Constants {
     public void run() throws InterruptedException {
         robot.initHardware(hardwareMap);
         //hardwareThread.run();
-        robot.dt.bl.setClosedLoop(true);
-        robot.dt.bl.setPID(1,0,0);
+        robot.dt.bl.setClosedLoop(false);
+        robot.dt.bl.setPID(.7,0,0);
         while(!opModeIsActive()){
             robot.tankTracker.update();
             feed.add("X: ",robot.tankTracker.getX());
@@ -49,7 +49,8 @@ public class TankOdometryTesting extends MaelLinearOp implements Constants {
         long startTime = System.nanoTime();
         long stopState = 0;
         while(opModeIsActive() && stopState <= (timeout * 1000)){
-            robot.dt.bl.setVelocity(left);
+            robot.dt.leftDrive.setVelocity(left);
+            robot.dt.rightDrive.setVelocity(right);
             //robot.drive(left,right);
             robot.tankTracker.update();
 

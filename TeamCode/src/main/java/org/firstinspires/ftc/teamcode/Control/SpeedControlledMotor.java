@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Control;
 
+import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -12,12 +13,17 @@ public class SpeedControlledMotor implements Constants {
     private long previousTime = 0;
     private double rpm = 0;
     private double currVelocity = 0;
+    private double kp,ki,kd;
+    private PIDCoefficients pidCoefficients = new PIDCoefficients();
 
 
     public PIDController PIDController;
 
     public SpeedControlledMotor(double KP, double KI, double KD, double maxI) {
         this.PIDController = new PIDController(KP, KI, KD, maxI);
+        pidCoefficients.kP = kp;
+        pidCoefficients.kI = ki;
+        pidCoefficients.kD = kd;
     }
 
 
@@ -34,11 +40,11 @@ public class SpeedControlledMotor implements Constants {
     }
 
     public double getRPM() {
-        int deltaPos = motor.getCurrentPosition() - previousPos;
+        int deltaPos = getCurrentPosition() - previousPos;
         double deltaTime = (System.nanoTime() - previousTime)/NANOSECONDS_PER_MINUTE;
         if (deltaTime*6e4 > 10) {
             rpm = (deltaPos/ NEVEREST20_COUNTS_PER_REV)/(deltaTime);
-            previousPos = motor.getCurrentPosition();
+            previousPos = getCurrentPosition();
             previousTime = System.nanoTime();
         }
         return rpm;
@@ -63,7 +69,7 @@ public class SpeedControlledMotor implements Constants {
     }
 
     public double getTargetVelocity(double velocity){
-        double target = NEVEREST20_COUNTS_PER_REV * velocity;
+        double target = dtMaxRpm * velocity;
         return target;
     }
 
@@ -74,7 +80,8 @@ public class SpeedControlledMotor implements Constants {
     }
 
     public void setSpeed(double speed) {
-        double rpm = DT_MAX_RPM*speed;
+        //double rpm = dtMaxRpm*speed;
+        double rpm = getTargetVelocity(speed);
         rpmTemp = rpm;
         double power = PIDController.power(rpm, getRPM());
         //motor.setPower((power > 0 && getRPM() > 0) || (power < 0 && getRPM() < 0) ? 0: (power));
@@ -110,6 +117,16 @@ public class SpeedControlledMotor implements Constants {
 
     public double getPower() {
         return motor.getPower();
+    }
+
+    public PIDCoefficients getPIDCoeffs(){
+        return new PIDCoefficients(kp,ki,kd);
+    }
+
+    public void setPidCoefficients(double kp, double ki, double kd){
+        pidCoefficients.kP = kp;
+        pidCoefficients.kI = ki;
+        pidCoefficients.kD = kd;
     }
 
 
