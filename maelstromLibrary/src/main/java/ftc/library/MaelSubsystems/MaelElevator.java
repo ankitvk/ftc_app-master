@@ -3,7 +3,7 @@ package ftc.library.MaelSubsystems;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import ftc.library.MaelControl.PID.PIDController;
+import ftc.library.MaelControl.PID.PIDFController;
 import ftc.library.MaelMotions.MaelMotors.MaelMotor;
 import ftc.library.MaelMotions.MaelMotors.MaelMotorSystem;
 import ftc.library.MaelMotions.MaelMotors.Motor;
@@ -30,7 +30,7 @@ public class MaelElevator implements LibConstants,Subsystem {
     public double spoolDiameter = 0 ;
     public double spoolCircumference = 0 ;
     public double gearboxRatio = 0;
-    public PIDController liftPid = new PIDController(kp,ki,kd);
+    public PIDFController liftPid = new PIDFController(kp,ki,kd);
     public State state = State.STOP;
     public enum State{
         EXTEND,

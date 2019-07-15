@@ -77,7 +77,7 @@ public class Lib_Crater extends MaelLinearOp implements Constants {
             feed.update();
         }
 
-        //PIDController yeah = new PIDController(1,1,1,1);
+        //PIDFController yeah = new PIDFController(1,1,1,1);
         //double y = yeah.power(20,10);
 
         waitForStart();

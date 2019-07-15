@@ -68,6 +68,13 @@ public abstract class Odometry implements Subsystem {
         return new MaelPose(goalPointX,goalPointY,getHeading());
     }
 
+    public MaelPose centerPose(double distanceFromCenter, double phi){
+        MaelPose encoderPose = toPose();
+        //double phi = 0;
+        double xCenter = encoderPose.x + distanceFromCenter*Math.cos(phi + imu.getYaw());
+        double yCenter = encoderPose.y + distanceFromCenter*Math.sin(phi + imu.getYaw());
+        return new MaelPose(xCenter,yCenter,imu.getYaw() );
+    }
 
     public void reset(){
         x.stopAndReset();

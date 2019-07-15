@@ -32,7 +32,7 @@ public abstract class MaelLinearOp extends LinearOpMode implements LibConstants 
             controller1 = new MaelController(super.gamepad1,"controller1");
             controller2 = new MaelController(super.gamepad2,"controller2");
             initHardware();
-            //hardwareThread = new HardwareThread(MaelUtils.subsystems,this);
+            hardwareThread = new HardwareThread(MaelUtils.subsystems,this);
             run();
         }
         finally {

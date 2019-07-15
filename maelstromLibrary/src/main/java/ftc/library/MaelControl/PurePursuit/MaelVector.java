@@ -33,11 +33,59 @@ public class MaelVector implements LibConstants {
         this.distance = v.distance;
     }
 
+    public MaelVector(){}
+
     public MaelVector(MaelPose point){
         this(point.x,point.y);
     }
 
-    public MaelVector add(MaelVector a, MaelVector b, MaelVector target){
+    public MaelVector add(MaelVector a,  MaelVector target){
+        if (target == null) {
+            target = new MaelVector(this.x + a.x , this.y + a.y);
+        } else {
+            target.set(this.x + a.x , this.y + a.y,0);
+        }
+        return target;
+    }
+
+    public double norm(){
+        return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+    }
+
+    public MaelVector normalize(MaelVector target){
+        if(target == null) target = new MaelVector();
+        double m = norm();
+        if(m > 0) target.set(x / m,y / m, z / m);
+        else target.set(x,y,z);
+        return target;
+    }
+
+    public double getMagnitude(){return Math.hypot(x,y);}
+
+    public double dot(MaelVector vector){
+        return (this.x * vector.x) + (this.y * vector.y);
+    }
+
+    public MaelVector multiply(double scalar){
+        return new MaelVector(this.x * scalar,this.y * scalar);
+    }
+
+    public void mult(double scalar){
+        this.x *= scalar;
+        this.y *= scalar;
+        this.z *= scalar;
+    }
+
+    public static MaelVector mult(MaelVector a, double n, MaelVector target) {
+        if (target == null) {
+            target = new MaelVector(a.x * n, a.y * n, a.z * n);
+        } else {
+            target.set(a.x * n, a.y * n, a.z * n);
+        }
+        return target;
+    }
+
+    public static MaelVector add(MaelVector a, MaelVector b, MaelVector target) {
         if (target == null) {
             target = new MaelVector(a.x + b.x, a.y + b.y, a.z + b.z);
         } else {
@@ -46,14 +94,10 @@ public class MaelVector implements LibConstants {
         return target;
     }
 
-    public double getMagnitude(){return Math.hypot(x,y);}
-
-    public double dotProdcut(MaelVector vector){
-        return (this.x * vector.x) + (this.y * vector.y);
-    }
-
-    public MaelVector multiply(double scalar){
-        return new MaelVector(this.x * scalar,this.y * scalar);
+    public void div(MaelVector a){
+        x /= a.x;
+        y /= a.y;
+        z = a.z;
     }
 
     public MaelVector displacement(MaelVector vector){

@@ -61,7 +61,7 @@ public class PathFollower implements LibConstants {
 
     private double getLookAheadSide(){
         tracker.update();
-        MaelPose lookAheadPoint = getLookAheadPoint();
+        MaelPose lookAheadPoint = /*getLookAheadPoint()*/getLookAheadPose();
         double xSide = Math.sin(tracker.getHeading())*(lookAheadPoint.x - current.x);
         double ySide = Math.cos(tracker.getHeading()) * (lookAheadPoint.y - current.y);
         double side = Math.signum(xSide - ySide);
@@ -71,7 +71,7 @@ public class PathFollower implements LibConstants {
     public double getCurvature(){
         tracker.update();
         //double distanceError = (Math.exp(goal.x - initial.x) + Math.exp(goal.y));
-        double curvature = (2*(getRobotLine()))/Math.exp(lookAhead);
+        double curvature = (2*(getRobotLine()))/Math.pow(lookAhead,2);
         return getLookAheadSide()*curvature;
     }
 
@@ -80,7 +80,7 @@ public class PathFollower implements LibConstants {
         double a = -Math.tan(tracker.getHeading());
         double b = 1;
         double c = -a * tracker.getX() - tracker.getY();
-        MaelPose lookAhead = getLookAheadPoint();
+        MaelPose lookAhead = /*getLookAheadPoint()*/getLookAheadPose();
         double x = Math.abs(a*lookAhead.x + b*lookAhead.y + c)/(Math.sqrt((a*a) + (b*b)));
         return x;
     }
@@ -91,7 +91,7 @@ public class PathFollower implements LibConstants {
 
     public double[] deriveSpeeds(double targetVelocity){
         tracker.update();
-        double r = getRadius();
+        double r = Math.abs(getRadius());
         double d = distanceBetweenWheels;
         double constantVelocity = (r - (d / 2))/(r + (d / 2));
         if(getCurvature() < 0){
@@ -108,6 +108,31 @@ public class PathFollower implements LibConstants {
         //MaelUtils.normalizeValues(speeds);
         return speeds;
     }
+
+    public MaelPose getFollow(){
+        MaelPose followMe = path.startPose();
+
+        for(int i = 0; i < path.getPath().size(); i++){
+            MaelPose startPoint = path.startPose();
+            MaelPose endPoint = path.endPose();
+
+            ArrayList<MaelPose> intersections = MaelMath.lineCircleIntersection(current,lookAhead,startPoint,endPoint);
+
+            double closestAngle = 1000000;
+
+            for(MaelPose thisIntersection: intersections){
+
+                double angle = Math.atan2(thisIntersection.y - tracker.getY(),thisIntersection.x - tracker.getX());
+                double deltaAngle = Math.abs(MaelMath.anglewrap(angle - tracker.getHeading()));
+                if(deltaAngle < closestAngle){
+                    closestAngle = deltaAngle;
+                    followMe.setPose(thisIntersection);
+                }
+            }
+        }
+        return followMe;
+    }
+
     //ignore, gf stuff
     public CurvePoint getFollowPoint(ArrayList<CurvePoint> pathPoints, MaelPose robot, double followradius){
         CurvePoint followMe = new CurvePoint(pathPoints.get(0));
@@ -142,19 +167,166 @@ public class PathFollower implements LibConstants {
 
     }
 
+
+
+    private MaelPose getLookAheadPose(){
+        MaelPose lookAheadPoint = new MaelPose();
+
+        // iterate through all pairs of points
+        for(int i = 0; i < path.numOfPoints() - 1; i++) {
+            // form a segment from each two adjacent points
+            MaelPose start = path.getPose(i);
+            MaelPose end = path.getPose(i + i);
+
+            // translate the segment to the origin
+            MaelVector v1 = new MaelVector(start.x - current.x, start.y - current.y);
+            MaelVector v2 = new MaelVector(end.x - current.x, end.y - current.y);
+
+            // calculate an intersection of a segment and a circle with radius r (lookahead) and origin (0, 0)
+            double dx = v2.x - v1.x;
+            double dy = v2.y - v1.y;
+            double d = Math.sqrt(dx * dx + dy * dy);
+            double D = v1.x * v2.y - v2.x * v1.y;
+
+            // if the discriminant is zero or the points are equal, there is no intersection
+            double discriminant = lookAhead * lookAhead * d * d - D * D;
+            if (discriminant < 0 /*|| v1 == v2*/ || v1 == v2) continue;
+
+            // the x components of the intersecting points
+            double x1 = (D * dy + Math.signum(dy) * dx * Math.sqrt(discriminant)) / (d * d);
+            double x2 = (D * dy - Math.signum(dy) * dx * Math.sqrt(discriminant)) / (d * d);
+
+            // the y components of the intersecting points
+            double y1 = (-D * dx + Math.abs(dy) * Math.sqrt(discriminant)) / (d * d);
+            double y2 = (-D * dx - Math.abs(dy) * Math.sqrt(discriminant)) / (d * d);
+
+
+            // whether each of the intersections are within the segment (and not the entire line)
+            boolean validIntersection1 = Math.min(v1.x, v2.x) < x1 && x1 < Math.max(v1.x, v2.x)
+                    || Math.min(v1.y, v2.y) < y1 && y1 < Math.max(v1.y, v2.y);
+            boolean validIntersection2 = Math.min(v1.x, v2.x) < x2 && x2 < Math.max(v1.x, v2.x)
+                    || Math.min(v1.y, v2.y) < y2 && y2 < Math.max(v1.y, v2.y);
+
+            // remove the old lookahead if either of the points will be selected as the lookahead
+            if (validIntersection1 || validIntersection2) lookAheadPoint = null;
+
+            // select the first one if it's valid
+            if (validIntersection1) {
+                lookAheadPoint = new MaelPose(x1 + current.x, y1 + current.y);
+
+            }
+
+            // select the second one if it's valid and either lookahead is none,
+            // or it's closer to the end of the segment than the first intersection
+            if (validIntersection2) {
+                if (lookAheadPoint == null || Math.abs(x1 - v2.x) > Math.abs(x2 - v2.x) || Math.abs(y1 - v2.y) > Math.abs(y2 - v2.y)) {
+                    lookAheadPoint = new MaelPose(x2 + current.x, y2 + current.y);
+                }
+            }
+        }
+
+        // special case for the very last point on the path
+        if(path.numOfPoints() > 0){
+            MaelPose endPoint = path.endPose();
+
+            double endX = endPoint.x;
+            double endY = endPoint.y;
+
+            // if we are closer than lookahead distance to the end, set it as the lookahead
+            if (Math.sqrt((endX - current.x) * (endX - current.x) + (endY - current.y) * (endY - current.y)) <= lookAhead) {
+                    return new MaelPose(endX,endY);
+            }
+        }
+        goal = lookAheadPoint;
+        return lookAheadPoint;
+    }
+
+
+/*    private float[] getLookaheadPoint(float x, float y, float r) {
+        float[] lookahead = null;
+
+        // iterate through all pairs of points
+        for (int i = 0; i < path.size() - 1; i++) {
+            // form a segment from each two adjacent points
+            float[] segmentStart = path.get(i);
+            float[] segmentEnd = path.get(i + 1);
+
+            // translate the segment to the origin
+            float[] p1 = new float[]{segmentStart[0] - x, segmentStart[1] - y};
+            float[] p2 = new float[]{segmentEnd[0] - x, segmentEnd[1] - y};
+
+            // calculate an intersection of a segment and a circle with radius r (lookahead) and origin (0, 0)
+            float dx = p2[0] - p1[0];
+            float dy = p2[1] - p1[1];
+            float d = (float) Math.sqrt(dx * dx + dy * dy);
+            float D = p1[0] * p2[1] - p2[0] * p1[1];
+
+            // if the discriminant is zero or the points are equal, there is no intersection
+            float discriminant = r * r * d * d - D * D;
+            if (discriminant < 0 || Arrays.equals(p1, p2)) continue;
+
+            // the x components of the intersecting points
+            float x1 = (float) (D * dy + signum(dy) * dx * Math.sqrt(discriminant)) / (d * d);
+            float x2 = (float) (D * dy - signum(dy) * dx * Math.sqrt(discriminant)) / (d * d);
+
+            // the y components of the intersecting points
+            float y1 = (float) (-D * dx + Math.abs(dy) * Math.sqrt(discriminant)) / (d * d);
+            float y2 = (float) (-D * dx - Math.abs(dy) * Math.sqrt(discriminant)) / (d * d);
+
+            // whether each of the intersections are within the segment (and not the entire line)
+            boolean validIntersection1 = Math.min(p1[0], p2[0]) < x1 && x1 < Math.max(p1[0], p2[0])
+                    || Math.min(p1[1], p2[1]) < y1 && y1 < Math.max(p1[1], p2[1]);
+            boolean validIntersection2 = Math.min(p1[0], p2[0]) < x2 && x2 < Math.max(p1[0], p2[0])
+                    || Math.min(p1[1], p2[1]) < y2 && y2 < Math.max(p1[1], p2[1]);
+
+            // remove the old lookahead if either of the points will be selected as the lookahead
+            if (validIntersection1 || validIntersection2) lookahead = null;
+
+            // select the first one if it's valid
+            if (validIntersection1) {
+                lookahead = new float[]{x1 + x, y1 + y};
+            }
+
+            // select the second one if it's valid and either lookahead is none,
+            // or it's closer to the end of the segment than the first intersection
+            if (validIntersection2) {
+                if (lookahead == null || Math.abs(x1 - p2[0]) > Math.abs(x2 - p2[0]) || Math.abs(y1 - p2[1]) > Math.abs(y2 - p2[1])) {
+                    lookahead = new float[]{x2 + x, y2 + y};
+                }
+            }
+        }
+
+        // special case for the very last point on the path
+        if (path.size() > 0) {
+            float[] lastPoint = path.get(path.size() - 1);
+
+            float endX = lastPoint[0];
+            float endY = lastPoint[1];
+
+            // if we are closer than lookahead distance to the end, set it as the lookahead
+            if (Math.sqrt((endX - x) * (endX - x) + (endY - y) * (endY - y)) <= r) {
+                return new float[]{endX, endY};
+            }
+        }
+
+        return lookahead;
+    }*/
+
+
     public void write(String m, Object v){
         System.out.println(m + v);
     }
 
     public void followPath(double velocity){
         while(!MaelUtils.linearOpMode.isStopRequested()){
+            path.addPoint(current);
             tracker.update();
             double maxRpm = robot.dt.fl.getRPM();
             double left = deriveSpeeds(velocity)[0]/* / maxRpm*/;
             double right = deriveSpeeds(velocity)[1]/* / maxRpm*/;
-            robot.dt.leftDrive.setVelocity(left);
-            robot.dt.rightDrive.setVelocity(-right);
-            MaelPose endPoint = path.getEndPoint();
+            robot.dt.leftDrive.setVelocity(-left);
+            robot.dt.rightDrive.setVelocity(right);
+            MaelPose endPoint = path.endPose();
             distanceError = MaelMath.calculateDistance(current,endPoint);
             double initialVelocity = velocity;
 
@@ -163,10 +335,10 @@ public class PathFollower implements LibConstants {
            feed.add("X: ",robot.tankTracker.getX());
             feed.add("Y: ",robot.tankTracker.getY());
             feed.add("Heading: ",robot.tankTracker.getHeading());
-            feed.add("LookAhead X: ",getLookAheadPoint().x);
-            feed.add("LookAhead Y: ",getLookAheadPoint().y);
-            feed.add("Left Power ",left);
-            feed.add("Right Power ",right);
+            feed.add("LookAhead X: ",/*getLookAheadPoint().x*/getLookAheadPose().x);
+            feed.add("LookAhead Y: ",/*getLookAheadPoint().y*/getLookAheadPose().y);
+            feed.add("Left Power: ",left);
+            feed.add("Right Power: ",right);
             feed.update();
 
 /*            write("X: ",robot.tankTracker.getX());
@@ -178,7 +350,7 @@ public class PathFollower implements LibConstants {
             write("Right Power ",right);*/
             //feed.update();
 
-            if(distanceError <= 5) break;
+            //if(distanceError <= 5) break;
 
             try{
                 Thread.sleep(1);
@@ -265,17 +437,18 @@ public class PathFollower implements LibConstants {
     }
 
     public MaelPose getLookAheadPoint(){
+        //MaelMath.lineCircleIntersection()
         tracker.update();
-        MaelPose start = path.getStartPoint();
+        MaelPose start = path.startPose();
         MaelPose center = tracker.toPose();
-        MaelPose end = path.getEndPoint();
+        MaelPose end = path.endPose();
 
         MaelVector d = new MaelVector(end.x - start.x,end.y - start.y);
         MaelVector f = new MaelVector(start.x - center.x,start.y - center.y);
 
-        double a = d.dotProdcut(d);
-        double b = 2 * f.dotProdcut(d);
-        double c = f.dotProdcut(f) - (lookAhead * lookAhead);
+        double a = d.dot(d);
+        double b = 2 * f.dot(d);
+        double c = f.dot(f) - (lookAhead * lookAhead);
         double discriminant = (b*b) - 4*(a*c);
 
             if(discriminant < 0){
@@ -299,6 +472,8 @@ public class PathFollower implements LibConstants {
         goal = lookAheadPoint;
         return lookAheadPoint;
     }
+
+
     //ignore
     public static double[][] doubleArrayCopy(double[][] arr)
     {
@@ -338,15 +513,16 @@ public class PathFollower implements LibConstants {
         while(change >= tolerance){
             change = 0.0;
             for(int i=1; i<path.size() - 1; i++){
-/*                for(int j = 0; j<path.get(i).x; j++){
+/*                for(int j = 0; j<path.getPose(i).x; j++){
 
                 }*/
             }
         }
         return newPath;
     }
+
     //ignore
-    public double[][] smoother(double[][] path, double weight_data, double weight_smooth, double tolerance)
+    public double[][] r(double[][] path, double weight_data, double weight_smooth, double tolerance)
     {
 
         //copy array
@@ -368,6 +544,30 @@ public class PathFollower implements LibConstants {
         return newPath;
 
     }
+
+    public static double[][] smoother(double[][] path, double weight_data, double weight_smooth, double tolerance)
+    {
+
+        //copy array
+        double[][] newPath = path.clone();
+
+        double change = tolerance;
+        while(change >= tolerance)
+        {
+            change = 0.0;
+            for(int i=1; i<path.length-1; i++)
+                for(int j=0; j<path[i].length; j++)
+                {
+                    double aux = newPath[i][j];
+                    newPath[i][j] += weight_data * (path[i][j] - newPath[i][j]) + weight_smooth * (newPath[i-1][j] + newPath[i+1][j] - (2.0 * newPath[i][j]));
+                    change += Math.abs(aux - newPath[i][j]);
+                }
+        }
+        //System.out.println(Arrays.deepToString(newPath));
+        return newPath;
+    }
+
+
 
     public MaelPose getGoal(){return goal;}
 

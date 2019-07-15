@@ -17,6 +17,11 @@ public class MaelMath {
         return Math.hypot(x2 - x1,y2- y1);
     }
 
+    private float signum(float n) {
+        if (n == 0) return 1;
+        else return Math.signum(n);
+    }
+
     public static double anglewrap(double angle){
         while(angle < -Math.PI){
             angle += 2 * Math.PI;

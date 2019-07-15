@@ -28,8 +28,8 @@ public class TankOdometry extends Odometry implements LibConstants {
     @Override
     void updateTracker() {
         double leftDelta = (getXCounts() - prevX);
-        double rightDelta = (getYCounts() - prevY);
-        double distance = (leftDelta + rightDelta)/2;
+        //double rightDelta = (getYCounts() - prevY);
+        double distance = (leftDelta) /*+ rightDelta)/2*/;
         double theta = Math.toRadians(imu.getYaw());
         double x = distance * Math.cos(theta);
         double y = distance * Math.sin(theta);
@@ -37,7 +37,7 @@ public class TankOdometry extends Odometry implements LibConstants {
         globalY += y;
         globalHeading = theta;
         prevX = getXCounts();
-        prevY = getYCounts();
+        //prevY = getYCounts();
     }
 
     @Override

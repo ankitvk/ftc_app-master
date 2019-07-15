@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Control.Constants;
 
-import ftc.library.MaelControl.PID.PIDController;
+import ftc.library.MaelControl.PID.PIDFController;
 import ftc.library.MaelMotions.MaelMotors.MaelMotorSystem;
 import ftc.library.MaelMotions.MaelMotors.Motor;
 import ftc.library.MaelSensors.MaelLimitSwitch;
@@ -17,7 +17,7 @@ import ftc.library.MaelWrappers.MaelTellemetry;
 
 public class MaelPivot implements LibConstants, Constants, Subsystem {
 
-    private double kp = .01, ki = 0, kd = 0;
+    private double kp = .01, ki = 0, kd = 0,kf = 0;
     private double targetPosition;
     private double basePower = 1;
     private double baseDownPower = 1;
@@ -28,7 +28,7 @@ public class MaelPivot implements LibConstants, Constants, Subsystem {
     private boolean scoringPosition = false;
     double SCORE_KP = 0.5;
 
-    public PIDController pivotPid = new PIDController(kp,ki,kd,0);
+    public PIDFController pivotPid = new PIDFController(kp,ki,kd,kf,0);
     public MaelMotorSystem pivot;
     public MaelLimitSwitch limit;
     public MaelTellemetry feed;
@@ -89,7 +89,7 @@ public class MaelPivot implements LibConstants, Constants, Subsystem {
 
     public void scoringPosition(){
 
-        PIDController scoringPosition = new PIDController(1,0,0,0);
+        PIDFController scoringPosition = new PIDFController(1,0,0,0);
 
         MaelTimer timer = new MaelTimer();
         timer.startTime();
@@ -118,7 +118,7 @@ public class MaelPivot implements LibConstants, Constants, Subsystem {
     }
 
     public void downPosition(){
-        PIDController downPosition = new PIDController(1,0,0,0);
+        PIDFController downPosition = new PIDFController(1,0,0,0);
         MaelTimer timer = new MaelTimer();
         timer.startTime();
         long stopState = 0;

@@ -15,5 +15,18 @@ public class MaelPose {
         this(x,y,0);
     }
 
+    public MaelPose(MaelPose thisPose){
+        this(thisPose.x,thisPose.y,thisPose.angle);
+    }
+    public MaelPose(){}
+
     public MaelVector toVector(){return new MaelVector(x,y);}
+
+    public void setPose(MaelPose pose){
+        this.x = pose.x;
+        this.y = pose.y;
+        this.angle = pose.angle;
+    }
+
+    public MaelPose copy(){return new MaelPose(x,y,angle);}
 }

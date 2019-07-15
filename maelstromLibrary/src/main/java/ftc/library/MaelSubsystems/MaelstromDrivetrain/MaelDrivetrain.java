@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import ftc.library.MaelControl.PID.PIDController;
+import ftc.library.MaelControl.PID.PIDFController;
 import ftc.library.MaelMotions.MaelMotors.MaelMotor;
 import ftc.library.MaelMotions.MaelMotors.MaelMotorSystem;
 import ftc.library.MaelMotions.MaelMotors.Motor;
@@ -26,11 +26,11 @@ public class MaelDrivetrain {
     public double sideKp, sideKi, sideKd, sideMaxI;
 
     // public MaelUtils.AutonomousOpMode auto;
-    //public PIDController distanceDrive = new PIDController(pidPackage().getDistanceKp(),pidPackage().getDistanceKi(),pidPackage().getDistanceKd(),1);
-    public PIDController distancePid = new PIDController(distanceKp,distanceKi,distanceKd,distanceMaxI);
-    public PIDController turnPid = new PIDController(turnKp,turnKi,turnKd,turnMaxI);
-    public PIDController rangePid = new PIDController(rangeKp,rangeKi,rangeKd,rangeMaxI);
-    public PIDController sidePid = new PIDController(sideKp,sideKi,sideKd,sideMaxI);
+    //public PIDFController distanceDrive = new PIDFController(pidPackage().getDistanceKp(),pidPackage().getDistanceKi(),pidPackage().getDistanceKd(),1);
+    public PIDFController distancePid = new PIDFController(distanceKp,distanceKi,distanceKd,distanceMaxI);
+    public PIDFController turnPid = new PIDFController(turnKp,turnKi,turnKd,turnMaxI);
+    public PIDFController rangePid = new PIDFController(rangeKp,rangeKi,rangeKd,rangeMaxI);
+    public PIDFController sidePid = new PIDFController(sideKp,sideKi,sideKd,sideMaxI);
 
 
     public MaelDrivetrain(String name1, String name2, String name3, String name4, HardwareMap hwMap, Motor encoder) {
@@ -40,8 +40,11 @@ public class MaelDrivetrain {
 
     public MaelDrivetrain(DrivetrainModels model, double gearRatio, double Kp, double Ki, double Kd, HardwareMap hwMap, Motor type) {
         //leftDrive = new MotorSystem("leftFront", "leftBack", "Left Drive",DcMotor.Direction.REVERSE, "LEFTDRIVE", hwMap, type);
-        leftDrive = new MaelMotorSystem(MaelUtils.LEFT_FRONT_KEY, MaelUtils.LEFT_BACK_KEY, Kp, Ki, Kd, DcMotor.Direction.REVERSE, hwMap, type);
-        rightDrive = new MaelMotorSystem(MaelUtils.RIGHT_FRONT_KEY, MaelUtils.RIGHT_BACK_KEY, Kp, Ki, Kd, DcMotor.Direction.FORWARD, hwMap, type);
+        this(MaelUtils.LEFT_FRONT_KEY, MaelUtils.LEFT_BACK_KEY,MaelUtils.RIGHT_FRONT_KEY, MaelUtils.RIGHT_BACK_KEY,hwMap,type);
+        leftDrive.setPID(Kp,Ki,Kd);
+        rightDrive.setPID(Kp,Ki,Kd);
+        //leftDrive = new MaelMotorSystem(MaelUtils.LEFT_FRONT_KEY, MaelUtils.LEFT_BACK_KEY, Kp, Ki, Kd, DcMotor.Direction.REVERSE, hwMap, type);
+        //rightDrive = new MaelMotorSystem(MaelUtils.RIGHT_FRONT_KEY, MaelUtils.RIGHT_BACK_KEY, Kp, Ki, Kd, DcMotor.Direction.FORWARD, hwMap, type);
         leftDrive.setGearRatio(gearRatio);
         rightDrive.setGearRatio(gearRatio);
         driveGearReduction = (1 / gearRatio);

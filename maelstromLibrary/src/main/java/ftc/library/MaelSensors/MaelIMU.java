@@ -70,7 +70,7 @@ public class MaelIMU implements LibConstants, Subsystem/*Runnable*/ {
     }*/
 
     public double getRelativeYaw(){
-        updateRelativeYaw();
+        //updateRelativeYaw();
         return relativeYaw;}
 
     public void updateAngles(){
@@ -98,7 +98,7 @@ public class MaelIMU implements LibConstants, Subsystem/*Runnable*/ {
     }
 
     public double getYaw() {
-        updateAngles();
+        //updateAngles();
         return yaw;}
     public double getRoll(){return roll;}
     public double getPitch(){return pitch;}

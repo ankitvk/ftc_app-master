@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import ftc.library.MaelControl.PID.PIDController;
+import ftc.library.MaelControl.PID.PIDFController;
 import ftc.library.MaelSensors.MaelTimer;
 import ftc.library.MaelSensors.MaelstromEncoder;
 import ftc.library.MaelSensors.MaelLimitSwitch;
@@ -24,7 +24,7 @@ public class MaelMotor implements LibConstants {
   private double rpm = 0;
   private double power = 0;
   private double motorPower = 0;
-  private double KP,KI,KD;
+  private double KP,KI,KD, KF;
   private double minPower = 0;
   private double minPosition=0, maxPosition=0;
   private double previousVelocity=0;
@@ -47,7 +47,7 @@ public class MaelMotor implements LibConstants {
         }
     };
 
-  private PIDController PID = new PIDController(KP,KI,KD);
+  private PIDFController PID = new PIDFController(KP,KI,KD);
   private MaelLimitSwitch minLim, maxLim = null;
 
 
@@ -118,8 +118,8 @@ public class MaelMotor implements LibConstants {
         }
         return currVelocity;*/
         int deltaPos = getCounts() - previousPos;
-        double deltaTime = (System.nanoTime() - previousTime)/NANOSECS_PER_SEC;
-        //double deltaTime = MaelUtils.getDeltaTime();
+        //double deltaTime = (System.nanoTime() - previousTime)/NANOSECS_PER_SEC;
+        double deltaTime = MaelUtils.getDeltaTime();
         if (deltaTime*6e4 > 10) {
             currVelocity = (deltaPos/ getCPR())/(deltaTime);
             previousPos = motor.getCurrentPosition();
@@ -135,6 +135,7 @@ public class MaelMotor implements LibConstants {
 
     public void setVelocity(double velocity){
         double targetVelocity = getTargetVelocity(velocity);
+        //PID.setKF(1/getEncoder().getRPM());
         if(closedLoop){ pidPower = PID.power(targetVelocity,getVelocity());}
         else {pidPower = velocity;}
         /*if(limitDetection){
@@ -194,12 +195,22 @@ public class MaelMotor implements LibConstants {
     public void setKD(double KD){
         this.KD = KD;
     }
+    public void setKF(double KF){this.KF = KF;}
 
-    public void setPID(double kp, double ki, double kd){
+    public void setPIDF(double kp, double ki, double kd, double kf){
         setKP(kp);
         setKI(ki);
         setKD(kd);
+        setKF(kf);
     }
+
+    public void setPID(double kp, double ki, double kd){
+/*        setKP(kp);
+        setKI(ki);
+        setKD(kd);*/
+        setPIDF(kp,ki,kd,0);
+    }
+
 
     public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior behavior){
         motor.setZeroPowerBehavior(behavior);

@@ -92,14 +92,14 @@ public class Hardware implements Constants {
 
         this.hwMap = hardwareMap;
 
-        /*revHub = hwMap.get(LynxModule.class, "Expansion Hub 2");
+        /*revHub = hwMap.getPose(LynxModule.class, "Expansion Hub 2");
         try {
             new LynxI2cConfigureChannelCommand(revHub, 1, LynxI2cConfigureChannelCommand.SpeedCode.FAST_400K).send();
         } catch (LynxNackException | InterruptedException ex) {
             ex.printStackTrace();
         }
 
-        ledRiver = hardwareMap.get(LEDRiver.IMPL, "ledriver");
+        ledRiver = hardwareMap.getPose(LEDRiver.IMPL, "ledriver");
 
         ledRiver.setLEDCount(ledCount);
         ledRiver.setMode(LEDRiver.Mode.PATTERN);

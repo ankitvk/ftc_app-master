@@ -23,7 +23,7 @@ public class StateMachineRunner {
 
  /*   public void runStateMachine() {
         if (states != null && currState < states.size() && delayDone()) {
-            switch (states.get(currState)) {
+            switch (states.getPose(currState)) {
                 case turn90Clockwise:
                     if (Robot.driveTrain.turnPOM(90, DriveTrain.Direction.CLOCKWISE)) {
                         nextState();

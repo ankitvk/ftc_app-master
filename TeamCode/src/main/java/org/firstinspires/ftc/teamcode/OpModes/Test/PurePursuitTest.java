@@ -46,7 +46,7 @@ public class PurePursuitTest extends MaelLinearOp {
             if(isStopRequested()) break;
         }
         robot.stop();*/
-        purePursuit.followPath(0.4);
+        purePursuit.followPath(0.6);
     }
 
     /*@Test
