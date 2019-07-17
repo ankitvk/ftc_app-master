@@ -13,6 +13,7 @@ public abstract class Odometry implements Subsystem {
     double globalX = 0, globalY = 0, prevX = 0, prevY = 0;
     double globalHeading = 0;
     double gearRatio = 1;
+    double wheelDiamter = 4;
     public Odometry(MaelMotor x, MaelMotor y, MaelIMU imu, double gearRatio){
         this.x = x;
         this.y = y;
@@ -48,7 +49,7 @@ public abstract class Odometry implements Subsystem {
     }
 
     public double calculateCircumference(double countsPerRev){
-        return (2 * Math.PI) / (countsPerRev * gearRatio);
+        return (wheelDiamter * Math.PI * gearRatio) / (countsPerRev);
     }
 
     public double getDistance(){

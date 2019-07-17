@@ -3,7 +3,7 @@ package ftc.library.MaelControl.PurePursuit;
 /*class for defining a point with x and y coordinates
 * along with angle*/
 public class MaelPose {
-    public double x, y, angle;
+    public double x = 0, y = 0, angle = 0;
 
     public MaelPose(double x, double y, double angle){
         this.x = x;

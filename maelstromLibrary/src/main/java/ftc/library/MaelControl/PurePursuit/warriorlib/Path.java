@@ -41,15 +41,11 @@ public class Path {
         path.addAll(Arrays.asList(points));
     }
 
-    public Path reverse(){
+
+    public void reverse(){
         ArrayList<MaelPose> temp = path;
         Collections.reverse(temp);
-        Path reversed = new Path();
-/*        for(int i = 0; i < temp.size(); i++){
-            reversed.addPoint(temp.get(i));
-        }*/
-        reversed.addPath(temp);
-        return reversed;
+        addPath(temp);
     }
 
     public MaelPose getPose(int i){
@@ -63,6 +59,11 @@ public class Path {
         }*/
         temp.addPath(path);
         return temp;
+    }
+
+    public void clear(){
+        path.clear();
+        addPath(path);
     }
 
     public double numOfPoints(){return path.size();}
@@ -123,7 +124,7 @@ tolerance is the maximum change per single smoothing iteration. If tolerance is 
         robotPath = path;
     }*/
 
-    public void smoothPath(double a, double b, double tolerance){
+    public void smooth(double a, double b, double tolerance){
         ArrayList<MaelPose> newPath = new ArrayList<>();
 
         for(MaelPose p : path){
@@ -151,7 +152,7 @@ tolerance is the maximum change per single smoothing iteration. If tolerance is 
         this.path = path;
     }
 
-    public Path smooth(double a, double b, double tolerance){
+    /*public Path smooth(double a, double b, double tolerance){
 
         Path newPath = copy();
 
@@ -171,5 +172,5 @@ tolerance is the maximum change per single smoothing iteration. If tolerance is 
             }
         }
         return newPath;
-    }
+    }*/
 }

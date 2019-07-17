@@ -3,6 +3,10 @@ package org.firstinspires.ftc.teamcode.Control;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 
 public interface Constants {
+    double DRIVE_TO_DEPOT_KP = .0025;
+
+
+
     double NANOSECONDS_PER_MINUTE = 6e+10;
     double NEVEREST_CLASSIC_MAX_RPM = 6600;
     double NEVEREST20_COUNTS_PER_REV = 560;

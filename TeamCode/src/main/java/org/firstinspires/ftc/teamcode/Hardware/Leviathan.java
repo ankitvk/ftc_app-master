@@ -11,8 +11,13 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.teamcode.Control.Constants;
 import org.firstinspires.ftc.teamcode.Control.GoldPos;
+import org.firstinspires.ftc.teamcode.Control.PIDController;
+import org.firstinspires.ftc.teamcode.Subsystems.Components.AutoMation;
 import org.firstinspires.ftc.teamcode.Subsystems.Components.MaelPivot;
 
+import ftc.library.MaelControl.PID.PIDFController;
+import ftc.library.MaelControl.PurePursuit.MaelPose;
+import ftc.library.MaelControl.PurePursuit.PathFollower;
 import ftc.library.MaelMotions.MaelMotors.Motor;
 import ftc.library.MaelMotions.MaelServos.CRServo.MaelCRServoSystem;
 import ftc.library.MaelMotions.MaelServos.Servo.MaelServo;
@@ -38,11 +43,15 @@ public class Leviathan extends MaelRobot implements Constants {
     public MaelCRServoSystem hang;
     public MaelServo index;
     public MaelServo hangLeftRealease, hangRightRelease;
+    public AutoMation automation;
     public MaelLimitSwitch limit;
     public Dogeforia dogeForia;
     public GoldAlignDetector detector;
+    public PathFollower follower;
     GoldPos position;
     public boolean startOpenCV;
+    private PIDFController liftPid = new PIDFController(0.01,0,0,0,1);
+    private PIDFController pivtorPid = new PIDFController(0.01,0,0,0,0);
 
     @Override
     public void initHardware(HardwareMap hwMap) {
@@ -55,6 +64,8 @@ public class Leviathan extends MaelRobot implements Constants {
         intake.setCollectorPowers(INTAKE_POWER,OUTTAKE_POWER);
         lift = new MaelElevator("extendo", Motor.NEVEREST_NAKED,SubsystemModels.MOTOR,hwMap);
         lift.setLiftPowers(LIFT_EXTEND,LIFT_RETRACT);
+        lift.setGearboxRatio(14);
+        lift.setSpoolDiameter(2);
         limit = new MaelLimitSwitch("limit",hwMap);
         pivot = new MaelPivot(hwMap);
         pivot.setPivotPowers(PIVOT_UP,PIVOT_DOWN);
@@ -66,13 +77,19 @@ public class Leviathan extends MaelRobot implements Constants {
         hangLeftRealease = new MaelServo("hangLeftRelease",hwMap);
         hangRightRelease = new MaelServo("hangRightRelease",hwMap);
         if(startOpenCV) startOpenCV(hwMap);
+        follower = new PathFollower(this);
+        automation = new AutoMation(this);
         add(intake,lift,pivot,imu);
+        setPidConstants();
+        follower.setLookAhead(.5);
+        follower.setTrackWidth(LENGTH_BETWEEN_WHEELS);
     }
 
     public void setPidConstants(){
         distancePid.setPID(distanceKP,distanceKI,distanceKD);
         turnPid.setPID(turnKP,turnKI,turnKD);
         sideTurnPid.setPID(sideKP,sideKI,sideKD);
+        follower.setEndKp(DRIVE_TO_DEPOT_KP);
     }
 
     public void hangRelease(){
@@ -93,6 +110,32 @@ public class Leviathan extends MaelRobot implements Constants {
             hang.setPower(-.85);
         }
         hang.setPower(0);
+    }
+
+
+    public void extendDistance(double distance){
+
+        long startTime = System.nanoTime();
+        long stopState = 0;
+
+        while((isStopRequested() && (stopState <= 250))){
+            double currDistance = lift.getDistance();
+            double power = liftPid.power(distance,currDistance);
+
+            lift.setPower(power);
+
+            feed.add("Current Distance: ", currDistance);
+            feed.add("Power: ", power);
+            feed.add("Error: ", liftPid.getError());
+            feed.add("P: ",liftPid.getP());
+            feed.add("I: ",liftPid.getI());
+            feed.add("D: ",liftPid.getD());
+            feed.update();
+
+            if(liftPid.getError() <= .5) stopState = (System.nanoTime() - startTime) / 1000000;
+            else startTime = System.nanoTime();
+        }
+        stop();
     }
 
     public void startOpenCV (HardwareMap hwMap) {
@@ -142,9 +185,56 @@ public class Leviathan extends MaelRobot implements Constants {
         return position;
     }
 
+    public MaelPose goldPose(){
+        if(position == GoldPos.LEFT) return new MaelPose(-3,3);
+        else if(position == GoldPos.MIDDLE) return new MaelPose(0,3);
+        else if(position == GoldPos.RIGHT) return new MaelPose(3,3);
+        else return new MaelPose(0,3);
+    }
+
     public void index(MaelController controller){
         if(controller.a()) index.setPos(.15);
         else index.setPos(.95);
+    }
+
+    public void intakeTeleop(MaelController c){
+        if(c.leftBumper()){
+            intake.setState(MaelCollector.State.INTAKE);
+        }
+        else if(c.leftTriggerPressed()){
+            intake.setState(MaelCollector.State.OUTTAKE);
+        }
+        else intake.setState(MaelCollector.State.STOP);
+
+        /*if(c.a()) index.setPos(.15);
+        else index.setPos(.95);*/
+    }
+
+    public void pivotTeleop(MaelController c){
+        if(c.leftBumper()) pivot.setState(MaelPivot.State.UP);
+        else if(c.rightBumper()) pivot.setState(MaelPivot.State.DOWN);
+        else pivot.setState(MaelPivot.State.STOP);
+    }
+
+    public void liftTeleop(MaelController c){
+        if(c.rightTriggerPressed()) lift.setState(MaelElevator.State.EXTEND);
+        else if(c.rightBumper()) lift.setState(MaelElevator.State.RETRACT);
+        else lift.setState(MaelElevator.State.STOP);
+    }
+
+    public void hangTeleop(MaelController c){
+        if(c.leftTriggerPressed()) lift();
+        else if(c.rightTriggerPressed()) lower();
+        else hang.setPower(0);
+    }
+
+    public void teleop(MaelController controller1, MaelController controller2){
+        driveTeleop(controller1);
+        intakeTeleop(controller1);
+        index(controller2);
+        pivotTeleop(controller2);
+        liftTeleop(controller1);
+        hangTeleop(controller2);
     }
 
     public void lift(){
@@ -155,4 +245,13 @@ public class Leviathan extends MaelRobot implements Constants {
         hang.setPower(.85);
     }
 
+
+    public void stopAllSystems(){
+        stop();
+        intake.setState(MaelCollector.State.STOP);
+        pivot.setState(MaelPivot.State.STOP);
+        lift.setState(MaelElevator.State.STOP);
+        index.setPos(.95);
+        hang.setPower(0);
+    }
 }

@@ -27,7 +27,7 @@ public class MaelElevator implements LibConstants,Subsystem {
     public double kp = 0.01, ki = 0, kd = 0;
     public double counts, power;
     public double targetPosition, currPosition;
-    public double spoolDiameter = 0 ;
+    public double spoolDiameter = 1 ;
     public double spoolCircumference = 0 ;
     public double gearboxRatio = 0;
     public PIDFController liftPid = new PIDFController(kp,ki,kd);

@@ -27,7 +27,7 @@ public class MaelUtils implements LibConstants {
     private static double deltaTime = 0;
     private static double currTime = 0;
     private static long prevTime = 0;
-    public static ArrayList<Subsystem> subsystems = new ArrayList<Subsystem>();
+    public static ArrayList<Subsystem> subsystems = new ArrayList<>();
     public static MaelTellemetry feed;
     public static FtcDashboard dashboard = FtcDashboard.getInstance();
     public static Telemetry dashTelemetry = dashboard.getTelemetry();

@@ -29,7 +29,6 @@ public class PathTest {
         write("Initial Path: ");
         for(int i = 0; i < path.numOfPoints(); i++){
             MaelPose pose = path.getPose(i);
-            //write("Point " + i + ": (" + pose.x + "," + pose.y + ")");
             write("Point " + i + ": " + pose(pose));
         }
         write("End Point: " + pose(path.endPose()));
@@ -41,46 +40,33 @@ public class PathTest {
         write("Injected Path: ");
         for(int i = 0; i < path.numOfPoints() - 1; i++){
             MaelPose pose = path.getPose(i);
-            //write("Point " + i + ": (" + pose.x + "," + pose.y + ")");
             write("Point " + i + ": " + pose(pose));
         }
         write("End Point: " + pose(path.endPose()));
         write("Injected Path Listing complete");
         write("");
 
-        /*Path smooth = path.smooth(.2,.8,0.001);
 
-        write("Smooth Path: ");
-        for(int i = 0; i < smooth.numOfPoints() - 1; i++){
-            MaelPose pose = smooth.getPose(i);
-            //write("Point " + i + ": (" + pose.x + "," + pose.y + ")");
-            write("Point " + i + ": " + pose(pose));
-        }
-        write("End Point: " + pose(smooth.endPose()));
-        write("Smooth Path Listing complete");
-        write("");*/
 
-        path.smoothPath(.2,.8,0.001);
+/*        path.smoooth(.5,0.0005,0.001);
 
         write("Smooth Path: ");
         for(int i = 0; i < path.numOfPoints() - 1; i++){
             MaelPose pose = path.getPose(i);
-            //write("Point " + i + ": (" + pose.x + "," + pose.y + ")");
             write("Point " + i + ": " + pose(pose));
         }
         write("End Point: " + pose(path.endPose()));
         write("Smooth Path Listing complete");
-        write("");
+        write("");*/
 
-        Path reversed = path.reverse();
+        path.reverse();
 
         write("Reversed Path: ");
-        for(int i = 0; i < reversed.numOfPoints() - 1; i++){
-            MaelPose pose = reversed.getPose(i);
-            //write("Point " + i + ": (" + pose.x + "," + pose.y + ")");
+        for(int i = 0; i < path.numOfPoints() - 1; i++){
+            MaelPose pose = path.getPose(i);
             write("Point " + i + ": " + pose(pose));
         }
-        write("End Point: " + pose(reversed.endPose()));
+        write("End Point: " + pose(path.endPose()));
         write("Reversed Path Listing complete");
         write("");
 

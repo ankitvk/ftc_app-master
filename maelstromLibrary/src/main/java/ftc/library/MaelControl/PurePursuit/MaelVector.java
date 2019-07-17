@@ -114,6 +114,10 @@ public class MaelVector implements LibConstants {
         this.z = z;
     }
 
+    public boolean equals(MaelVector v){
+        return (this.x == v.x) && (this.y == v.y);
+    }
+
     public double getDirection(){return Math.toDegrees(Math.atan(y/x));}
 
     public MaelPose toPose(){ return new MaelPose(x,y,getDirection());}

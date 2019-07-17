@@ -28,7 +28,7 @@ public class PurePursuitControllerTest {
         //points.add(point1);
         //purePursuit.wayPoints = points;
         purePursuit.setLookAhead(3);
-        purePursuit.distanceBetweenWheels = 16;
+        purePursuit.setTrackWidth(16);
         path.addPoints(point0,point1,point2);
         purePursuit.setPath(path);
     }

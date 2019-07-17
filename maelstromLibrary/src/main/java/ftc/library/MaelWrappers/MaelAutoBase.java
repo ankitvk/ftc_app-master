@@ -1,11 +1,21 @@
-package ftc.library.MaelControl;
+package ftc.library.MaelWrappers;
 
-import ftc.library.MaelUtils.MaelUtils;
+import ftc.library.MaelUtils.LibConstants;
 
-public abstract class StateMachineRunner {
+public abstract class MaelAutoBase extends MaelLinearOp implements LibConstants {
     public int programStage = 0;
     public boolean stageFinished = false;
     private int nextStage = 0;
+
+    @Override
+    public void run() throws InterruptedException {
+        loopStateMachine();
+    }
+
+    @Override
+    public void initHardware() {
+        hardwareInit();
+    }
 
     public void nextStage(int ordinal){
         nextStage = ordinal;
@@ -14,8 +24,8 @@ public abstract class StateMachineRunner {
 
     public void nextStage(){
         nextStage(programStage + 1);
-/*        System.out.println("Stage " + programStage + " Complete");
-        System.out.println();*/
+        System.out.println("Stage " + programStage + " Complete");
+        System.out.println();
     }
 
     private void incrementStage(){
@@ -23,8 +33,8 @@ public abstract class StateMachineRunner {
         stageFinished = true;
     }
 
-    public void loopStateMachine(){
-        while(!MaelUtils.linearOpMode.isStopRequested()){
+    private void loopStateMachine(){
+        while(!isStopRequested()){
             MainStateMachine();
 
             if(programStage == getOrdinalLength()) break;
@@ -39,4 +49,5 @@ public abstract class StateMachineRunner {
 
     public abstract void MainStateMachine();
 
+    public abstract void hardwareInit();
 }

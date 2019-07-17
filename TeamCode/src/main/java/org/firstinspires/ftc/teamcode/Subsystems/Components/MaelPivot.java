@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Subsystems.Components;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Control.Constants;
+import org.firstinspires.ftc.teamcode.Control.PIDController;
 
 import ftc.library.MaelControl.PID.PIDFController;
 import ftc.library.MaelMotions.MaelMotors.MaelMotorSystem;
@@ -26,7 +27,7 @@ public class MaelPivot implements LibConstants, Constants, Subsystem {
 
     private boolean isReset = false;
     private boolean scoringPosition = false;
-    double SCORE_KP = 0.5;
+    double FF = 0.5;
 
     public PIDFController pivotPid = new PIDFController(kp,ki,kd,kf,0);
     public MaelMotorSystem pivot;
@@ -68,6 +69,7 @@ public class MaelPivot implements LibConstants, Constants, Subsystem {
         pivot.stopAndReset();
         pivot.runWithoutEncoders();
         pivot.setBreakMode();
+        feed = MaelUtils.feed;
     }
 
     public void DriverControl(MaelController controller){
@@ -100,7 +102,7 @@ public class MaelPivot implements LibConstants, Constants, Subsystem {
         while(isStopRequested() &&(stopState <= 250)){
             double position = getCounts();
             double power = scoringPosition.power(desiredAngle,getAngle());
-            double pidPower = power + (SCORE_KP*Math.sin(getAngle()));
+            double pidPower = power + (FF*Math.sin(getAngle()));
 
             feed.add("StopState:", timer.stopState());
             feed.add("Angle:", getAngle());
@@ -128,7 +130,7 @@ public class MaelPivot implements LibConstants, Constants, Subsystem {
         while(isStopRequested() &&(stopState <= 250)){
             double position = getCounts();
             double power = downPosition.power(desiredAngle,getAngle());
-            double pidPower = power + (SCORE_KP*Math.sin(getAngle()));
+            double pidPower = power + (FF*Math.sin(getAngle()));
 
             feed.add("StopState:", timer.stopState());
             feed.add("Angle:", getAngle());
@@ -188,6 +190,37 @@ public class MaelPivot implements LibConstants, Constants, Subsystem {
 
     public double getAngle(){
         return PIVOT_LIMIT_ANGLE + (pivot.getAngle()*PIVOT_GEAR_RATIO);
+    }
+
+    public void setAngle(double angle){
+/*            PIDController pivotAngleController = new PIDController(Math.abs(Math.cos(getAngle()))*0.003 + 0.05 ,0,0,0);
+            double power = pivotAngleController.power(angle, getAngle());
+            pivot.setPower(power);*/
+
+        long startTime = System.nanoTime();
+        long stopState = 0;
+
+        while(isStopRequested() &&(stopState <= 250)){
+
+            kp = Math.abs(Math.cos(getAngle()))*0.003 + 0.05;
+
+            double position = getCounts();
+            double power = pivotPid.power(angle,getAngle());
+            double pidPower = power + (FF*Math.sin(getAngle()));
+
+            feed.add("StopState:", stopState);
+            feed.add("Angle:", getAngle());
+            feed.add("P:", pivotPid.getP());
+            feed.add("I:", pivotPid.getI());
+            feed.add("Error:", pivotPid.getError());
+            feed.add("Angle:", getAngle());
+            feed.update();
+
+            pivot.setPower(pidPower);
+
+            if(limit.pressed() && getAngle() <= 0.5) stopState = (System.nanoTime() - startTime) / 1000000;
+        }
+        stop();
     }
 
     public void setLiftPosition(double position){

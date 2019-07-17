@@ -9,6 +9,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Quaternion;
 import ftc.library.MaelSubsystems.Subsystem;
 import ftc.library.MaelUtils.AxesSigns;
 import ftc.library.MaelUtils.LibConstants;
+import ftc.library.MaelUtils.MaelUtils;
+import ftc.library.MaelWrappers.MaelLinearOp;
 
 /*Custon class for gyro imu*/
 public class MaelIMU implements LibConstants, Subsystem/*Runnable*/ {
@@ -21,6 +23,7 @@ public class MaelIMU implements LibConstants, Subsystem/*Runnable*/ {
     private double pitch = 0;
     private double roll = 0;
     private final BNO055IMU imu;
+    private MaelLinearOp linearOp = MaelUtils.linearOpMode;
 
     public MaelIMU(String name, HardwareMap hwMap){
         imu = hwMap.get(BNO055IMU.class,name);
@@ -32,8 +35,19 @@ public class MaelIMU implements LibConstants, Subsystem/*Runnable*/ {
 
     @Override
     public void update() throws InterruptedException {
-        updateAngles();
-        updateRelativeYaw();
+
+        while(!linearOp.opModeIsActive()){
+            updateAngles();
+            updateRelativeYaw();
+            try{Thread.sleep(10);}
+            catch (InterruptedException e){ e.printStackTrace(); }
+        }
+        while(!linearOp.isStopRequested()){
+            updateAngles();
+            updateRelativeYaw();
+            try{Thread.sleep(10);}
+            catch (InterruptedException e){ e.printStackTrace(); }
+        }
     }
 
 
